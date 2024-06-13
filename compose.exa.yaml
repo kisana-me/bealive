@@ -1,0 +1,69 @@
+services:
+  app:
+    build: .
+    tty: true
+    stdin_open: true
+    environment:
+      RAILS_ENV: production
+      DB_HOST: 'db'
+      DB_USER: 'root'
+      DB_PASSWORD: 'mdbroot'
+      S3_LOCAL_ENDPOINT: 'http://minio:9000/'
+      S3_PUBLIC_ENDPOINT: 'http://localhost:9000/'
+      S3_REGION: 'bealive'
+      S3_BUCKET: 'production'
+      S3_USER: 'minioroot'
+      S3_PASSWORD: 'minioroot'
+    working_dir: /app
+    volumes:
+      - ./src:/app
+    ports:
+      - '3060:3000'
+    depends_on:
+      - db
+      - minio
+    command: >
+      bash -c "rm -f /app/tmp/pids/server.pid &&
+      rm -f /app/public/assets &&
+      gem cleanup &&
+      bundle install -j4 &&
+      rails s -b 0.0.0.0"
+
+  minio:
+    image: minio/minio:latest
+    tty: true
+    stdin_open: true
+    environment:
+      MINIO_ROOT_USER: 'minioroot'
+      MINIO_ROOT_PASSWORD: 'minioroot'
+    volumes:
+      - minio-vol:/data
+    ports:
+      - '9060:9000'
+      - '9061:9001'
+    command: server /data --console-address ":9001"
+
+  db:
+    image: mariadb:latest
+    tty: true
+    stdin_open: true
+    environment:
+      TZ: 'Asia/Tokyo'
+      MARIADB_ROOT_PASSWORD: 'mdbroot'
+    volumes:
+      - db-vol:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    tty: true
+    stdin_open: true
+    environment:
+      PMA_HOSTS: 'db'
+    ports:
+      - '8060:80'
+    depends_on:
+      - db
+
+volumes:
+  db-vol:
+  minio-vol:
