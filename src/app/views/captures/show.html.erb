@@ -1,0 +1,44 @@
+<% provide(:title, 'みる') %>
+
+<h1>みる</h1>
+
+<div id="<%= @capture.name %>">
+  <p>
+    <strong><%= @capture.sender.name %></strong>さんからの依頼
+    <br />
+    <strong>Name:</strong>
+    <%= @capture.name %>
+  </p>
+
+  <div>
+    <% if @capture.front_original_key.present? %>
+      <%= image_tag @capture.front_image_url %>
+    <% else %>
+      <p>のいまげ</p>
+    <% end %>
+
+    <% if @capture.back_original_key.present? %>
+      <%= image_tag @capture.back_image_url %>
+    <% else %>
+      <p>のいまげ</p>
+    <% end %>
+    </div>
+
+  <p>
+    <strong>Captured at:</strong>
+    <%= @capture.captured_at %>
+    <br />
+    <strong>Latitude:</strong>
+    <%= @capture.latitude %>
+    <strong>Longitude:</strong>
+    <%= @capture.longitude %>
+    <br />
+    <%= @capture.uuid %>
+  </p>
+
+</div>
+
+
+<div>
+  <%= link_to "撮る", edit_capture_path(@capture.uuid) %>
+</div>

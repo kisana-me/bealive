@@ -1,0 +1,23 @@
+<% provide(:title, 'セッション') %>
+
+<h1>セッション</h1>
+
+<div id="sessions">
+  <% @sessions.each do |session| %>
+    <div id="<%= session.uuid %>">
+      <p>
+        <strong>Uuid:</strong>
+        <%= session.uuid %>
+      </p>
+
+      <p>
+        <strong>Name:</strong>
+        <%= session.name %>
+      </p>
+    </div>
+
+    <p>
+      <%= link_to "詳しく", session %>
+    </p>
+  <% end %>
+</div>

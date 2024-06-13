@@ -1,0 +1,32 @@
+<% provide(:title, 'リクエストする') %>
+
+<h1>リクエストする</h1>
+
+<%= form_with(model: @capture) do |form| %>
+  <% if @capture.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(@capture.errors.count, "error") %> つ問題があります。</h2>
+
+      <ul>
+        <% @capture.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    公開範囲：URLを知っている人のみ、フォロー、グループ、当事者。
+  </div>
+
+  <div>
+    <%= form.submit '作成' %>
+  </div>
+<% end %>
+
+
+<br>
+
+<div>
+  <%= link_to "Back to captures", captures_path %>
+</div>

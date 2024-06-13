@@ -1,0 +1,18 @@
+<% provide(:title, 'セッションをみる') %>
+
+<div id="<%= @session.uuid %>">
+  <p>
+    <strong>Uuid:</strong>
+    <%= @session.uuid %>
+  </p>
+
+  <p>
+    <strong>Name:</strong>
+    <%= @session.name %>
+  </p>
+
+  <p>
+    <strong>Ip:</strong>
+    <%= @session.ip %>
+  </p>
+</div>
