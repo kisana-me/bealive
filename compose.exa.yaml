@@ -24,9 +24,11 @@ services:
       - minio
     command: >
       bash -c "rm -f /app/tmp/pids/server.pid &&
-      rm -f /app/public/assets &&
+      rm -rf /app/public/assets &&
       gem cleanup &&
       bundle install -j4 &&
+      rails db:migrate &&
+      RAILS_ENV=production rails assets:precompile &&
       rails s -b 0.0.0.0"
 
   minio:
