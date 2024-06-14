@@ -7,9 +7,12 @@ class ApplicationRecord < ActiveRecord::Base
 
   #object.update(column.to_sym => mca_array.to_json)
   def add_mca_data(object, column, add_mca_array, save = false)
+    Rails.logger.info("{MMMMMCCCAAAAAAAA}")
     if object[column.to_sym].present?
+      Rails.logger.info("{pppppppppp}")
       mca_array = JSON.parse(object[column.to_sym])
     else
+      Rails.logger.info("{eeeeee}")
       mca_array = []
     end
     add_mca_array.each do |obj|
@@ -17,7 +20,7 @@ class ApplicationRecord < ActiveRecord::Base
     end
     object[column.to_sym] = mca_array.to_json
     if save
-      object.save
+      object.save!
     end
   end
   def remove_mca_data(object, column, remove_mca_array, save = false)

@@ -43,7 +43,9 @@ module SessionManagement
     db_session = Session.find_by(uuid: cookies.signed[:ba_uid], deleted: false)
     if BCrypt::Password.new(db_session.digest).is_password?(cookies.signed[:ba_rtk])
       account = db_session.account
-      account.update(deleted: true)
+      if account && !account.deleted
+        db_session.update(deleted: true)
+      end
     end
     cookies.delete(:ba_uid)
     cookies.delete(:ba_rtk)

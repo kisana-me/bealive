@@ -39,6 +39,7 @@ class CapturesController < ApplicationController
     end
     @capture.captured_at = Time.now
     @capture.status = 'done'
+    @capture.upload = true
     if @capture.update(capture_params)
       # 画像
       # ステータス更新
