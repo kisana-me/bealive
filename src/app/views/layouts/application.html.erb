@@ -7,11 +7,11 @@
     <meta property="og:title" content="<%= full_title(yield(:title)) %>">
     <meta property="og:description" content="<%= content_for?(:description) ? yield(:description) : 'BeAlive. いつもの日常を相互確認。' %>">
     <meta property="og:type" content="website">
+    <meta property="og:image" content="https://bealive.amiverse.net/images/bealive-image-169.webp">
     <meta http-equiv="content-language" content="<%= content_for?(:lang) ? yield(:lang) : 'ja' %>">
     <link rel="icon" href="/favicon.ico">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
     <% if false %>
