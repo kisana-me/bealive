@@ -54,10 +54,10 @@
       </div>
     </header>
     <main>
-      <%= yield %>
       <% flash.each do |message_type, message| %>
         <div class="flash <%= message_type %>"><%= message %></div>
       <% end %>
+      <%= yield %>
     </main>
     <footer>
       <ul>

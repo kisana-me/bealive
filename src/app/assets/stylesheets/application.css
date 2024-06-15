@@ -20,6 +20,7 @@
 }
 .flash {
   padding: 7px;
+  color: black;
 }
 .notice {
   background: #b7ff8d;
@@ -82,8 +83,9 @@ img {
 
 main {
   min-height: 100vh;
-  margin: 70px 0 0;
+  margin: 70px auto 0;
   padding: 20px;
+  max-width: 720px;
 }
 
 .bealive-copylight {
