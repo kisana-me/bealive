@@ -15,7 +15,7 @@ services:
       S3_BUCKET: 'production'
       S3_USER: 'minioroot'
       S3_PASSWORD: 'minioroot'
-      GA4_ID: '2PND2STXF8'
+      GA4_ID: ''
     working_dir: /app
     volumes:
       - ./src:/app
