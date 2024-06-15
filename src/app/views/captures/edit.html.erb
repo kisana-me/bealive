@@ -39,8 +39,8 @@
     </div>
   <% end %>
 
-  <%= form.hidden_field :front_image, id: 'front_image_field' %>
-  <%= form.hidden_field :back_image, id: 'back_image_field' %>
+  <%= form.file_field :front_image, id: 'front_image_field', style: "display: none" %>
+  <%= form.file_field :back_image, id: 'back_image_field', style: "display: none" %>
   <%= form.hidden_field :latitude %>
   <%= form.hidden_field :longitude %>
 
