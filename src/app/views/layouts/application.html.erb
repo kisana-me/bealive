@@ -14,7 +14,7 @@
     <%= csp_meta_tag %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
-    <% if false %>
+    <% if Rails.env.production? %>
       <!-- Google tag (gtag.js) -->
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-<%= ENV['GA4_ID'] %>"></script>
       <script>
