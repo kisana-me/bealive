@@ -15,4 +15,8 @@ Rails.application.routes.draw do
   get 'signup' => 'accounts#new'
 
   get "up" => "rails/health#show", as: :rails_health_check
+
+  # Error
+  get '*not_found', to: 'application#routing_error'
+  post '*not_found', to: 'application#routing_error'
 end
