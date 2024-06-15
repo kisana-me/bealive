@@ -12,5 +12,22 @@ class PagesController < ApplicationController
   end
 
   def contact
+    @inquiry = Inquiry.new
+  end
+
+  def create_inquiry
+    @inquiry = Inquiry.new(inquiry_params)
+    @inquiry.uuid = SecureRandom.uuid
+    if @inquiry.save
+      redirect_to root_path, notice: "送信しました。受付ID:#{@inquiry.uuid}"
+    else
+      render :contact
+    end
+  end
+
+  private
+
+  def inquiry_params
+    params.require(:inquiry).permit(:name, :address, :subject, :content)
   end
 end

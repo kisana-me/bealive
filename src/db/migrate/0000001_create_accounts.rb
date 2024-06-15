@@ -13,6 +13,7 @@ class CreateAccounts < ActiveRecord::Migration[7.1]
       t.json :meta, null: false, default: {}
       t.string :password_digest, null: false, default: ''
       t.bigint :icon_id, null: true
+      t.bigint :invitation_id, null: true
 
       t.timestamps
     end

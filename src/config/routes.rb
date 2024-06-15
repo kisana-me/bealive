@@ -1,8 +1,10 @@
 Rails.application.routes.draw do
+  resources :invitations
   root 'pages#index'
   get 'tos' => 'pages#tos'
   get 'privacy_policy' => 'pages#privacy_policy'
   get 'contact' => 'pages#contact'
+  post 'create_inquiry' => 'pages#create_inquiry'
   resources :groups
   resources :comments
   resources :captures

@@ -28,31 +28,45 @@
 
   <body>
     <header>
-      <div><%= link_to 'BeAlive.', root_path %></div>
+      <div class="bealive-logo"><%= link_to 'BeAlive.', root_path %></div>
+      <div class="header-menu" data-controller="menu">
+        <button data-action="click->menu#toggle" class="hamburger-menu">&#9776;</button>
+        <nav data-menu-target="nav" class="menu">
+          <button data-action="click->menu#toggle" class="close-menu">&times;</button>
+          <div class="bealive-logo"><%= link_to 'BeAlive.', root_path %></div>
+          <ul class="header-menu-account">
+            <% if @current_account %>
+              <li><%= link_to 'プロフィール', account_path(@current_account.name_id) %></li>
+              <li><%= button_to 'ログアウト', logout_path, method: :delete %></li>
+            <% else %>
+              <li><%= link_to 'ログイン', login_path %></li>
+              <li><%= link_to 'はじめる', signup_path %></li>
+            <% end %>
+          </ul>
+          <ul class="header-menu-general">
+            <li><%= link_to '利用規約', tos_path %></li>
+            <li><%= link_to 'プライバシーポリシー', privacy_policy_path %></li>
+            <li><%= link_to 'お問い合わせ', contact_path %></li>
+            <li><%= link_to 'BeAlive.', root_path %></li>
+          </ul>
+          <div class="bealive-copylight">© BeAlive. 2024</div>
+        </nav>
+      </div>
     </header>
-    <nav>
-      <% if @current_account %>
-      <div><%= link_to 'プロフィール', account_path(@current_account.name_id) %></div>
-      <div><%= button_to 'ログアウト', logout_path, method: :delete %></div>
-      <% else %>
-      <div><%= link_to 'ログイン', login_path %></div>
-      <div><%= link_to 'はじめる', signup_path %></div>
-      <% end %>
-    </nav>
-    <hr />
     <main>
       <%= yield %>
       <% flash.each do |message_type, message| %>
         <div class="flash <%= message_type %>"><%= message %></div>
       <% end %>
     </main>
-    <hr />
     <footer>
-      <div>© BeAlive. 2024</div>
-      <div><%= link_to '利用規約', tos_path %></div>
-      <div><%= link_to 'プライバシーポリシー', privacy_policy_path %></div>
-      <div><%= link_to 'お問い合わせ', contact_path %></div>
-      <div><%= link_to 'BeAlive.', root_path %></div>
+      <ul>
+        <li><%= link_to '利用規約', tos_path, data: { turbo_prefetch: false } %></li>
+        <li><%= link_to 'プライバシーポリシー', privacy_policy_path %></li>
+        <li><%= link_to 'お問い合わせ', contact_path %></li>
+        <li><%= link_to 'BeAlive.', root_path %></li>
+      </ul>
+      <div class="bealive-copylight">© BeAlive. 2024</div>
     </footer>
   </body>
 </html>

@@ -2,6 +2,30 @@
 
 <h1>撮る</h1>
 
+<div data-controller="capture">
+  <h1>カメラを選択して開く</h1>
+  <div>
+    <select>
+      <!-- オプションはJavaScriptで動的に生成 -->
+    </select>
+    <button type="button" data-action="click->capture#openCamera">カメラを開く</button>
+  </div>
+  <div>
+    <video autoplay playsinline></video>
+  </div>
+
+  <div>
+    <button type="button" data-action="click->capture#takeFrontPhoto"
+      data-disabled="false" data-capture-target="frontPhotoButton">前面写真を撮る</button>
+    <button type="button" data-action="click->capture#takeBackPhoto"
+      data-disabled="false" data-capture-target="backPhotoButton">背面写真を撮る</button>
+    <img src="#" alt="Captured Photo" style="display: none;" data-capture-target="capturedImage">
+  </div>
+</div>
+
+
+
+<h1>コメント</h1>
 <%= form_with(model: @capture, url: capture_path(@capture.uuid), data: {turbo: false}) do |form| %>
   <% if @capture.errors.any? %>
     <div style="color: red">
@@ -15,23 +39,14 @@
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :front_image, 'てまえ側', style: "display: block" %>
-    <%= form.file_field :front_image %>
-  </div>
-  <div>
-    <%= form.label :back_image, 'むこう側', style: "display: block" %>
-    <%= form.file_field :back_image %>
-  </div>
+  <%= form.hidden_field :front_image, id: 'front_image_field' %>
+  <%= form.hidden_field :back_image, id: 'back_image_field' %>
+  <%= form.hidden_field :latitude %>
+  <%= form.hidden_field :longitude %>
 
   <div>
     <%= form.label :name, style: "display: block" %>
     <%= form.text_field :name %>
-  </div>
-
-  <div>
-    <%= form.hidden_field :latitude %>
-    <%= form.hidden_field :longitude %>
   </div>
 
   <div>

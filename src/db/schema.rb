@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 9) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_15_025436) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "name_id", null: false
@@ -41,6 +41,7 @@ ActiveRecord::Schema[7.1].define(version: 9) do
     t.string "back_variants", default: "", null: false
     t.string "name", default: "", null: false
     t.datetime "captured_at"
+    t.integer "visibility", limit: 1, default: 0, null: false
     t.integer "status", limit: 1, default: 0, null: false
     t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
     t.boolean "deleted", default: false, null: false
@@ -136,6 +137,18 @@ ActiveRecord::Schema[7.1].define(version: 9) do
     t.datetime "updated_at", null: false
     t.index ["uuid"], name: "index_inquiries_on_uuid", unique: true
     t.check_constraint "json_valid(`meta`)", name: "meta"
+  end
+
+  create_table "invitations", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
+    t.string "uuid"
+    t.string "name"
+    t.string "code"
+    t.integer "uses"
+    t.integer "max_uses"
+    t.datetime "expires_at"
+    t.boolean "deleted"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "sessions", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|

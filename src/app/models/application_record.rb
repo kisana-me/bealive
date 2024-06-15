@@ -3,16 +3,22 @@ class ApplicationRecord < ActiveRecord::Base
   require 'aws-sdk-s3'
   include ImageTools
 
+  def read_include(column: 'info', obj:)
+    if self[column.to_sym].present?
+      mca_array = JSON.parse(object[column.to_sym])
+      return mca_array.include?(obj)
+    else
+      return false
+    end
+  end
+
   private
 
   #object.update(column.to_sym => mca_array.to_json)
   def add_mca_data(object, column, add_mca_array, save = false)
-    Rails.logger.info("{MMMMMCCCAAAAAAAA}")
     if object[column.to_sym].present?
-      Rails.logger.info("{pppppppppp}")
       mca_array = JSON.parse(object[column.to_sym])
     else
-      Rails.logger.info("{eeeeee}")
       mca_array = []
     end
     add_mca_array.each do |obj|
