@@ -153,14 +153,14 @@ ActiveRecord::Schema[7.1].define(version: 11) do
 
   create_table "invitations", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.bigint "account_id", null: false
-    t.string "uuid"
-    t.string "name"
-    t.string "code"
-    t.integer "uses"
-    t.integer "max_uses"
+    t.string "uuid", null: false
+    t.string "name", default: "", null: false
+    t.string "code", default: "", null: false
+    t.integer "uses", default: 0, null: false
+    t.integer "max_uses", default: 1, null: false
     t.datetime "expires_at"
     t.integer "status", limit: 1, default: 0, null: false
-    t.boolean "deleted"
+    t.boolean "deleted", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_invitations_on_account_id"

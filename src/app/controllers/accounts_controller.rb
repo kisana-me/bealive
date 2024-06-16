@@ -25,7 +25,6 @@ class AccountsController < ApplicationController
         return
       end
     else
-      Rails.logger.info("AAA#{invitation.uses}fadfasdfafs#{invitation.max_uses}")
       unless invitation && invitation.uses < invitation.max_uses
         flash.now[:alert] = '招待コードが正しくありません'
         render :new

@@ -42,13 +42,13 @@ export default class extends Controller {
   openCamera() {
     const deviceId = this.selectedDeviceId()
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ video: { deviceId: deviceId, aspectRatio: 3/4 } })
+      navigator.mediaDevices.getUserMedia({ video: { deviceId: deviceId, aspectRatio: 4/3 } })//
         .then((stream) => {
           this.videoElement.srcObject = stream
           this.videoElement.play()
           this.frontPhotoButtonTarget.disabled = false
           this.backPhotoButtonTarget.disabled = false
-          this.reloadCameraDevices()
+          //this.reloadCameraDevices()
         })
         .catch((error) => {
           console.error('Error accessing media devices.', error)
@@ -62,7 +62,6 @@ export default class extends Controller {
   takePhoto(fieldId, buttonTarget, ImageTarget) {
     const canvas = document.createElement('canvas')
     const video = this.videoElement
-    const aspectRatio = 3 / 4;
     canvas.width = video.videoWidth
     canvas.height = video.videoHeight
     const context = canvas.getContext('2d')
