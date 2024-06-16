@@ -39,7 +39,7 @@ class Capture < ApplicationRecord
     unless variants.include?(variant_type)
       return '/images/bealive-image-169.webp'
     end
-    return signed_object_url(key: "/variants/#{variant_type}/front_images/#{self.uuid}.webp")
+    return object_url(key: "/variants/#{variant_type}/front_images/#{self.uuid}.webp")
   end
   def back_image_url(variant_type: 'images')
     variants = []
@@ -49,7 +49,7 @@ class Capture < ApplicationRecord
     unless variants.include?(variant_type)
       return '/images/bealive-image-169.webp'
     end
-    return signed_object_url(key: "/variants/#{variant_type}/back_images/#{self.uuid}.webp")
+    return object_url(key: "/variants/#{variant_type}/back_images/#{self.uuid}.webp")
   end
   def variants_delete
     delete_variants()# aaa
