@@ -10,6 +10,6 @@ class CreateComments < ActiveRecord::Migration[7.1]
 
       t.timestamps
     end
-    add_index :comments, [:uuid], unique: true
+    add_index :comments, :uuid, unique: true
   end
 end

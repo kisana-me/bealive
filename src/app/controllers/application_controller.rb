@@ -42,4 +42,18 @@ class ApplicationController < ActionController::Base
     redirect_to(session[:forwarding_url] || default)
     session.delete(:forwarding_url)
   end
+  def generate_random_problem
+    num1 = rand(100)
+    num2 = rand(1..10)
+    operator = %w[+ - * /].sample
+    if operator == '/'
+      num1 = num1 - (num1 % num2)
+    end
+    problem = "#{num1} #{operator} #{num2}"
+    [problem, eval(problem)]
+  end
+  def admin_account
+    return if @current_account.meta && @current_account.meta['admin'] == true
+    return render_404
+  end
 end

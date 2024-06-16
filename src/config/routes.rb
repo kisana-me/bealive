@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   delete 'logout' => 'sessions#logout'
   resources :accounts, except: [:new]
   get 'signup' => 'accounts#new'
+  post 'search_account' => 'accounts#search_account'
 
   get "up" => "rails/health#show", as: :rails_health_check
 

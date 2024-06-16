@@ -4,22 +4,26 @@
 
 <%= form_with(url: sessions_path, data: {turbo: false}) do |form| %>
 
-  <div>
-    <%= form.label :name_id, 'ログインID', style: "display: block" %>
-    <%= form.text_field :name_id, value: @name_id %>
-  </div>
+  <div class="custom-form">
+    <div>
+      <%= form.label :name_id, 'ログインID', class: "custom-label" %>
+      <%= form.text_field :name_id, value: @name_id, class: "custom-input" %>
+    </div>
 
-  <div>
-    <%= form.label :password, 'パスワード', style: "display: block" %>
-    <%= form.password_field :password %>
+    <div>
+      <%= form.label :password, 'パスワード', class: "custom-label" %>
+      <%= form.password_field :password, class: "custom-input" %>
+    </div>
   </div>
-
-  <div>
+  <br />
+  <div class="custom-button">
     <%= form.submit 'ログイン' %>
   </div>
 <% end %>
 
 
+<br>
+<br>
 <br>
 
 <div>

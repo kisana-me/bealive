@@ -2,43 +2,45 @@
 
 <h1>みる</h1>
 
-<div id="<%= @capture.name %>">
-  <p>
-    <strong><%= @capture.sender.name %></strong>さんからの依頼
-    <br />
-    <strong>Name:</strong>
-    <%= @capture.name %>
-  </p>
-
-  <div>
-    <% if @capture.front_original_key.present? %>
-      <%= image_tag @capture.front_image_url %>
-    <% else %>
-      <p>のいまげ</p>
-    <% end %>
-
-    <% if @capture.back_original_key.present? %>
-      <%= image_tag @capture.back_image_url %>
-    <% else %>
-      <p>のいまげ</p>
-    <% end %>
+<div class="capture-person">
+  <% if @capture.receiver %>
+    <strong><%= @capture.receiver.name %></strong>が撮った
+  <% end %>
+  <% if @capture.sender %>
+    <strong><%= @capture.sender.name %></strong>がリクエスト
+  <% end %>
+</div>
+<div class="capture-image" style="width: 100%;">
+  <% if @capture.done? %>
+    <%= image_tag @capture.front_image_url, class: 'front-image', style: 'width: 100%;' %>
+    <%= image_tag @capture.back_image_url, class: 'back-image', style: 'width: 28%;' %>
+  <% else %>
+    <div class="capture-image-dummy">
+      リンクを共有して撮ってもらおう！
     </div>
-
-  <p>
-    <strong>Captured at:</strong>
-    <%= @capture.captured_at %>
-    <br />
-    <strong>Latitude:</strong>
-    <%= @capture.latitude %>
-    <strong>Longitude:</strong>
-    <%= @capture.longitude %>
-    <br />
-    <%= @capture.uuid %>
-  </p>
-
+  <% end %>
 </div>
-
-
-<div>
+<div class="capture-comment">
+  <p><%= @capture.comment %></p>
+</div>
+<div class="capture-info">
+  <% if @capture.captured_at %>
+  <p><%= @capture.captured_at.strftime("%d日 %k時 %M分") %>に撮影</p>
+  <% end %>
+</div>
+  <strong>Latitude:</strong>
+  <%= @capture.latitude %>
+  <br />
+  <strong>Longitude:</strong>
+  <%= @capture.longitude %>
+  <br />
+  <strong>Uuid:</strong>
+  <%= @capture.uuid %>
+<% if !@capture.done? %>
   <%= link_to "撮る", edit_capture_path(@capture.uuid) %>
-</div>
+<% end %>
+<br />
+<% if @capture.sender == @current_account || @capture.receiver == @current_account %>
+  <%= button_to '削除', capture_path(@capture.uuid), method: :delete %>
+<% end %>
+<p>コメントする</p>

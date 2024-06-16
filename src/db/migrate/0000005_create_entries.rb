@@ -9,5 +9,7 @@ class CreateEntries < ActiveRecord::Migration[7.0]
 
       t.timestamps
     end
+    add_index :entries, [:account_id, :group_id], unique: true
+    add_index :entries, :uuid, unique: true
   end
 end

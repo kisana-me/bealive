@@ -1,4 +1,6 @@
 class InvitationsController < ApplicationController
+  before_action :admin_account
+  before_action :logged_in_account
   before_action :set_invitation, only: %i[ show edit update destroy ]
 
   # GET /invitations or /invitations.json
@@ -22,15 +24,12 @@ class InvitationsController < ApplicationController
   # POST /invitations or /invitations.json
   def create
     @invitation = Invitation.new(invitation_params)
-
-    respond_to do |format|
-      if @invitation.save
-        format.html { redirect_to invitation_url(@invitation), notice: "Invitation was successfully created." }
-        format.json { render :show, status: :created, location: @invitation }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @invitation.errors, status: :unprocessable_entity }
-      end
+    @invitation.account = @current_account
+    @invitation.uuid = SecureRandom.uuid
+    if @invitation.save
+      redirect_to invitation_url(@invitation), notice: "Invitation was successfully created."
+    else
+      render :new
     end
   end
 

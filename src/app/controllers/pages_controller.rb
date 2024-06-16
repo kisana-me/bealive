@@ -13,14 +13,22 @@ class PagesController < ApplicationController
 
   def contact
     @inquiry = Inquiry.new
+    @problem, session[:answer] = generate_random_problem
   end
 
   def create_inquiry
     @inquiry = Inquiry.new(inquiry_params)
+    if session[:answer].to_i != params[:answer].to_i
+      @problem, session[:answer] = generate_random_problem
+      flash.now[:alert] = '解答が間違っています'
+      render 'contact'
+      return
+    end
     @inquiry.uuid = SecureRandom.uuid
     if @inquiry.save
       redirect_to root_path, notice: "送信しました。受付ID:#{@inquiry.uuid}"
     else
+      @problem, session[:answer] = generate_random_problem
       render :contact
     end
   end

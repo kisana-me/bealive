@@ -12,11 +12,10 @@ class CreateAccounts < ActiveRecord::Migration[7.1]
       t.boolean :deleted, null: false, default: false
       t.json :meta, null: false, default: {}
       t.string :password_digest, null: false, default: ''
-      t.bigint :icon_id, null: true
-      t.bigint :invitation_id, null: true
 
       t.timestamps
     end
-    add_index :accounts, [:name_id, :uuid], unique: true
+    add_index :accounts, :name_id, unique: true
+    add_index :accounts, :uuid, unique: true
   end
 end

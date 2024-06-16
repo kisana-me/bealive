@@ -7,4 +7,5 @@ class Inquiry < ApplicationRecord
     presence: true
   validates :content,
     presence: true
+  enum status: { waiting: 0, done: 1 }
 end

@@ -11,6 +11,6 @@ class CreateSessions < ActiveRecord::Migration[7.1]
 
       t.timestamps
     end
-    add_index :sessions, [:uuid], unique: true
+    add_index :sessions, :uuid, unique: true
   end
 end

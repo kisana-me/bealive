@@ -7,9 +7,9 @@ class CreateGroups < ActiveRecord::Migration[7.1]
       t.integer :status, limit: 1, null: false, default: 0
       t.json :meta, null: false, default: {}
       t.boolean :deleted, null: false, default: false
-      t.bigint :icon_id, null: true
 
       t.timestamps
     end
+    add_index :groups, :uuid, unique: true
   end
 end

@@ -3,39 +3,47 @@
 <h1>プロフィール編集</h1>
 
 <%= form_with(model: @account, url: account_path(@account.name_id), data: {turbo: false}) do |form| %>
-  <% if @account.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(@account.errors.count, "error") %> つ問題があります。</h2>
-
-      <ul>
-        <% account.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render 'shared/error_messages', instead: @account %>
 
   <div>
-    <%= form.label :name, '名前', style: "display: block" %>
-    <%= form.text_field :name %>
+    <%= form.label :name, '名前', class: "custom-label" %>
+    <%= form.text_field :name, class: "custom-input" %>
   </div>
 
   <div>
-    <%= form.label :name_id, 'ID', style: "display: block" %>
-    <%= form.text_field :name_id %>
+    <%= form.label :name_id, 'ID', class: "custom-label" %>
+    <%= form.text_field :name_id, class: "custom-input" %>
   </div>
 
   <div>
-    <%= form.label :description, 'あなたを説明', style: "display: block" %>
-    <%= form.text_area :description %>
+    <%= form.label :description, 'あなたを説明', class: "custom-label" %>
+    <%= form.text_area :description, class: "custom-textarea" %>
   </div>
 
   <div>
-    <%= form.label :birth, '生まれ', style: "display: block" %>
+    <%= form.label :birth, '生まれ', class: "custom-label" %>
     <%= form.datetime_field :birth %>
   </div>
 
   <div>
+    <%= form.label :email, 'メール', class: "custom-label" %>
+    <%= form.text_field :email, class: "custom-input" %>
+  </div>
+
+  <div>
+    <%= form.label :phone, '電話番号', class: "custom-label" %>
+    <%= form.text_field :phone, class: "custom-input" %>
+  </div>
+  <div class="custom-button">
     <%= form.submit '更新' %>
   </div>
 <% end %>
+
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+
+<%= button_to 'アカウントを削除', account_path(@account.name_id), method: :delete %>

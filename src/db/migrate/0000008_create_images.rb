@@ -4,6 +4,7 @@ class CreateImages < ActiveRecord::Migration[7.1]
       t.references :account, null: true, foreign_key: true
       t.string :uuid, null: false
       t.string :name, null: false, default: ''
+      t.datetime :expires_at
       t.string :original_key, null: false, default: ''
       t.string :variants, null: false, default: ''
       t.integer :status, limit: 1, null: false, default: 0
@@ -11,6 +12,6 @@ class CreateImages < ActiveRecord::Migration[7.1]
 
       t.timestamps
     end
-    add_index :images, [:uuid], unique: true
+    add_index :images, :uuid, unique: true
   end
 end

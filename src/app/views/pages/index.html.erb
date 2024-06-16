@@ -1,27 +1,11 @@
+<% provide(:robots, 'index, follow, archive') %>
+
 <% if @current_account %>
 
   <h1>新着</h1>
-  <div id="captures">
-    <% @captures.each do |capture| %>
-      <p>
-        <strong>送信先:</strong>
-        <%= capture.receiver %>
-      </p>
-
-      <p>
-        <strong>Uuid:</strong>
-        <%= capture.uuid %>
-      </p>
-
-      <p>
-        <strong>Name:</strong>
-        <%= capture.name %>
-      </p>
-      <p>
-        <%= link_to "みる", capture_path(capture.uuid) %>
-      </p>
-    <% end %>
-  </div>
+  
+  <%= render 'captures/captures', captures: @captures %>
+  <br /><br />
   <%= link_to 'リクエストする', new_capture_path %>
 
 <% else %>
@@ -30,6 +14,13 @@
 
   <p>いつもの日常を相互確認。</p>
 
+  <div>
+    <%= link_to 'ログイン', login_path, class: 'pages-link-button' %>
+    <br /><br />
+    または
+    <br /><br />
+    <%= link_to 'はじめる', signup_path, class: 'pages-link-button' %>
+  </div>
 <% end %>
 
 <p>

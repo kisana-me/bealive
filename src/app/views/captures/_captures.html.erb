@@ -1,0 +1,35 @@
+<div class="captures">
+  <% captures.each do |capture| %>
+    <div class="capture-wrap">
+      <%= link_to capture_path(capture.uuid), data: {turbo_prefetch: false} do %>
+        <div class="capture">
+          <div class="capture-person">
+            <% if capture.receiver %>
+              <strong><%= capture.receiver.name %></strong>が撮った
+            <% else %>
+              <strong><%= capture.sender.name %></strong>がリクエスト
+            <% end %>
+          </div>
+          <div class="capture-image">
+            <% if capture.done? %>
+              <%= image_tag capture.front_image_url, class: 'front-image' %>
+              <%= image_tag capture.back_image_url, class: 'back-image' %>
+            <% else %>
+              <div class="capture-image-dummy">
+                リンクを共有して撮ってもらおう！
+              </div>
+            <% end %>
+          </div>
+          <div class="capture-comment">
+            <p><%= capture.comment %></p>
+          </div>
+          <div class="capture-info">
+            <% if capture.captured_at %>
+            <p><%= capture.captured_at.strftime("%d日 %k時 %M分") %>に撮影</p>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

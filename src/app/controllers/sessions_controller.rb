@@ -10,7 +10,6 @@ class SessionsController < ApplicationController
   end
 
   def new
-    @reform
   end
 
   def edit
@@ -36,36 +35,26 @@ class SessionsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /sessions/1 or /sessions/1.json
   def update
-    respond_to do |format|
-      if @session.update(session_params)
-        format.html { redirect_to session_url(@session), notice: "Session was successfully updated." }
-        format.json { render :show, status: :ok, location: @session }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @session.errors, status: :unprocessable_entity }
-      end
+    if @session.update!(session_params)
+      redirect_to session_url(@session.uuid), notice: "セッションを更新しました"
+    else
+      render :edit
     end
   end
 
-  # DELETE /sessions/1 or /sessions/1.json
   def destroy
-    @session.destroy!
-
-    respond_to do |format|
-      format.html { redirect_to sessions_url, notice: "Session was successfully destroyed." }
-      format.json { head :no_content }
-    end
+    @session.update(deleted: true)
+    redirect_to root_path, notice: "セッションを削除しました"
   end
 
   private
 
   def set_session
-    @session = Session.find_by(uuid: params[:id], deleted: false)
+    @session = Session.find_by(account: @current_account, uuid: params[:id], deleted: false)
   end
 
   def session_params
-    params.require(:session).permit()
+    params.require(:session).permit(:name)
   end
 end

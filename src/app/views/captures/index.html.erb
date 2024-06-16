@@ -2,26 +2,9 @@
 
 <h1>リクエストした</h1>
 
-<div id="captures">
-  <% @captures.each do |capture| %>
-    <p>
-      <strong>送信先:</strong>
-      <%= 'a' if capture.receiver %>
-    </p>
-
-    <p>
-      <strong>Uuid:</strong>
-      <%= capture.uuid %>
-    </p>
-
-    <p>
-      <strong>Name:</strong>
-      <%= capture.name %>
-    </p>
-    <p>
-      <%= link_to "Show this capture", capture.uuid %>
-    </p>
-  <% end %>
-</div>
-
+<%= render 'captures/captures', captures: @captures %>
+<br /><br />
 <%= link_to "リクエストする", new_capture_path %>
+
+<h1>過去のすべて</h1>
+<p>もうじき...</p>

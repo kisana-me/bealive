@@ -9,7 +9,9 @@ class CreateCaptures < ActiveRecord::Migration[7.1]
       t.string :front_variants, null: false, default: ''
       t.string :back_original_key, null: false, default: ''
       t.string :back_variants, null: false, default: ''
-      t.string :name, null: false, default: ''
+      t.string :comment, null: false, default: ''
+      t.boolean :reversed, null: false, default: false
+      t.boolean :strict, null: false, default: false
       t.datetime :captured_at, null: true
       t.integer :visibility, limit: 1, null: false, default: 0
       t.integer :status, limit: 1, null: false, default: 0
@@ -22,6 +24,6 @@ class CreateCaptures < ActiveRecord::Migration[7.1]
     end
     add_foreign_key :captures, :accounts, column: :sender_id
     add_foreign_key :captures, :accounts, column: :receiver_id
-    add_index :captures, [:uuid], unique: true
+    add_index :captures, :uuid, unique: true
   end
 end

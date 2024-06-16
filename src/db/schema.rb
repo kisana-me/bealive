@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_15_025436) do
+ActiveRecord::Schema[7.1].define(version: 11) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "name_id", null: false
@@ -23,10 +23,14 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_15_025436) do
     t.boolean "deleted", default: false, null: false
     t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
     t.string "password_digest", default: "", null: false
-    t.bigint "icon_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name_id", "uuid"], name: "index_accounts_on_name_id_and_uuid", unique: true
+    t.bigint "icon_id"
+    t.bigint "invitation_id"
+    t.index ["icon_id"], name: "fk_rails_fc2285bd47"
+    t.index ["invitation_id"], name: "fk_rails_a7fac840b0"
+    t.index ["name_id"], name: "index_accounts_on_name_id", unique: true
+    t.index ["uuid"], name: "index_accounts_on_uuid", unique: true
     t.check_constraint "json_valid(`meta`)", name: "meta"
   end
 
@@ -39,7 +43,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_15_025436) do
     t.string "front_variants", default: "", null: false
     t.string "back_original_key", default: "", null: false
     t.string "back_variants", default: "", null: false
-    t.string "name", default: "", null: false
+    t.string "comment", default: "", null: false
+    t.boolean "reversed", default: false, null: false
+    t.boolean "strict", default: false, null: false
     t.datetime "captured_at"
     t.integer "visibility", limit: 1, default: 0, null: false
     t.integer "status", limit: 1, default: 0, null: false
@@ -79,8 +85,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_15_025436) do
     t.boolean "deleted", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["account_id", "group_id"], name: "index_entries_on_account_id_and_group_id", unique: true
     t.index ["account_id"], name: "index_entries_on_account_id"
     t.index ["group_id"], name: "index_entries_on_group_id"
+    t.index ["uuid"], name: "index_entries_on_uuid", unique: true
   end
 
   create_table "follows", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
@@ -91,8 +99,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_15_025436) do
     t.boolean "deleted", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["followed_id"], name: "fk_rails_5ef72a3867"
+    t.index ["followed_id", "follower_id"], name: "index_follows_on_followed_id_and_follower_id", unique: true
     t.index ["follower_id"], name: "fk_rails_622d34a301"
+    t.index ["uuid"], name: "index_follows_on_uuid", unique: true
   end
 
   create_table "groups", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
@@ -102,10 +111,12 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_15_025436) do
     t.integer "status", limit: 1, default: 0, null: false
     t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
     t.boolean "deleted", default: false, null: false
-    t.bigint "icon_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "icon_id"
     t.index ["account_id"], name: "index_groups_on_account_id"
+    t.index ["icon_id"], name: "fk_rails_79bcbd1e53"
+    t.index ["uuid"], name: "index_groups_on_uuid", unique: true
     t.check_constraint "json_valid(`meta`)", name: "meta"
   end
 
@@ -113,6 +124,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_15_025436) do
     t.bigint "account_id"
     t.string "uuid", null: false
     t.string "name", default: "", null: false
+    t.datetime "expires_at"
     t.string "original_key", default: "", null: false
     t.string "variants", default: "", null: false
     t.integer "status", limit: 1, default: 0, null: false
@@ -140,15 +152,20 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_15_025436) do
   end
 
   create_table "invitations", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
+    t.bigint "account_id", null: false
     t.string "uuid"
     t.string "name"
     t.string "code"
     t.integer "uses"
     t.integer "max_uses"
     t.datetime "expires_at"
+    t.integer "status", limit: 1, default: 0, null: false
     t.boolean "deleted"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_invitations_on_account_id"
+    t.index ["code"], name: "index_invitations_on_code", unique: true
+    t.index ["uuid"], name: "index_invitations_on_uuid", unique: true
   end
 
   create_table "sessions", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
@@ -165,6 +182,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_15_025436) do
     t.index ["uuid"], name: "index_sessions_on_uuid", unique: true
   end
 
+  add_foreign_key "accounts", "images", column: "icon_id"
+  add_foreign_key "accounts", "invitations"
   add_foreign_key "captures", "accounts", column: "receiver_id"
   add_foreign_key "captures", "accounts", column: "sender_id"
   add_foreign_key "captures", "groups"
@@ -175,6 +194,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_15_025436) do
   add_foreign_key "follows", "accounts", column: "followed_id"
   add_foreign_key "follows", "accounts", column: "follower_id"
   add_foreign_key "groups", "accounts"
+  add_foreign_key "groups", "images", column: "icon_id"
   add_foreign_key "images", "accounts"
+  add_foreign_key "invitations", "accounts"
   add_foreign_key "sessions", "accounts"
 end

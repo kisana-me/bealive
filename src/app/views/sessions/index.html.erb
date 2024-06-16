@@ -2,22 +2,22 @@
 
 <h1>セッション</h1>
 
-<div id="sessions">
+<div class="sessions">
   <% @sessions.each do |session| %>
-    <div id="<%= session.uuid %>">
+    <div>
       <p>
-        <strong>Uuid:</strong>
+        <strong>UUID:</strong>
         <%= session.uuid %>
       </p>
 
       <p>
-        <strong>Name:</strong>
+        <strong>名前:</strong>
         <%= session.name %>
       </p>
-    </div>
 
-    <p>
-      <%= link_to "詳しく", session %>
-    </p>
+      <p>
+        <%= link_to "詳しく", session_path(session.uuid) %>
+      </p>
+    </div>
   <% end %>
 </div>

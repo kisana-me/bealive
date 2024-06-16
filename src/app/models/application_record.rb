@@ -49,7 +49,7 @@ class ApplicationRecord < ActiveRecord::Base
     url = File.join(ENV["S3_PUBLIC_ENDPOINT"], bucket_key)
     return url
   end
-  def signed_object_url(key: '', expires_in: 10)
+  def signed_object_url(key: '', expires_in: 100)
     s3 = Aws::S3::Client.new(
       endpoint: ENV["S3_PUBLIC_ENDPOINT"],
       region: ENV["S3_REGION"],

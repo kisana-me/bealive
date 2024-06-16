@@ -1,5 +1,17 @@
 <% provide(:title, @account.name + 'さん') %>
 
+<% if @current_account == @account %>
+  <p>
+    <strong>操作:</strong>
+    <%= link_to '編集', edit_account_path(@account.name_id) %>
+  </p>
+<% else %>
+  <p>
+    <strong>操作:</strong>
+    フォローする
+  </p>
+<% end %>
+
 <p>
   <strong>名前:</strong>
   <%= @account.name %>

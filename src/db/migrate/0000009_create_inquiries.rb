@@ -13,6 +13,6 @@ class CreateInquiries < ActiveRecord::Migration[7.1]
 
       t.timestamps
     end
-    add_index :inquiries, [:uuid], unique: true
+    add_index :inquiries, :uuid, unique: true
   end
 end

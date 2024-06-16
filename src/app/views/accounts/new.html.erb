@@ -2,64 +2,51 @@
 
 <h1>はじめる</h1>
 
-<%= form_with(model: @account) do |form| %>
-  <% if @account.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(@account.errors.count, "error") %> つ問題があります。</h2>
+<%= form_with(model: @account, data: {turbo: false}) do |form| %>
+  <%= render 'shared/error_messages', instead: @account %>
 
-      <ul>
-        <% @account.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+  <div class="custom-form">
+    <div>
+      <%= label_tag :invitation_code, '招待コード', class: "custom-label" %>
+      <%= text_field_tag :invitation_code, nil, class: "custom-input" %>
     </div>
-  <% end %>
 
-  <div>
-    <%= form.label :name, '名前', style: "display: block" %>
-    <%= form.text_field :name %>
-  </div>
+    <div>
+      <%= form.label :name, '名前', class: "custom-label" %>
+      <%= form.text_field :name, class: "custom-input" %>
+    </div>
 
-  <div>
-    <%= form.label :name_id, 'ID', style: "display: block" %>
-    <%= form.text_field :name_id %>
-  </div>
+    <div>
+      <%= form.label :name_id, 'ID', class: "custom-label" %>
+      <%= form.text_field :name_id, class: "custom-input" %>
+    </div>
 
-  <div>
-    <%= form.label :description, 'あなたを説明', style: "display: block" %>
-    <%= form.text_area :description %>
-  </div>
+    <div>
+      <%= form.label :password, '新しいパスワード', class: "custom-label" %>
+      <%= form.password_field :password, class: "custom-input" %>
+    </div>
 
-  <div>
-    <%= form.label :birth, '生まれ', style: "display: block" %>
-    <%= form.datetime_field :birth %>
-  </div>
-
-  <div>
-    <%= form.label :password, '新しいパスワード', style: "display: block" %>
-    <%= form.text_field :password %>
-  </div>
-
-  <div>
-    <%= form.label :password_confirmation, 'パスワードをもう一度', style: "display: block" %>
-    <%= form.text_field :password_confirmation %>
+    <div>
+      <%= form.label :password_confirmation, 'パスワードをもう一度', class: "custom-label" %>
+      <%= form.password_field :password_confirmation, class: "custom-input" %>
+    </div>
   </div>
 
   <div>
     <br />
-    次の「はじめる」ボタンを押してアカウントを作成することで、<br />
-    我々の<%= link_to '利用規約', tos_path %>と<br />
-    <%= link_to 'プライバシーポリシー', privacy_policy_path %>に<br />
-    同意したとみなされますので事前にご確認ください。<br />
+    アカウントを作成することで、当サービスの<br />
+    <%= link_to '利用規約', tos_path %>と<%= link_to 'プライバシーポリシー', privacy_policy_path %>に<br />
+    同意したとみなされます。<br />
     <br />
   </div>
 
-  <div>
+  <div class="custom-button">
     <%= form.submit 'はじめる' %>
   </div>
 <% end %>
 
-
+<br>
+<br>
 <br>
 
 <div>

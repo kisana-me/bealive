@@ -1,18 +1,26 @@
 <% provide(:title, 'セッションをみる') %>
 
-<div id="<%= @session.uuid %>">
+<h1>セッションをみる</h1>
+
+<div>
   <p>
-    <strong>Uuid:</strong>
+    <strong>UUID:</strong>
     <%= @session.uuid %>
   </p>
 
   <p>
-    <strong>Name:</strong>
+    <strong>名前:</strong>
     <%= @session.name %>
   </p>
 
   <p>
-    <strong>Ip:</strong>
-    <%= @session.ip %>
+    <strong>IP:</strong>
+    不明
+  </p>
+
+  <p>
+    <strong>操作:</strong>
+    <%= link_to "変更", edit_session_path(@session.uuid) %>
+    <%= button_to "削除", session_path(@session.uuid), method: :delete %>
   </p>
 </div>

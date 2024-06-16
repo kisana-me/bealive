@@ -17,11 +17,28 @@ class AccountsController < ApplicationController
 
   def create
     @account = Account.new(account_params)
+    invitation = Invitation.find_by(code: params[:invitation_code])
+    if params[:invitation_code] == 'first'
+      if Account.last
+        flash.now[:alert] = '招待コードが正しくありません!'
+        render :new
+        return
+      end
+    else
+      Rails.logger.info("AAA#{invitation.uses}fadfasdfafs#{invitation.max_uses}")
+      unless invitation && invitation.uses < invitation.max_uses
+        flash.now[:alert] = '招待コードが正しくありません'
+        render :new
+        return
+      end
+    end
     @account.uuid = SecureRandom.uuid
+    @account.invitation_id = invitation.id if invitation
     if @account.save
+      invitation.update!(uses: invitation.uses + 1) if invitation
       redirect_to login_path, notice: "アカウントを作成しました"
     else
-      render :new, status: :unprocessable_entity
+      render :new
     end
   end
 
@@ -29,13 +46,19 @@ class AccountsController < ApplicationController
     if @account.update(update_account_params)
       redirect_to account_path(@account.name_id), notice: "更新しました"
     else
-      render :edit, status: :unprocessable_entity
+      render :edit
     end
   end
 
   def destroy
-    @account.update(delete: true)
+    @account.update(deleted: true)
     redirect_to root_url, notice: "ご利用いただきありがとうございました"
+  end
+
+  def search_account
+    @account = Account.find_by(name_id: params[:query], deleted: false)
+    return render_404 unless @account
+    redirect_to account_path(@account.name_id)
   end
 
   private

@@ -1,9 +1,10 @@
 class CapturesController < ApplicationController
   before_action :logged_in_account, except: %i[ show edit update ]
-  before_action :set_capture, only: %i[ show edit update destroy ]
+  before_action :set_capture, only: %i[ show edit update ]
+  before_action :set_correct_capture, only: %i[ destroy ]
 
   def index
-    @captures = Capture.where(sender: @current_account, deleted: false)
+    @captures = Capture.where(sender: @current_account, deleted: false).limit(10).order(created_at: :desc)
   end
 
   def show
@@ -51,7 +52,7 @@ class CapturesController < ApplicationController
   end
 
   def destroy
-    @capture.udpate(delete: true)
+    @capture.update(deleted: true)
     redirect_to captures_url, notice: "削除しました"
   end
 
@@ -59,13 +60,24 @@ class CapturesController < ApplicationController
 
   def set_capture
     @capture = Capture.find_by(uuid: params[:id], deleted: false)
+    return render_404 unless @capture
+  end
+
+  def set_correct_capture
+    @capture = Capture.find_by(uuid: params[:id], deleted: false)
+    if @capture.sender == @current_account || @capture.receiver == @current_account
+      return @capture
+    else
+      @capture = nil
+    end
+    return render_404 unless @capture
   end
 
   def capture_params
     params.require(:capture).permit(
       :front_image,
       :back_image,
-      :name,
+      :comment,
       :latitude,
       :longitude
     )

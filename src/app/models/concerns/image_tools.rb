@@ -2,7 +2,7 @@ module ImageTools
 
   private
 
-  def process_image(variant_type: 'images', image_type: 'images', variants_column: 'variants', original_key_column: 'original_key')
+  def process_image(variant_type: 'images', image_type: 'images', variants_column: 'variants', original_key_column: 'original_key', original_image_path: '')
     if self.send(variants_column).present?
       variants =JSON.parse(self.send(variants_column))
       if variants.include?(variant_type)
@@ -16,9 +16,12 @@ module ImageTools
       secret_access_key: ENV["S3_PASSWORD"],
       force_path_style: true
     )
-    downloaded_image = Tempfile.new(['downloaded_image'])
+    if original_image_path.blank?
+      downloaded_image = Tempfile.new(['downloaded_image'])
+      original_image_path = downloaded_image.path
+      s3.get_object(bucket: ENV["S3_BUCKET"], key: self.send(original_key_column), response_target: original_image_path)
+    end
     converted_image = Tempfile.new(['converted_image'])
-    s3.get_object(bucket: ENV["S3_BUCKET"], key: self.send(original_key_column), response_target: downloaded_image.path)
     resize = "2048x2048>"
     extent = "" # 切り取る
     case variant_type
@@ -49,10 +52,10 @@ module ImageTools
     when 'tb-emojis'
       resize = "50x50>"
     end
-    image = MiniMagick::Image.open(downloaded_image.path)
+    image = MiniMagick::Image.open(original_image_path)
     if image.frames.count > 1
       processed = ImageProcessing::MiniMagick
-        .source(downloaded_image.path)
+        .source(original_image_path)
         .loader(page: nil)
         .coalesce
         .gravity("center")
@@ -70,7 +73,7 @@ module ImageTools
         .convert("webp")
         .call(destination: converted_image.path)
     else
-      image = MiniMagick::Image.open(downloaded_image.path)
+      image = MiniMagick::Image.open(original_image_path)
       image.format('webp')
       image = image.coalesce
       image.combine_options do |img|
@@ -87,8 +90,10 @@ module ImageTools
     end
     key = "/variants/#{variant_type}/#{image_type}/#{self.uuid}.webp"
     s3_upload(key: key, file: converted_image.path, content_type: 'image/webp')
-    add_mca_data(self, variants_column, [variant_type], true)
-    downloaded_image.close
+    add_mca_data(self, variants_column, [variant_type], false)
+    if downloaded_image
+      downloaded_image.close
+    end
     converted_image.close
   end
 
