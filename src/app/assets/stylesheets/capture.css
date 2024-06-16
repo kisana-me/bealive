@@ -36,6 +36,8 @@
   border: 2px solid #fff;
   border-radius: 14px;
   box-sizing: border-box;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
 }
 
 .capture-image .back-image {
@@ -46,6 +48,8 @@
   z-index: 2;
   border: 2px solid #000;
   border-radius: 7px;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
 }
 
 .capture-image-dummy {
