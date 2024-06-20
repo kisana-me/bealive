@@ -1,5 +1,4 @@
 <% provide(:title, 'お問い合わせ') %>
-<% provide(:robots, 'index, follow, archive') %>
 
 <h1>お問い合わせ</h1>
 <%= form_with(model: @inquiry, url: create_inquiry_path, method: :post, data: { turbo: false }) do |f| %>

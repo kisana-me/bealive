@@ -5,10 +5,10 @@ class PagesController < ApplicationController
     end
   end
 
-  def tos
+  def terms
   end
 
-  def privacy_policy
+  def privacy
   end
 
   def contact
