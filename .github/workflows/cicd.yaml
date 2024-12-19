@@ -19,7 +19,7 @@ jobs:
           script: |
             cd ~/bealive
             docker compose down
-            git remote set-url origin https://Kisana528:${{ secrets.GH_TOKEN }}@github.com/Kisana528/bealive.git
+            git remote set-url origin https://kisana-me:${{ secrets.GH_TOKEN }}@github.com/kisana-me/bealive.git
             git fetch origin main
             git reset --hard origin/main
             docker compose up -d --build
