@@ -4,18 +4,8 @@ services:
     tty: true
     stdin_open: true
     restart: always
-    environment:
-      RAILS_ENV: production
-      DB_HOST: 'db'
-      DB_USER: 'root'
-      DB_PASSWORD: 'mdbroot'
-      S3_LOCAL_ENDPOINT: 'http://minio:9000/'
-      S3_PUBLIC_ENDPOINT: 'http://localhost:9000/'
-      S3_REGION: 'bealive'
-      S3_BUCKET: 'production'
-      S3_USER: 'minioroot'
-      S3_PASSWORD: 'minioroot'
-      GA4_ID: ''
+    env_file:
+      - .exa.env
     working_dir: /app
     volumes:
       - ./src:/app
@@ -38,9 +28,8 @@ services:
     tty: true
     stdin_open: true
     restart: always
-    environment:
-      MINIO_ROOT_USER: 'minioroot'
-      MINIO_ROOT_PASSWORD: 'minioroot'
+    env_file:
+      - .exa.env
     volumes:
       - minio-vol:/data
     ports:
@@ -53,9 +42,8 @@ services:
     tty: true
     stdin_open: true
     restart: always
-    environment:
-      TZ: 'Asia/Tokyo'
-      MARIADB_ROOT_PASSWORD: 'mdbroot'
+    env_file:
+      - .exa.env
     volumes:
       - db-vol:/var/lib/mysql
 
@@ -64,8 +52,8 @@ services:
     tty: true
     stdin_open: true
     restart: always
-    environment:
-      PMA_HOSTS: 'db'
+    env_file:
+      - .exa.env
     ports:
       - '8060:80'
     depends_on:

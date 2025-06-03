@@ -22,13 +22,13 @@ class ApplicationController < ActionController::Base
   end
   def logged_in_account
     unless @current_account
-      flash[:alert] = "ログインしてください"
-      redirect_to login_path
+      flash[:alert] = "サインインしてください"
+      redirect_to root_path
     end
   end
   def logged_out_account
     unless !@current_account
-      flash[:alert] = "ログイン済みです"
+      flash[:alert] = "サインイン済みです"
       redirect_to root_path
     end
   end

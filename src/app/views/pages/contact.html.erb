@@ -1,35 +1,7 @@
 <% provide(:title, 'お問い合わせ') %>
 
 <h1>お問い合わせ</h1>
-<%= form_with(model: @inquiry, url: create_inquiry_path, method: :post, data: { turbo: false }) do |f| %>
-  <%= render 'shared/error_messages', instead: @inquiry %>
 
-  <div class="custom-form">
-    <div>
-      <%= f.label :subject, '件名', class:'custom-label' %>
-      <%= f.text_field :subject, placeholder: '件名', class:'custom-input' %>
-    </div>
-    <div>
-      <%= f.label :content, '内容', class:'custom-label' %>
-      <%= f.text_area :content, placeholder: '内容', class: 'custom-textarea' %>
-    </div>
-    <div>
-      <%= f.label :name, 'お名前', class:'custom-label' %>
-      <%= f.text_field :name, placeholder: 'お名前', class:'custom-input' %>
-    </div>
-    <div>
-      <%= f.label :address, 'アドレス', class:'custom-label' %>
-      <%= f.text_field :address, placeholder: 'アドレス', class:'custom-input' %>
-    </div>
-    <br />
-    <div>
-      <p style="font-size: 12px;">問題にご回答ください。「*」は掛け算(×)、「/」は割り算(÷)を表しています。</p>
-      <%= label_tag :answer, @problem, class:'custom-label' %>
-      <%= text_field_tag :answer, nil, placeholder: '解答', class:'custom-input' %>
-    </div>
-  </div>
-  <br />
-  <div class="custom-button">
-    <%= f.submit "送信" %>
-  </div>
-<% end %>
+<p>本サービスのお問い合わせは、下記リンク先に設置しております。</p>
+
+<a href="https://anyur.com/contact">ANYUR お問い合わせ</a>

@@ -31,11 +31,10 @@ class AccountsController < ApplicationController
         return
       end
     end
-    @account.uuid = SecureRandom.uuid
     @account.invitation_id = invitation.id if invitation
     if @account.save
       invitation.update!(uses: invitation.uses + 1) if invitation
-      redirect_to login_path, notice: "アカウントを作成しました"
+      redirect_to root_path, notice: "アカウントを作成しました"
     else
       render :new
     end

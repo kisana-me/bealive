@@ -2,9 +2,15 @@
 
 <h1>リクエストした</h1>
 
-<%= render 'captures/captures', captures: @captures %>
+<%= render 'captures/captures', captures: @sender_captures %>
+
+<h1>リクエストされた</h1>
+
+<%= render 'captures/captures', captures: @receiver_captures %>
+
 <br /><br />
+
 <%= link_to "リクエストする", new_capture_path %>
 
 <h1>過去のすべて</h1>
-<p>もうじき...</p>
+<p>準備中</p>

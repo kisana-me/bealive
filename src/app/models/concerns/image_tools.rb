@@ -25,6 +25,10 @@ module ImageTools
     resize = "2048x2048>"
     extent = "" # 切り取る
     case variant_type
+    # bealive
+    when 'bealive_capture'
+      resize = "400x600^"
+      extent = "400x600"
     # icon
     when 'icons'
       resize = "400x400^"

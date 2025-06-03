@@ -1,96 +1,204 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ['frontPhotoButton', 'backPhotoButton', 'capturedFrontImage', 'capturedBackImage']
+  static targets = [
+    'capturedFrontImage', 'capturedBackImage',
+    'countdown', 'currentCamera',
+    'toggleCaptureButton', 'toggleCameraButton',
+    'backVideo', 'frontVideo'
+  ]
 
   connect() {
-    console.log("Camera controller connected")
-    this.initializeCamera()
-  }
-  disconnect() {
-    const videoElement = this.videoElement
-    const stream = videoElement.srcObject
-    if (stream) {
-      const tracks = stream.getTracks()
-      tracks.forEach(track => track.stop())
-      videoElement.srcObject = null
-    }
-  }
-  reloadCameraDevices() {
-    const selectElement = this.element.querySelector('select')
-    selectElement.innerHTML = ''
-    this.initializeCamera()
-  }
-  initializeCamera() {
-    const selectElement = this.element.querySelector('select')
-    navigator.mediaDevices.enumerateDevices()
-      .then(devices => {
-        devices.forEach(device => {
-          if (device.kind === 'videoinput') {
-            const option = document.createElement('option')
-            option.value = device.deviceId
-            option.text = device.label || `Camera ${selectElement.options.length + 1}`
-            selectElement.appendChild(option)
-            console.log(`Device ID: ${device.deviceId}, Label: ${device.label}, Facing mode: ${device.facingMode}`);
-          }
-        })
-      })
-      .catch(error => {
-        console.error('Error enumerating media devices.', error)
-      })
-  }
-  openCamera() {
-    const deviceId = this.selectedDeviceId()
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ video: { deviceId: deviceId, aspectRatio: 4/3 } })//
-        .then((stream) => {
-          this.videoElement.srcObject = stream
-          this.videoElement.play()
-          this.frontPhotoButtonTarget.disabled = false
-          this.backPhotoButtonTarget.disabled = false
-          //this.reloadCameraDevices()
-        })
-        .catch((error) => {
-          console.error('Error accessing media devices.', error)
-        })
-    }
-  }
-  selectedDeviceId() {
-    const selectElement = this.element.querySelector('select')
-    return selectElement.value
-  }
-  takePhoto(fieldId, buttonTarget, ImageTarget) {
-    const canvas = document.createElement('canvas')
-    const video = this.videoElement
-    canvas.width = video.videoWidth
-    canvas.height = video.videoHeight
-    const context = canvas.getContext('2d')
-    context.drawImage(video, 0, 0, canvas.width, canvas.height)
-    const imageDataUrl = canvas.toDataURL('image/png')
-    const imgElement = ImageTarget
-    imgElement.src = imageDataUrl
-    imgElement.style.display = 'block'
-    fetch(imageDataUrl)
-      .then(res => res.blob())
-      .then(blob => {
-        const file = new File([blob], 'captured_image.png', { type: 'image/png' })
-        const dataTransfer = new DataTransfer()
-        dataTransfer.items.add(file)
-        const hiddenFileField = document.getElementById(fieldId)
-        hiddenFileField.files = dataTransfer.files
-      })
-    buttonTarget.disabled = true
+    this.photosTaken = { front: false, back: false }
+    this.captureStarted = false
+    this.previewing = false
+    this.currentFacingMode = 'user'
   }
 
-  // 撮影する, 自動でカメラ切り替えて連続撮影に？
-  takeFrontPhoto() {
-    this.takePhoto('front_image_field', this.frontPhotoButtonTarget, this.capturedFrontImageTarget)
+  updateCurrentCameraLabel() {
+    if (this.hasCurrentCameraTarget) {
+      this.currentCameraTarget.textContent =
+        this.currentFacingMode === 'user' ? 'セルフィ' : 'アウト'
+    }
   }
-  takeBackPhoto() {
-    this.takePhoto('back_image_field', this.backPhotoButtonTarget, this.capturedBackImageTarget)
+
+  toggleCamera() {
+    this.currentFacingMode = this.currentFacingMode === 'user' ? 'environment' : 'user'
+    this.updateCurrentCameraLabel()
+    if (this.previewing) {
+      this.startCamera({ facingMode: this.currentFacingMode })
+    }
+  }
+
+  async toggleCaptureFlow() {
+    if (!this.captureStarted) {
+      await this.startPreview()
+    } else {
+      this.toggleCameraButtonTarget.disabled = true
+      this.toggleCaptureButtonTarget.disabled = true
+      await this.startCapture()
+      this.toggleCaptureButtonTarget.textContent = '撮り直し'
+      this.toggleCaptureButtonTarget.disabled = false
+      this.captureStarted = false
+    }
+  }
+
+  async startPreview() {
+    await this.startCamera({ facingMode: this.currentFacingMode })
+    this.toggleCameraButtonTarget.disabled = false
+    this.toggleCaptureButtonTarget.textContent = '撮影開始'
+    this.capturedFrontImageTarget.style.display = 'none'
+    this.capturedBackImageTarget.style.display = 'none'
+    this.captureStarted = true
+    this.previewing = true
+  }
+
+  async startCapture() {
+    this.photosTaken = { front: false, back: false }
+
+    const startWithUser = this.currentFacingMode === 'user'
+    const devices = await navigator.mediaDevices.enumerateDevices()
+    const videoDevices = devices.filter(device => device.kind === 'videoinput')
+    const useSingleCamera = videoDevices.length <= 1
+
+    const first = startWithUser ? 'user' : 'environment'
+    const second = startWithUser ? 'environment' : 'user'
+    const sequence = useSingleCamera ? [first, first] : [first, second]
+
+    for (let i = 0; i < sequence.length; i++) {
+      await this.startCamera({ facingMode: sequence[i] })
+      await this.waitForVideoReady()
+      await this.countdownBeforeCapture()
+
+      const isFirst = i === 0
+      const role = startWithUser
+        ? (isFirst ? 'front' : 'back')
+        : (isFirst ? 'back' : 'front')
+
+      await this.capturePhoto(role)
+    }
+    this.countdownTarget.textContent = ''
+
+    this.stopCamera()
+    this.previewing = false
+    this.checkCaptureComplete()
+  }
+
+  async startCamera({ facingMode }) {
+    this.stopCamera()
+    this.currentFacingMode = facingMode
+    this.updateCurrentCameraLabel()
+
+    try {
+      this.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode } })
+      const video = this.videoElement
+      video.srcObject = this.stream
+      await video.play()
+    } catch (e) {
+      console.error("カメラ起動失敗", e)
+    }
+  }
+
+  stopCamera() {
+    if (this.stream) {
+      this.stream.getTracks().forEach(track => track.stop())
+      this.stream = null
+    }
+
+    if (this.hasBackVideoTarget) {
+      this.backVideoTarget.pause()
+      this.backVideoTarget.srcObject = null
+      this.backVideoTarget.style.display = 'none'
+    }
+
+    if (this.hasFrontVideoTarget) {
+      this.frontVideoTarget.pause()
+      this.frontVideoTarget.srcObject = null
+      this.frontVideoTarget.style.display = 'none'
+    }
+  }
+
+  async waitForVideoReady() {
+    return new Promise(resolve => {
+      if (this.videoElement.readyState >= 3) {
+        resolve()
+      } else {
+        this.videoElement.onloadedmetadata = () => resolve()
+      }
+    })
+  }
+
+  async countdownBeforeCapture() {
+    const el = this.countdownTarget
+    for (let i = 3; i >= 1; i--) {
+      el.textContent = i
+      await this.sleep(1000)
+    }
+    el.textContent = 'カメラ切り替え中'
+  }
+
+  async capturePhoto(role) {
+    const video = this.videoElement
+    const originalWidth = video.videoWidth
+    const originalHeight = video.videoHeight
+    const targetAspect = 2 / 3
+    let cropWidth = originalWidth
+    let cropHeight = cropWidth / targetAspect
+
+    if (cropHeight > originalHeight) {
+      cropHeight = originalHeight
+      cropWidth = cropHeight * targetAspect
+    }
+
+    const cropX = (originalWidth - cropWidth) / 2
+    const cropY = (originalHeight - cropHeight) / 2
+
+    const canvas = document.createElement('canvas')
+    canvas.width = cropWidth
+    canvas.height = cropHeight
+
+    const ctx = canvas.getContext('2d')
+    ctx.drawImage(
+      video,
+      cropX, cropY, cropWidth, cropHeight,
+      0, 0, cropWidth, cropHeight
+    )
+
+    const dataUrl = canvas.toDataURL('image/png')
+    const blob = await (await fetch(dataUrl)).blob()
+    const file = new File([blob], `${role}_photo.png`, { type: 'image/png' })
+    const dataTransfer = new DataTransfer()
+    dataTransfer.items.add(file)
+
+    const fieldId = role === 'front' ? 'front_image_field' : 'back_image_field'
+    const imgTarget = role === 'front' ? this.capturedFrontImageTarget : this.capturedBackImageTarget
+    const fileField = document.getElementById(fieldId)
+
+    imgTarget.src = dataUrl
+    imgTarget.style.display = 'block'
+    fileField.files = dataTransfer.files
+
+    this.photosTaken[role] = true
+  }
+
+
+  checkCaptureComplete() {
+    if (this.photosTaken.front && this.photosTaken.back) {
+      console.log("📸 撮影完了")
+    }
+  }
+
+  sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
   }
 
   get videoElement() {
-    return this.element.querySelector('video')
+    const isFront = this.currentFacingMode === 'user'
+    const front = this.hasFrontVideoTarget ? this.frontVideoTarget : null
+    const back = this.hasBackVideoTarget ? this.backVideoTarget : null
+
+    if (front) front.style.display = isFront ? 'block' : 'none'
+    if (back) back.style.display = isFront ? 'none' : 'block'
+    return isFront ? front : back
   }
 }

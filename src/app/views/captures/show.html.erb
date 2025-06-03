@@ -4,10 +4,12 @@
 
 <div class="capture-person">
   <% if @capture.receiver %>
-    <strong><%= @capture.receiver.name %></strong>が撮った
+    <strong>撮影者:</strong> <%= @capture.receiver.name %>
+  <% else %>
+    <strong>撮影者:</strong> 匿名
   <% end %>
   <% if @capture.sender %>
-    <strong><%= @capture.sender.name %></strong>がリクエスト
+    <strong>リクエスト:</strong> <%= @capture.sender.name %>
   <% end %>
 </div>
 <div class="capture-image" style="width: 100%;">
@@ -16,7 +18,7 @@
     <%= image_tag @capture.back_image_url, class: 'back-image', style: 'width: 28%;' %>
   <% else %>
     <div class="capture-image-dummy">
-      リンクを共有して撮ってもらおう！
+      このリンクを共有して撮ってもらおう！
     </div>
   <% end %>
 </div>
@@ -28,19 +30,13 @@
   <p><%= @capture.captured_at.strftime("%d日 %k時 %M分") %>に撮影</p>
   <% end %>
 </div>
-  <strong>Latitude:</strong>
-  <%= @capture.latitude %>
-  <br />
-  <strong>Longitude:</strong>
-  <%= @capture.longitude %>
-  <br />
-  <strong>Uuid:</strong>
-  <%= @capture.uuid %>
 <% if !@capture.done? %>
   <%= link_to "撮る", edit_capture_path(@capture.uuid) %>
 <% end %>
 <br />
-<% if @capture.sender == @current_account || @capture.receiver == @current_account %>
+<br />
+<br />
+<% if @capture.sender == @current_account || @capture.receiver == @current_account || session[:captured]&.include?(@capture.uui) %>
   <%= button_to '削除', capture_path(@capture.uuid), method: :delete %>
 <% end %>
-<p>コメントする</p>
+<p>コメントはそのうち実装</p>
