@@ -12,26 +12,34 @@
 
 ActiveRecord::Schema[7.1].define(version: 11) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
+    t.string "aid", null: false
+    t.string "anyur_id"
     t.string "name", null: false
     t.string "name_id", null: false
-    t.string "uuid", null: false
     t.text "description", default: "", null: false
     t.datetime "birth"
     t.string "email", default: "", null: false
+    t.boolean "email_verified", default: false, null: false
     t.string "phone", default: "", null: false
+    t.string "roles", default: "", null: false
+    t.string "password_digest", default: "", null: false
+    t.text "cache", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
+    t.text "settings", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
+    t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
     t.integer "status", limit: 1, default: 0, null: false
     t.boolean "deleted", default: false, null: false
-    t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
-    t.string "password_digest", default: "", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "icon_id"
     t.bigint "invitation_id"
+    t.index ["aid"], name: "index_accounts_on_aid", unique: true
+    t.index ["anyur_id"], name: "index_accounts_on_anyur_id", unique: true
     t.index ["icon_id"], name: "fk_rails_fc2285bd47"
     t.index ["invitation_id"], name: "fk_rails_a7fac840b0"
     t.index ["name_id"], name: "index_accounts_on_name_id", unique: true
-    t.index ["uuid"], name: "index_accounts_on_uuid", unique: true
+    t.check_constraint "json_valid(`cache`)", name: "cache"
     t.check_constraint "json_valid(`meta`)", name: "meta"
+    t.check_constraint "json_valid(`settings`)", name: "settings"
   end
 
   create_table "captures", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
@@ -44,9 +52,8 @@ ActiveRecord::Schema[7.1].define(version: 11) do
     t.string "back_original_key", default: "", null: false
     t.string "back_variants", default: "", null: false
     t.string "comment", default: "", null: false
-    t.boolean "reversed", default: false, null: false
-    t.boolean "strict", default: false, null: false
     t.datetime "captured_at"
+    t.datetime "expires_at"
     t.integer "visibility", limit: 1, default: 0, null: false
     t.integer "status", limit: 1, default: 0, null: false
     t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
@@ -124,7 +131,6 @@ ActiveRecord::Schema[7.1].define(version: 11) do
     t.bigint "account_id"
     t.string "uuid", null: false
     t.string "name", default: "", null: false
-    t.datetime "expires_at"
     t.string "original_key", default: "", null: false
     t.string "variants", default: "", null: false
     t.integer "status", limit: 1, default: 0, null: false
@@ -170,16 +176,21 @@ ActiveRecord::Schema[7.1].define(version: 11) do
 
   create_table "sessions", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.bigint "account_id", null: false
-    t.string "uuid", null: false
+    t.string "lookup", null: false
     t.string "digest", null: false
     t.string "name", default: "", null: false
-    t.string "ip", default: "", null: false
+    t.string "user_agent", default: "", null: false
+    t.string "ip_address", default: "", null: false
+    t.datetime "expires_at"
+    t.datetime "generated_at"
+    t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
     t.integer "status", limit: 1, default: 0, null: false
     t.boolean "deleted", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_sessions_on_account_id"
-    t.index ["uuid"], name: "index_sessions_on_uuid", unique: true
+    t.index ["lookup"], name: "index_sessions_on_lookup", unique: true
+    t.check_constraint "json_valid(`meta`)", name: "meta"
   end
 
   add_foreign_key "accounts", "images", column: "icon_id"

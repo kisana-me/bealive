@@ -11,12 +11,14 @@ class Capture < ApplicationRecord
   attr_accessor :image
   attr_accessor :upload
 
+  validates :comment, length: { in: 1..255, allow_blank: true }
+
   def image_upload
     if front_image
       extension = front_image.original_filename.split('.').last.downcase
       key = "/front_images/#{self.uuid}.#{extension}"
       process_image(
-        variant_type: 'images', image_type: 'front_images',
+        variant_type: 'bealive_capture', image_type: 'front_images',
         variants_column: 'front_variants', original_key_column: 'front_original_key',
         original_image_path: front_image.path
       )
@@ -25,13 +27,14 @@ class Capture < ApplicationRecord
       extension = back_image.original_filename.split('.').last.downcase
       key = "/back_images/#{self.uuid}.#{extension}"
       process_image(
-        variant_type: 'images', image_type: 'back_images',
+        variant_type: 'bealive_capture', image_type: 'back_images',
         variants_column: 'back_variants', original_key_column: 'back_original_key',
         original_image_path: back_image.path
       )
     end
   end
-  def front_image_url(variant_type: 'images')
+
+  def front_image_url(variant_type: 'bealive_capture')
     variants = []
     if self.front_variants.present?
       variants =JSON.parse(self.front_variants)
@@ -39,9 +42,10 @@ class Capture < ApplicationRecord
     unless variants.include?(variant_type)
       return '/images/bealive-image-169.webp'
     end
-    return object_url(key: "/variants/#{variant_type}/front_images/#{self.uuid}.webp")
+    return signed_object_url(key: "/variants/#{variant_type}/front_images/#{self.uuid}.webp")
   end
-  def back_image_url(variant_type: 'images')
+
+  def back_image_url(variant_type: 'bealive_capture')
     variants = []
     if self.back_variants.present?
       variants =JSON.parse(self.back_variants)
@@ -49,7 +53,7 @@ class Capture < ApplicationRecord
     unless variants.include?(variant_type)
       return '/images/bealive-image-169.webp'
     end
-    return object_url(key: "/variants/#{variant_type}/back_images/#{self.uuid}.webp")
+    return signed_object_url(key: "/variants/#{variant_type}/back_images/#{self.uuid}.webp")
   end
   def variants_delete
     delete_variants()# aaa

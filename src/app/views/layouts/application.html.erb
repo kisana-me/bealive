@@ -39,8 +39,7 @@
               <li><%= link_to 'プロフィール', account_path(@current_account.name_id) %></li>
               <li><%= button_to 'ログアウト', logout_path, method: :delete %></li>
             <% else %>
-              <li><%= link_to 'ログイン', login_path %></li>
-              <li><%= link_to 'はじめる', signup_path %></li>
+              <li><%= link_to '続ける', sessions_start_path %></li>
             <% end %>
           </ul>
           <ul class="header-menu-general">

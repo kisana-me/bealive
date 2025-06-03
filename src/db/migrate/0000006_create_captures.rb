@@ -11,8 +11,8 @@ class CreateCaptures < ActiveRecord::Migration[7.1]
       t.string :back_variants, null: false, default: ''
       t.string :comment, null: false, default: ''
       t.boolean :reversed, null: false, default: false
-      t.boolean :strict, null: false, default: false
       t.datetime :captured_at, null: true
+      t.datetime :expires_at
       t.integer :visibility, limit: 1, null: false, default: 0
       t.integer :status, limit: 1, null: false, default: 0
       t.json :meta, null: false, default: {}

@@ -3,6 +3,19 @@ class ApplicationRecord < ActiveRecord::Base
   require 'aws-sdk-s3'
   include ImageTools
 
+  def generate_base36(length = 128)
+    SecureRandom.base36(length)
+  end
+
+  def generate_lookup(token, length = 36)
+    Digest::SHA256.hexdigest(token)[ 0 ... length ]
+  end
+
+  def generate_digest(token)
+    cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST : BCrypt::Engine.cost
+    BCrypt::Password.create(token, cost: cost)
+  end
+
   def read_include(column: 'info', obj:)
     if self[column.to_sym].present?
       mca_array = JSON.parse(object[column.to_sym])
@@ -49,6 +62,7 @@ class ApplicationRecord < ActiveRecord::Base
     url = File.join(ENV["S3_PUBLIC_ENDPOINT"], bucket_key)
     return url
   end
+
   def signed_object_url(key: '', expires_in: 100)
     s3 = Aws::S3::Client.new(
       endpoint: ENV["S3_PUBLIC_ENDPOINT"],
@@ -58,13 +72,15 @@ class ApplicationRecord < ActiveRecord::Base
       force_path_style: true
     )
     signer = Aws::S3::Presigner.new(client: s3)
-    url = signer.presigned_url(
+    signer.presigned_url(
       :get_object,
       bucket: ENV["S3_BUCKET"],
       key: "#{key}",
       expires_in: expires_in
     )
-    return url
+  rescue => e
+    Rails.logger.error("Failed to generate signed URL: #{e.message}")
+    nil
   end
 
   def s3_upload(key:, file:, content_type:)
