@@ -75,7 +75,7 @@ class ApplicationRecord < ActiveRecord::Base
     signer.presigned_url(
       :get_object,
       bucket: ENV["S3_BUCKET"],
-      key: "#{key}",
+      key: key.to_s.gsub(%r{^/}, ''),
       expires_in: expires_in
     )
   rescue => e
