@@ -1,28 +1,38 @@
-<% provide(:title, @account.name + 'さん') %>
+<% if @account %>
 
-<% if @current_account == @account %>
+  <% provide(:title, @account.name + "さん") %>
+
+  <p>
+    <strong>名前:</strong>
+    <%= @account.name %>
+  </p>
+
+  <p>
+    <strong>ID:</strong>
+    <%= @account.name_id %>
+  </p>
+
+  <p>
+    <strong>自己紹介:</strong>
+    <%= @account.description %>
+  </p>
+
+  <% if @account == @current_account %>
   <p>
     <strong>操作:</strong>
-    <%= link_to '編集', edit_account_path(@account.name_id) %>
+    <%= link_to "設定", settings_account_path %>
   </p>
-<% else %>
+  <% else %>
   <p>
     <strong>操作:</strong>
     フォローする
   </p>
+  <% end %>
+
+<% else %>
+
+  <% provide(:title, 'アカウントが見つかりません') %>
+
+  <p>アカウントが見つかりません</p>
+
 <% end %>
-
-<p>
-  <strong>名前:</strong>
-  <%= @account.name %>
-</p>
-
-<p>
-  <strong>ID:</strong>
-  <%= @account.name_id %>
-</p>
-
-<p>
-  <strong>自己紹介:</strong>
-  <%= @account.description %>
-</p>

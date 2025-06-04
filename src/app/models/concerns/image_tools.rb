@@ -115,15 +115,29 @@ module ImageTools
     self.update(original_key_column.to_sym => '')
   end
 
-  def varidate_image(column_name: 'image', required: true)
+  def varidate_image(column_name: 'image', required: true, max_size_mb: 30, max_width: 2000, max_height: 2000)
     file = self.send(column_name)
     if file
       begin
         image = MiniMagick::Image.read(file)
+
+        # 拡張子チェック
         allowed_content_types = ['image/png', 'image/jpeg', 'image/gif', 'image/webp']
         unless allowed_content_types.include?(image.mime_type)
           errors.add(column_name.to_sym, "未対応の形式です")
         end
+
+        # 容量チェック（バイト単位）
+        size_in_mb = (file.size.to_f / 1024 / 1024).round(2)
+        if size_in_mb > max_size_mb
+          errors.add(column_name.to_sym, "容量が大きすぎます（最大 #{max_size_mb}MB）")
+        end
+
+        # ピクセルサイズチェック
+        if image.width > max_width || image.height > max_height
+          errors.add(column_name.to_sym, "画像サイズが大きすぎます（最大 #{max_width}x#{max_height}px）")
+        end
+
       rescue MiniMagick::Invalid
         errors.add(column_name.to_sym, "無効な画像ファイルです")
       end
@@ -131,4 +145,5 @@ module ImageTools
       errors.add(column_name.to_sym, "画像がありません")
     end
   end
+
 end

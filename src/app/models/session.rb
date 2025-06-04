@@ -1,6 +1,6 @@
 class Session < ApplicationRecord
   belongs_to :account
-  enum status: { normal: 0, suspended: 1 }
+  enum :status, { normal: 0, locked: 1 }
 
   def self.find_by_token(token)
     lookup = new.generate_lookup(token)

@@ -1,38 +1,24 @@
 class Capture < ApplicationRecord
-  enum visibility: { public_visibility: 0, follow_visibility: 1, group_visibility: 2, follow_group_visibility: 3, party_visibility: 4 }
-  enum status: { waiting: 0, done: 1 }
   belongs_to :sender, foreign_key: 'sender_id', class_name: 'Account'
   belongs_to :receiver, foreign_key: 'receiver_id', class_name: 'Account', optional: true
 
-  validate :image_type_and_required, if: :upload
+  enum :visibility, {
+    public: 0,            # 全体公開
+    link_only: 1,         # リンクを知っている人のみ
+    group_only: 2,        # グループのユーザーのみ
+    following_only: 3,    # フォロー中のユーザーのみ
+    private: 4            # 非公開
+  }
+  enum :status, { waiting: 0, done: 1 }
   attr_accessor :front_image
   attr_accessor :back_image
-  before_update :image_upload
   attr_accessor :image
   attr_accessor :upload
 
-  validates :comment, length: { in: 1..255, allow_blank: true }
+  before_update :image_upload
 
-  def image_upload
-    if front_image
-      extension = front_image.original_filename.split('.').last.downcase
-      key = "/front_images/#{self.uuid}.#{extension}"
-      process_image(
-        variant_type: 'bealive_capture', image_type: 'front_images',
-        variants_column: 'front_variants', original_key_column: 'front_original_key',
-        original_image_path: front_image.path
-      )
-    end
-    if back_image
-      extension = back_image.original_filename.split('.').last.downcase
-      key = "/back_images/#{self.uuid}.#{extension}"
-      process_image(
-        variant_type: 'bealive_capture', image_type: 'back_images',
-        variants_column: 'back_variants', original_key_column: 'back_original_key',
-        original_image_path: back_image.path
-      )
-    end
-  end
+  validate :image_type_and_required, if: :upload
+  validates :comment, length: { in: 1..255, allow_blank: true }
 
   def front_image_url(variant_type: 'bealive_capture')
     variants = []
@@ -68,4 +54,26 @@ class Capture < ApplicationRecord
     varidate_image(column_name: 'front_image', required: true)
     varidate_image(column_name: 'back_image', required: true)
   end
+
+  def image_upload
+    if front_image
+      extension = front_image.original_filename.split('.').last.downcase
+      key = "/front_images/#{self.uuid}.#{extension}"
+      process_image(
+        variant_type: 'bealive_capture', image_type: 'front_images',
+        variants_column: 'front_variants', original_key_column: 'front_original_key',
+        original_image_path: front_image.path
+      )
+    end
+    if back_image
+      extension = back_image.original_filename.split('.').last.downcase
+      key = "/back_images/#{self.uuid}.#{extension}"
+      process_image(
+        variant_type: 'bealive_capture', image_type: 'back_images',
+        variants_column: 'back_variants', original_key_column: 'back_original_key',
+        original_image_path: back_image.path
+      )
+    end
+  end
+
 end

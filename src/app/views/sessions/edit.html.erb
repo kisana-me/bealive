@@ -2,7 +2,7 @@
 
 <h1>セッションを編集</h1>
 
-<%= form_with(model: @session, url: session_path(@session.uuid), method: :patch) do |form| %>
+<%= form_with(model: @session, url: session_path(@session.lookup), method: :patch) do |form| %>
   <%= render 'shared/error_messages', instead: @session %>
 
   <div>

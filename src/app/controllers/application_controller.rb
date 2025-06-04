@@ -53,7 +53,7 @@ class ApplicationController < ActionController::Base
     [problem, eval(problem)]
   end
   def admin_account
-    return if @current_account.meta && @current_account.meta['admin'] == true
+    return if @current_account.meta['admin']
     return render_404
   end
 end

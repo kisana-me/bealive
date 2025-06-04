@@ -1,7 +1,8 @@
 class SessionsController < ApplicationController
-  # before_action :logged_in_account, except: %i[ start oauth callback form post_form ]
-  # before_action :set_session, only: %i[ show edit update destroy ]
+  require "net/http"
+  before_action :logged_in_account, except: %i[ start oauth callback ]
   before_action :logged_out_account, only: %i[ start oauth callback ]
+  before_action :set_session, only: %i[ show edit update destroy ]
 
   def start
     #「続ける」
@@ -86,7 +87,7 @@ class SessionsController < ApplicationController
 
   def update
     if @session.update!(session_params)
-      redirect_to session_url(@session.uuid), notice: "セッションを更新しました"
+      redirect_to session_path(@session.lookup), notice: "セッションを更新しました"
     else
       render :edit
     end
@@ -94,7 +95,7 @@ class SessionsController < ApplicationController
 
   def destroy
     @session.update(deleted: true)
-    redirect_to root_path, notice: "セッションを削除しました"
+    redirect_to sessions_path, notice: "セッションを削除しました"
   end
 
   def logout
@@ -108,7 +109,7 @@ class SessionsController < ApplicationController
   private
 
   def set_session
-    @session = Session.find_by(account: @current_account, uuid: params[:id], deleted: false)
+    @session = Session.find_by(account: @current_account, lookup: params[:id], deleted: false)
   end
 
   def session_params

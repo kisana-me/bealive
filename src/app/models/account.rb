@@ -1,16 +1,19 @@
 class Account < ApplicationRecord
-  has_secure_password validations: false
   has_many :sender, class_name: 'Capture', foreign_key: 'sender_id'
   has_many :receiver, class_name: 'Capture', foreign_key: 'receiver_id'
   has_many :invitations
   belongs_to :invitation, optional: true
-  enum status: { normal: 0, suspended: 1 }
-  # serialize :meta, JSON
+
+  enum :status, { normal: 0, locked: 1 }
+  attribute :meta, :json, default: {}
 
   before_create :generate_aid
 
   BASE_64_URL_REGEX  = /\A[a-zA-Z0-9_-]*\z/
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
+  validates :name,
+    presence: true,
+    length: { in: 1..50, allow_blank: true }
   validates :name_id,
     presence: true,
     length: { in: 5..50, allow_blank: true },
@@ -21,6 +24,7 @@ class Account < ApplicationRecord
     format: { with: VALID_EMAIL_REGEX, allow_blank: true },
     uniqueness: { case_sensitive: false, allow_blank: true }
   validates :password, length: { in: 8..63, allow_blank: true }
+  has_secure_password validations: false
 
   def remember(ip, ua)
     session = Session.new(account: self, ip_address: ip, user_agent: ua)

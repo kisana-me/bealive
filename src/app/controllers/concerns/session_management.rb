@@ -21,16 +21,6 @@ module SessionManagement
   end
 
   def log_out
-    # return nil unless cookies.signed[:ba_uid].present? && cookies.signed[:ba_rtk].present?
-    # db_session = Session.find_by(uuid: cookies.signed[:ba_uid], deleted: false)
-    # if BCrypt::Password.new(db_session.digest).is_password?(cookies.signed[:ba_rtk])
-    #   account = db_session.account
-    #   if account && !account.deleted
-    #     db_session.update(deleted: true)
-    #   end
-    # end
-
-    
     return if cookies.signed[:bealive].blank?
     db_session = Session.find_by_token(cookies.signed[:bealive])
     return unless db_session

@@ -4,8 +4,8 @@
 
 <div>
   <p>
-    <strong>UUID:</strong>
-    <%= @session.uuid %>
+    <strong>lookup:</strong>
+    <%= @session.lookup %>
   </p>
 
   <p>
@@ -15,12 +15,12 @@
 
   <p>
     <strong>IP:</strong>
-    不明
+    <%= @session.ip_address %>
   </p>
 
   <p>
     <strong>操作:</strong>
-    <%= link_to "変更", edit_session_path(@session.uuid) %>
-    <%= button_to "削除", session_path(@session.uuid), method: :delete %>
+    <%= link_to "変更", edit_session_path(@session.lookup) %>
+    <%= button_to "削除", session_path(@session.lookup), method: :delete %>
   </p>
 </div>
