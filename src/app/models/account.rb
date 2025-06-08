@@ -40,7 +40,7 @@ class Account < ApplicationRecord
     lookup = new.generate_lookup(token)
     db_session = Session.find_by(token_lookup: lookup, status: 0, deleted: false)
     return nil unless db_session
-    return nil unless BCrypt::Password.new(db_session.digest).is_password?(token)
+    return nil unless BCrypt::Password.new(db_session.token_digest).is_password?(token)
     db_session.account
   end
 
