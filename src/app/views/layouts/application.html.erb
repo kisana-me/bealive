@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="<%= content_for?(:lang) ? yield(:lang) : 'ja' %>">
+<html lang="<%= content_for?(:lang) ? yield(:lang) : "ja" %>">
   <head>
     <title><%= full_title(yield(:title)) %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="robots" content="<%= content_for?(:robots) ? yield(:robots) : 'noindex, nofollow, noarchive' %>">
+    <meta name="robots" content="<%= content_for?(:robots) ? yield(:robots) : "noindex, nofollow, noarchive" %>">
     <meta property="og:title" content="<%= full_title(yield(:title)) %>">
-    <meta property="og:description" content="<%= content_for?(:description) ? yield(:description) : 'BeAlive. いつもの日常を相互確認。' %>">
+    <meta property="og:description" content="<%= content_for?(:description) ? yield(:description) : "BeAlive. いつもの日常を相互確認。" %>">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://bealive.amiverse.net/images/bealive-image-169.webp">
-    <meta http-equiv="content-language" content="<%= content_for?(:lang) ? yield(:lang) : 'ja' %>">
+    <meta http-equiv="content-language" content="<%= content_for?(:lang) ? yield(:lang) : "ja" %>">
     <link rel="icon" href="/favicon.ico">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -16,37 +16,37 @@
     <%= javascript_importmap_tags %>
     <% if Rails.env.production? %>
       <!-- Google tag (gtag.js) -->
-      <script async src="https://www.googletagmanager.com/gtag/js?id=G-<%= ENV['GA4_ID'] %>"></script>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-<%= ENV["GA4_ID"] %>"></script>
       <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-<%= ENV['GA4_ID'] %>');
+        gtag("js", new Date());
+        gtag("config", "G-<%= ENV["GA4_ID"] %>");
       </script>
     <% end %>
   </head>
 
   <body>
     <header>
-      <div class="bealive-logo"><%= link_to 'BeAlive.', root_path %></div>
+      <div class="bealive-logo"><%= link_to "BeAlive.", root_path %></div>
       <div class="header-menu" data-controller="menu">
         <button data-action="click->menu#toggle" class="hamburger-menu">&#9776;</button>
         <nav data-menu-target="nav" class="menu">
           <button data-action="click->menu#toggle" class="close-menu">&times;</button>
-          <div class="bealive-logo"><%= link_to 'BeAlive.', root_path %></div>
+          <div class="bealive-logo"><%= link_to "BeAlive.", root_path %></div>
           <ul class="header-menu-account">
             <% if @current_account %>
-              <li><%= link_to 'プロフィール', account_path(@current_account.name_id) %></li>
-              <li><%= button_to 'ログアウト', logout_path, method: :delete %></li>
+              <li><%= link_to "プロフィール", account_path(@current_account.name_id) %></li>
+              <li><%= button_to "ログアウト", logout_path, method: :delete %></li>
             <% else %>
-              <li><%= link_to '続ける', sessions_start_path %></li>
+              <li><%= link_to "続ける", sessions_start_path %></li>
             <% end %>
           </ul>
           <ul class="header-menu-general">
-            <li><%= link_to '利用規約', terms_path %></li>
-            <li><%= link_to 'プライバシーポリシー', privacy_path %></li>
-            <li><%= link_to 'お問い合わせ', contact_path %></li>
-            <li><%= link_to 'BeAlive.', root_path %></li>
+            <li><%= link_to "利用規約", terms_of_service_path %></li>
+            <li><%= link_to "プライバシーポリシー", privacy_policy_path %></li>
+            <li><%= link_to "お問い合わせ", contact_path %></li>
+            <li><%= link_to "BeAlive.", root_path %></li>
           </ul>
           <div class="bealive-copylight">© BeAlive. 2024</div>
         </nav>
@@ -60,12 +60,12 @@
     </main>
     <footer>
       <ul>
-        <li><%= link_to '利用規約', terms_path %></li>
-        <li><%= link_to 'プライバシーポリシー', privacy_path %></li>
-        <li><%= link_to 'お問い合わせ', contact_path %></li>
-        <li><%= link_to 'BeAlive.', root_path %></li>
+        <li><%= link_to "利用規約", terms_of_service_path %></li>
+        <li><%= link_to "プライバシーポリシー", privacy_policy_path %></li>
+        <li><%= link_to "お問い合わせ", contact_path %></li>
+        <li><%= link_to "BeAlive.", root_path %></li>
       </ul>
-      <div class="bealive-copylight">© BeAlive. 2024</div>
+      <div class="bealive-copylight">© BeAlive. 2025</div>
     </footer>
   </body>
 </html>

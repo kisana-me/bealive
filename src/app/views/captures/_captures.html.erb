@@ -12,8 +12,8 @@
           </div>
           <div class="capture-image">
             <% if capture.done? %>
-              <%= image_tag capture.front_image_url, class: 'front-image' %>
-              <%= image_tag capture.back_image_url, class: 'back-image' %>
+              <%= image_tag capture.front_image_url, class: "front-image" %>
+              <%= image_tag capture.back_image_url, class: "back-image" %>
             <% else %>
               <div class="capture-image-dummy">
                 リンクを共有して撮ってもらおう！
@@ -25,7 +25,7 @@
           </div>
           <div class="capture-info">
             <% if capture.captured_at %>
-            <p><%= capture.captured_at.strftime("%d日 %k時 %M分") %>に撮影</p>
+            <p><%= capture.captured_at.strftime("%m月 %d日 %k時 %M分") %>に撮影</p>
             <% end %>
           </div>
         </div>

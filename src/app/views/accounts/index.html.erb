@@ -1,16 +1,11 @@
-<% provide(:title, '仲間を探す') %>
+<% provide(:title, "アカウント") %>
 
-<h1>仲間を探す</h1>
+<h1>アカウント</h1>
 
 <div id="accounts">
 
   <p>
     <strong>検索</strong>
-    <%= form_with url: search_account_path, method: :post do |f| %>
-      <%= f.label :query, "検索" %>
-      <%= f.search_field :query %>
-      <%= f.submit "検索" %>
-    <% end %>
   </p>
 
 </div>

@@ -1,4 +1,4 @@
-<% provide(:title, 'セッション') %>
+<% provide(:title, "セッション") %>
 
 <h1>セッション</h1>
 
@@ -6,8 +6,12 @@
   <% @sessions.each do |session| %>
     <div>
       <p>
-        <strong>UUID:</strong>
-        <%= session.uuid %>
+        <strong>lookup:</strong>
+        <%= session.lookup %>
+      </p>
+      <p>
+        <strong>IP:</strong>
+        <%= session.ip_address %>
       </p>
 
       <p>
@@ -16,7 +20,7 @@
       </p>
 
       <p>
-        <%= link_to "詳しく", session_path(session.uuid) %>
+        <%= link_to "詳しく", session_path(session.lookup) %>
       </p>
     </div>
   <% end %>

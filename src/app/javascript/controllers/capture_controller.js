@@ -2,28 +2,28 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = [
-    'capturedFrontImage', 'capturedBackImage',
-    'countdown', 'currentCamera',
-    'toggleCaptureButton', 'toggleCameraButton',
-    'backVideo', 'frontVideo'
+    "capturedFrontImage", "capturedBackImage",
+    "countdown", "currentCamera",
+    "toggleCaptureButton", "toggleCameraButton",
+    "backVideo", "frontVideo"
   ]
 
   connect() {
     this.photosTaken = { front: false, back: false }
     this.captureStarted = false
     this.previewing = false
-    this.currentFacingMode = 'user'
+    this.currentFacingMode = "user"
   }
 
   updateCurrentCameraLabel() {
     if (this.hasCurrentCameraTarget) {
       this.currentCameraTarget.textContent =
-        this.currentFacingMode === 'user' ? 'セルフィ' : 'アウト'
+        this.currentFacingMode === "user" ? "セルフィ" : "アウト"
     }
   }
 
   toggleCamera() {
-    this.currentFacingMode = this.currentFacingMode === 'user' ? 'environment' : 'user'
+    this.currentFacingMode = this.currentFacingMode === "user" ? "environment" : "user"
     this.updateCurrentCameraLabel()
     if (this.previewing) {
       this.startCamera({ facingMode: this.currentFacingMode })
@@ -37,7 +37,7 @@ export default class extends Controller {
       this.toggleCameraButtonTarget.disabled = true
       this.toggleCaptureButtonTarget.disabled = true
       await this.startCapture()
-      this.toggleCaptureButtonTarget.textContent = '撮り直し'
+      this.toggleCaptureButtonTarget.textContent = "撮り直し"
       this.toggleCaptureButtonTarget.disabled = false
       this.captureStarted = false
     }
@@ -46,9 +46,9 @@ export default class extends Controller {
   async startPreview() {
     await this.startCamera({ facingMode: this.currentFacingMode })
     this.toggleCameraButtonTarget.disabled = false
-    this.toggleCaptureButtonTarget.textContent = '撮影開始'
-    this.capturedFrontImageTarget.style.display = 'none'
-    this.capturedBackImageTarget.style.display = 'none'
+    this.toggleCaptureButtonTarget.textContent = "撮影開始"
+    this.capturedFrontImageTarget.style.display = "none"
+    this.capturedBackImageTarget.style.display = "none"
     this.captureStarted = true
     this.previewing = true
   }
@@ -56,13 +56,13 @@ export default class extends Controller {
   async startCapture() {
     this.photosTaken = { front: false, back: false }
 
-    const startWithUser = this.currentFacingMode === 'user'
+    const startWithUser = this.currentFacingMode === "user"
     const devices = await navigator.mediaDevices.enumerateDevices()
-    const videoDevices = devices.filter(device => device.kind === 'videoinput')
+    const videoDevices = devices.filter(device => device.kind === "videoinput")
     const useSingleCamera = videoDevices.length <= 1
 
-    const first = startWithUser ? 'user' : 'environment'
-    const second = startWithUser ? 'environment' : 'user'
+    const first = startWithUser ? "user" : "environment"
+    const second = startWithUser ? "environment" : "user"
     const sequence = useSingleCamera ? [first, first] : [first, second]
 
     for (let i = 0; i < sequence.length; i++) {
@@ -72,12 +72,12 @@ export default class extends Controller {
 
       const isFirst = i === 0
       const role = startWithUser
-        ? (isFirst ? 'front' : 'back')
-        : (isFirst ? 'back' : 'front')
+        ? (isFirst ? "front" : "back")
+        : (isFirst ? "back" : "front")
 
       await this.capturePhoto(role)
     }
-    this.countdownTarget.textContent = ''
+    this.countdownTarget.textContent = ""
 
     this.stopCamera()
     this.previewing = false
@@ -108,13 +108,13 @@ export default class extends Controller {
     if (this.hasBackVideoTarget) {
       this.backVideoTarget.pause()
       this.backVideoTarget.srcObject = null
-      this.backVideoTarget.style.display = 'none'
+      this.backVideoTarget.style.display = "none"
     }
 
     if (this.hasFrontVideoTarget) {
       this.frontVideoTarget.pause()
       this.frontVideoTarget.srcObject = null
-      this.frontVideoTarget.style.display = 'none'
+      this.frontVideoTarget.style.display = "none"
     }
   }
 
@@ -134,7 +134,7 @@ export default class extends Controller {
       el.textContent = i
       await this.sleep(1000)
     }
-    el.textContent = 'カメラ切り替え中'
+    el.textContent = "カメラ切り替え中"
   }
 
   async capturePhoto(role) {
@@ -153,29 +153,29 @@ export default class extends Controller {
     const cropX = (originalWidth - cropWidth) / 2
     const cropY = (originalHeight - cropHeight) / 2
 
-    const canvas = document.createElement('canvas')
+    const canvas = document.createElement("canvas")
     canvas.width = cropWidth
     canvas.height = cropHeight
 
-    const ctx = canvas.getContext('2d')
+    const ctx = canvas.getContext("2d")
     ctx.drawImage(
       video,
       cropX, cropY, cropWidth, cropHeight,
       0, 0, cropWidth, cropHeight
     )
 
-    const dataUrl = canvas.toDataURL('image/png')
+    const dataUrl = canvas.toDataURL("image/png")
     const blob = await (await fetch(dataUrl)).blob()
-    const file = new File([blob], `${role}_photo.png`, { type: 'image/png' })
+    const file = new File([blob], `${role}_photo.png`, { type: "image/png" })
     const dataTransfer = new DataTransfer()
     dataTransfer.items.add(file)
 
-    const fieldId = role === 'front' ? 'front_image_field' : 'back_image_field'
-    const imgTarget = role === 'front' ? this.capturedFrontImageTarget : this.capturedBackImageTarget
+    const fieldId = role === "front" ? "front_image_field" : "back_image_field"
+    const imgTarget = role === "front" ? this.capturedFrontImageTarget : this.capturedBackImageTarget
     const fileField = document.getElementById(fieldId)
 
     imgTarget.src = dataUrl
-    imgTarget.style.display = 'block'
+    imgTarget.style.display = "block"
     fileField.files = dataTransfer.files
 
     this.photosTaken[role] = true
@@ -193,12 +193,12 @@ export default class extends Controller {
   }
 
   get videoElement() {
-    const isFront = this.currentFacingMode === 'user'
+    const isFront = this.currentFacingMode === "user"
     const front = this.hasFrontVideoTarget ? this.frontVideoTarget : null
     const back = this.hasBackVideoTarget ? this.backVideoTarget : null
 
-    if (front) front.style.display = isFront ? 'block' : 'none'
-    if (back) back.style.display = isFront ? 'none' : 'block'
+    if (front) front.style.display = isFront ? "block" : "none"
+    if (back) back.style.display = isFront ? "none" : "block"
     return isFront ? front : back
   }
 }

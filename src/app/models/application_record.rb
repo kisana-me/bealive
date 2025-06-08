@@ -1,6 +1,6 @@
 class ApplicationRecord < ActiveRecord::Base
   primary_abstract_class
-  require 'aws-sdk-s3'
+  require "aws-sdk-s3"
   include ImageTools
 
   def generate_base36(length = 128)
@@ -16,7 +16,17 @@ class ApplicationRecord < ActiveRecord::Base
     BCrypt::Password.create(token, cost: cost)
   end
 
-  def read_include(column: 'info', obj:)
+  def self.find_by_token(type, token)
+    lookup = new.generate_lookup(token)
+    record = where("#{type}_expires_at > ?", Time.current)
+      .find_by("#{type}_lookup": lookup, status: 0, deleted: false)
+    return nil unless record
+    digest = record.send("#{type}_digest")
+    return nil unless BCrypt::Password.new(digest).is_password?(token)
+    record
+  end
+
+  def read_include(column: "info", obj:)
     if self[column.to_sym].present?
       mca_array = JSON.parse(object[column.to_sym])
       return mca_array.include?(obj)
@@ -57,13 +67,13 @@ class ApplicationRecord < ActiveRecord::Base
     end
   end
 
-  def object_url(key: '')
+  def object_url(key: "")
     bucket_key = File.join(ENV["S3_BUCKET"], key)
     url = File.join(ENV["S3_PUBLIC_ENDPOINT"], bucket_key)
     return url
   end
 
-  def signed_object_url(key: '', expires_in: 100)
+  def signed_object_url(key: "", expires_in: 100)
     s3 = Aws::S3::Client.new(
       endpoint: ENV["S3_PUBLIC_ENDPOINT"],
       region: ENV["S3_REGION"],
@@ -75,7 +85,7 @@ class ApplicationRecord < ActiveRecord::Base
     signer.presigned_url(
       :get_object,
       bucket: ENV["S3_BUCKET"],
-      key: "#{key}",
+      key: key.to_s.gsub(%r{^/}, ""),
       expires_in: expires_in
     )
   rescue => e
@@ -92,7 +102,7 @@ class ApplicationRecord < ActiveRecord::Base
       force_path_style: true
     )
     obj = s3.bucket(ENV["S3_BUCKET"]).object(key)
-    obj.upload_file(file, content_type: content_type, acl: 'readonly')
+    obj.upload_file(file, content_type: content_type, acl: "readonly")
   end
   def s3_delete(key:)
     s3 = Aws::S3::Client.new(

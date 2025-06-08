@@ -4,11 +4,17 @@ class CapturesController < ApplicationController
   before_action :set_correct_capture, only: %i[ destroy ]
 
   def index
-    @sender_captures = Capture.where(sender: @current_account, deleted: false).limit(10).order(created_at: :desc)
-    @receiver_captures = Capture.where(receiver: @current_account, deleted: false).limit(10).order(created_at: :desc)
+    @sender_captures = Capture.where(sender: @current_account, deleted: false).limit(30).order(created_at: :desc)
+    @receiver_captures = Capture.where(receiver: @current_account, deleted: false).limit(30).order(created_at: :desc)
   end
 
   def show
+    @destroy_flag = false
+    if @current_account
+      @destroy_flag ||= @capture.sender == @current_account if @capture.sender
+      @destroy_flag ||= @capture.receiver == @current_account if @capture.receiver
+    end
+    @destroy_flag ||= session[:captured]&.include?(@capture.uuid)
   end
 
   def new
@@ -18,7 +24,7 @@ class CapturesController < ApplicationController
   def edit
     # いらない？
     if @capture.done?
-      redirect_to capture_path(@capture.uuid), alert: '撮影済み'
+      redirect_to capture_path(@capture.uuid), alert: "撮影済み"
     end
   end
 
@@ -28,30 +34,29 @@ class CapturesController < ApplicationController
                       .count
 
     if recent_count >= 10
-      flash.now[:alert] = '作成制限：24時間以内に15件以上作成できません'
-      render :new
-      return
+      flash.now[:alert] = "作成制限：24時間以内に10件以上作成できません"
+      return render :new
     end
 
     @capture = Capture.new
     @capture.uuid = SecureRandom.uuid
     @capture.sender = @current_account
-    @capture.status = 'waiting'
+    @capture.status = "waiting"
     if @capture.save
       redirect_to capture_url(@capture.uuid), notice: "作成しました"
     else
-      flash.now[:alert] = '間違っています'
+      flash.now[:alert] = "間違っています"
       render :new
     end
   end
 
   def update
     if @capture.done?
-      redirect_to capture_path(@capture.uuid), alert: '撮影済み'
+      redirect_to capture_path(@capture.uuid), alert: "撮影済み"
     end
     @capture.captured_at = Time.now
     @capture.receiver = @current_account if @current_account
-    @capture.status = 'done'
+    @capture.status = "done"
     @capture.upload = true
     if @capture.update(capture_params)
       # 通知
@@ -61,7 +66,7 @@ class CapturesController < ApplicationController
       end
       redirect_to capture_url(@capture.uuid), notice: "更新しました"
     else
-      flash.now[:alert] = '間違っています'
+      flash.now[:alert] = "間違っています"
       render :edit
     end
   end
@@ -69,7 +74,7 @@ class CapturesController < ApplicationController
   def destroy
     unless @current_account
       captured_array = session[:captured] || []
-      redirect_to root_url, alert: "不可能な操作" unless captured_array.include?(@capture.uuid)
+      return redirect_to root_url, alert: "不可能な操作" unless captured_array.include?(@capture.uuid)
     end
     @capture.update(deleted: true)
     redirect_to root_url, notice: "削除しました"

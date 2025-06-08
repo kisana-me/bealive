@@ -1,16 +1,16 @@
-<% provide(:title, 'セッションを編集') %>
+<% provide(:title, "セッションを編集") %>
 
 <h1>セッションを編集</h1>
 
-<%= form_with(model: @session, url: session_path(@session.uuid), method: :patch) do |form| %>
-  <%= render 'shared/error_messages', instead: @session %>
+<%= form_with(model: @session, url: session_path(@session.lookup), method: :patch) do |form| %>
+  <%= render "shared/error_messages", instead: @session %>
 
   <div>
-    <%= form.label :name, 'セッション名', class: "custom-label" %>
+    <%= form.label :name, "セッション名", class: "custom-label" %>
     <%= form.text_field :name, class: "custom-input" %>
   </div>
   <br />
   <div>
-    <%= form.submit '更新' %>
+    <%= form.submit "更新" %>
   </div>
 <% end %>

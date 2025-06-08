@@ -1,12 +1,18 @@
-<% provide(:title, 'リクエストした') %>
+<% provide(:title, "キャプチャー一覧") %>
 
 <h1>リクエストした</h1>
 
-<%= render 'captures/captures', captures: @sender_captures %>
+<% @sender_captures.each_slice(5) do |captures_slice| %>
+  <%= render "captures/captures", captures: captures_slice %>
+  <br />
+<% end %>
 
 <h1>リクエストされた</h1>
 
-<%= render 'captures/captures', captures: @receiver_captures %>
+<% @receiver_captures.each_slice(5) do |captures_slice| %>
+  <%= render "captures/captures", captures: captures_slice %>
+  <br />
+<% end %>
 
 <br /><br />
 
