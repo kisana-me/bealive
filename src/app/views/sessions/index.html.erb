@@ -7,7 +7,7 @@
     <div>
       <p>
         <strong>lookup:</strong>
-        <%= session.lookup %>
+        <%= session.token_lookup %>
       </p>
       <p>
         <strong>IP:</strong>
@@ -20,7 +20,7 @@
       </p>
 
       <p>
-        <%= link_to "詳しく", session_path(session.lookup) %>
+        <%= link_to "詳しく", session_path(session.token_lookup) %>
       </p>
     </div>
   <% end %>

@@ -5,7 +5,7 @@
 <div>
   <p>
     <strong>lookup:</strong>
-    <%= @session.lookup %>
+    <%= @session.token_lookup %>
   </p>
 
   <p>
@@ -20,7 +20,7 @@
 
   <p>
     <strong>操作:</strong>
-    <%= link_to "変更", edit_session_path(@session.lookup) %>
-    <%= button_to "削除", session_path(@session.lookup), method: :delete %>
+    <%= link_to "変更", edit_session_path(@session.token_lookup) %>
+    <%= button_to "削除", session_path(@session.token_lookup), method: :delete %>
   </p>
 </div>

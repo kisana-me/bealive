@@ -31,8 +31,8 @@ class Account < ApplicationRecord
     token = generate_base36
     lookup = generate_lookup(token)
     digest = generate_digest(token)
-    session.lookup = lookup
-    session.digest = digest
+    session.token_lookup = lookup
+    session.token_digest = digest
     return token if session.save
   end
 

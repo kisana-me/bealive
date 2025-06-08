@@ -87,7 +87,7 @@ class SessionsController < ApplicationController
 
   def update
     if @session.update!(session_params)
-      redirect_to session_path(@session.lookup), notice: "セッションを更新しました"
+      redirect_to session_path(@session.token_lookup), notice: "セッションを更新しました"
     else
       render :edit
     end
