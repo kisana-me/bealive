@@ -1,4 +1,4 @@
-<% provide(:title, 'みる') %>
+<% provide(:title, "みる") %>
 
 <h1>みる</h1>
 
@@ -14,8 +14,8 @@
 </div>
 <div class="capture-image" style="width: 100%;">
   <% if @capture.done? %>
-    <%= image_tag @capture.front_image_url, class: 'front-image', style: 'width: 100%;' %>
-    <%= image_tag @capture.back_image_url, class: 'back-image', style: 'width: 28%;' %>
+    <%= image_tag @capture.front_image_url, class: "front-image", style: "width: 100%;" %>
+    <%= image_tag @capture.back_image_url, class: "back-image", style: "width: 28%;" %>
   <% else %>
     <div class="capture-image-dummy">
       このリンクを共有して撮ってもらおう！
@@ -27,7 +27,7 @@
 </div>
 <div class="capture-info">
   <% if @capture.captured_at %>
-  <p><%= @capture.captured_at.strftime("%d日 %k時 %M分") %>に撮影</p>
+  <p><%= @capture.captured_at.strftime("%m月 %d日 %k時 %M分") %>に撮影</p>
   <% end %>
 </div>
 <% if !@capture.done? %>
@@ -36,7 +36,7 @@
 <br />
 <br />
 <br />
-<% if @capture.sender == @current_account || @capture.receiver == @current_account || session[:captured]&.include?(@capture.uui) %>
-  <%= button_to '削除', capture_path(@capture.uuid), method: :delete %>
+<% if @destroy_flag %>
+  <%= button_to "削除", capture_path(@capture.uuid), method: :delete %>
 <% end %>
 <p>コメントはそのうち実装</p>

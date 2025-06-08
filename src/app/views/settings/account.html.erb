@@ -6,27 +6,27 @@
   <%= render "shared/error_messages", instead: @current_account %>
 
   <div>
-    <%= form.label :name, '名前', class: "custom-label" %>
+    <%= form.label :name, "名前", class: "custom-label" %>
     <%= form.text_field :name, class: "custom-input" %>
   </div>
   <br />
   <div>
-    <%= form.label :name_id, 'ID', class: "custom-label" %>
+    <%= form.label :name_id, "ID", class: "custom-label" %>
     <%= form.text_field :name_id, class: "custom-input" %>
   </div>
   <br />
   <div>
-    <%= form.label :description, 'あなたを説明', class: "custom-label" %>
+    <%= form.label :description, "あなたを説明", class: "custom-label" %>
     <%= form.text_area :description, class: "custom-textarea" %>
   </div>
   <br />
   <div>
-    <%= form.label :birth, '生まれ', class: "custom-label" %>
+    <%= form.label :birth, "生まれ", class: "custom-label" %>
     <%= form.datetime_field :birth %>
   </div>
   <br />
   <div class="custom-button">
-    <%= form.submit '更新' %>
+    <%= form.submit "更新" %>
   </div>
 <% end %>
 
@@ -37,4 +37,4 @@
 <br />
 <br />
 
-<%= button_to 'アカウントを削除', settings_leave_path, method: :delete %>
+<%= button_to "アカウントを削除", settings_leave_path, method: :delete %>

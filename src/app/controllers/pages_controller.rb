@@ -1,9 +1,7 @@
 class PagesController < ApplicationController
 
   def index
-    if @current_account
-      @captures = Capture.where(sender: @current_account, deleted: false).limit(10).order(created_at: :desc)
-    end
+    @captures = Capture.where(visibility: :public, status: :done, deleted: false).limit(30).order(created_at: :desc)
   end
 
   def terms_of_service

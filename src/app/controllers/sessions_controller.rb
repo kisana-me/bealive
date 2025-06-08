@@ -100,9 +100,9 @@ class SessionsController < ApplicationController
 
   def logout
     if log_out
-      redirect_to root_path, notice: 'ログアウトしました'
+      redirect_to root_path, notice: "ログアウトしました"
     else
-      redirect_to root_path, alert: 'ログアウトできませんでした'
+      redirect_to root_path, alert: "ログアウトできませんでした"
     end
   end
 

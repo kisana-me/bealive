@@ -15,10 +15,10 @@ class ApplicationController < ActionController::Base
   private
 
   def render_404
-    render 'errors/404', status: :not_found
+    render "errors/404", status: :not_found
   end
   def render_500
-    render 'errors/500', status: :internal_server_error
+    render "errors/500", status: :internal_server_error
   end
   def logged_in_account
     unless @current_account
@@ -46,14 +46,14 @@ class ApplicationController < ActionController::Base
     num1 = rand(100)
     num2 = rand(1..10)
     operator = %w[+ - * /].sample
-    if operator == '/'
+    if operator == "/"
       num1 = num1 - (num1 % num2)
     end
     problem = "#{num1} #{operator} #{num2}"
     [problem, eval(problem)]
   end
   def admin_account
-    return if @current_account.meta['admin']
+    return if @current_account.meta["admin"]
     return render_404
   end
 end

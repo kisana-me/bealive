@@ -3,7 +3,7 @@
 <p>ようこそ、<%= session[:pending_oauth_info]["name"] %> さん！以下の情報を確認して登録してください。</p>
 
 <%= form_with model: @account, url: signup_path, method: :post, data: { turbo: false } do |f| %>
-  <%= render 'shared/error_messages', instead: @account %>
+  <%= render "shared/error_messages", instead: @account %>
 
   <div>
     <%= f.label :name, "名前" %>
@@ -18,7 +18,7 @@
   <div>
     <br />
     アカウントを作成することで、当サービスの<br />
-    <%= link_to '利用規約', terms_of_service_path %>と<%= link_to 'プライバシーポリシー', privacy_policy_path %>に<br />
+    <%= link_to "利用規約", terms_of_service_path %>と<%= link_to "プライバシーポリシー", privacy_policy_path %>に<br />
     同意したとみなされます。<br />
     <br />
   </div>

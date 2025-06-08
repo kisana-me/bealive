@@ -22,7 +22,7 @@ module SessionManagement
 
   def log_out
     return if cookies.signed[:bealive].blank?
-    db_session = Session.find_by_token(cookies.signed[:bealive])
+    db_session = Session.find_by_token("token", cookies.signed[:bealive])
     return unless db_session
     cookies.delete(:bealive)
     db_session.update(deleted: true)

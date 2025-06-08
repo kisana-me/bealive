@@ -1,6 +1,6 @@
 class Account < ApplicationRecord
-  has_many :sender, class_name: 'Capture', foreign_key: 'sender_id'
-  has_many :receiver, class_name: 'Capture', foreign_key: 'receiver_id'
+  has_many :sender, class_name: "Capture", foreign_key: "sender_id"
+  has_many :receiver, class_name: "Capture", foreign_key: "receiver_id"
   has_many :invitations
   belongs_to :invitation, optional: true
 
@@ -38,7 +38,7 @@ class Account < ApplicationRecord
 
   def self.find_by_session(token)
     lookup = new.generate_lookup(token)
-    db_session = Session.find_by(lookup: lookup, status: 0, deleted: false)
+    db_session = Session.find_by(token_lookup: lookup, status: 0, deleted: false)
     return nil unless db_session
     return nil unless BCrypt::Password.new(db_session.digest).is_password?(token)
     db_session.account

@@ -9,7 +9,7 @@ services:
     volumes:
       - ./src:/app
     ports:
-      - '3000:3000'
+      - "3000:3000"
     depends_on:
       - db
       - minio
@@ -29,8 +29,8 @@ services:
     volumes:
       - minio-vol:/data
     ports:
-      - '9000:9000'
-      - '9001:9001'
+      - "9000:9000"
+      - "9001:9001"
     command: server /data --console-address ":9001"
 
   db:
@@ -42,7 +42,7 @@ services:
     volumes:
       - db-vol:/var/lib/mysql
     ports:
-      - '3306:3306'
+      - "3306:3306"
 
   phpmyadmin:
     image: phpmyadmin:latest
@@ -51,7 +51,7 @@ services:
     env_file:
       - .dev.env
     ports:
-      - '8080:80'
+      - "8080:80"
     depends_on:
       - db
 

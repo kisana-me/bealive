@@ -1,10 +1,10 @@
 Rails.application.routes.draw do
 
   # pages
-  root 'pages#index'
-  get 'terms-of-service' => 'pages#terms_of_service'
-  get 'privacy-policy' => 'pages#privacy_policy'
-  get 'contact' => 'pages#contact'
+  root "pages#index"
+  get "terms-of-service" => "pages#terms_of_service"
+  get "privacy-policy" => "pages#privacy_policy"
+  get "contact" => "pages#contact"
 
   # accounts
   resources :accounts, only: [:index, :show], param: :name_id

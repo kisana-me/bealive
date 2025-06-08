@@ -1,4 +1,4 @@
-<% provide(:title, '撮る') %>
+<% provide(:title, "撮る") %>
 
 <h1>撮る</h1>
 
@@ -48,8 +48,8 @@
     </div>
   <% end %>
 
-  <%= form.file_field :front_image, id: 'front_image_field', style: "display: none" %>
-  <%= form.file_field :back_image, id: 'back_image_field', style: "display: none" %>
+  <%= form.file_field :front_image, id: "front_image_field", style: "display: none" %>
+  <%= form.file_field :back_image, id: "back_image_field", style: "display: none" %>
   <%= form.hidden_field :latitude %>
   <%= form.hidden_field :longitude %>
 
@@ -59,7 +59,7 @@
   </div>
 
   <div>
-    <%= form.submit '送信' %>
+    <%= form.submit "送信" %>
   </div>
 <% end %>
 
