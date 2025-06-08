@@ -1,6 +1,6 @@
 class GroupsController < ApplicationController
-  before_action :admin_account
-  before_action :logged_in_account
+  before_action :require_admin
+  before_action :require_signin
   before_action :set_group, only: %i[ show edit update destroy ]
 
   # GET /groups or /groups.json

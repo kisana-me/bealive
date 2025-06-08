@@ -1,61 +1,12 @@
 <% provide(:title, "撮る") %>
 
-<h1>撮る</h1>
-
-<div data-controller="capture">
-  <div>
-    <button type="button"
-            data-action="click->capture#toggleCamera"
-            data-capture-target="toggleCameraButton">
-      カメラ切替
-    </button>
-
-    <p data-capture-target="currentCamera" style="font-size: 1em; font-weight: bold;">セルフィ</p>
-    <p data-capture-target="countdown" style="font-size: 2em; font-weight: bold;"></p>
-
-    <button type="button"
-            data-action="click->capture#toggleCaptureFlow"
-            data-capture-target="toggleCaptureButton">
-      カメラ起動
-    </button>
-  </div>
-
-  <div class="capture-image" style="width: 100%;">
-    <div class="front-image" style="width: 100%;">
-      <video autoplay playsinline data-capture-target="frontVideo" style="width: 100%; height: 100%;object-fit: cover;"></video>
-      <img data-capture-target="capturedFrontImage" alt="撮影画像" style="width: 100%; height: 100%;object-fit: cover;"/>
-    </div>
-    <div class="back-image" style="width: 28%;">
-      <video autoplay playsinline data-capture-target="backVideo" style="width: 100%; height: 100%;object-fit: cover;"></video>
-      <img data-capture-target="capturedBackImage" alt="撮影画像" style="width: 100%; height: 100%;object-fit: cover;"/>
-    </div>
-  </div>
-</div>
-
-
-
-<h1>コメント</h1>
+<h1>編集</h1>
 <%= form_with(model: @capture, url: capture_path(@capture.uuid), data: {turbo: false}) do |form| %>
-  <% if @capture.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(@capture.errors.count, "error") %> prohibited this capture from being saved:</h2>
-
-      <ul>
-        <% @capture.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-
-  <%= form.file_field :front_image, id: "front_image_field", style: "display: none" %>
-  <%= form.file_field :back_image, id: "back_image_field", style: "display: none" %>
-  <%= form.hidden_field :latitude %>
-  <%= form.hidden_field :longitude %>
+  <%= render "shared/error_messages", instead: @capture %>
 
   <div>
-    <%= form.label :comment, style: "display: block" %>
-    <%= form.text_field :comment %>
+    <%= form.label :visibility %>
+    <%= form.select :visibility, Capture.visibilities.keys.map { |k| [t("activerecord.enums.capture.visibility.#{k}"), k] }, {} %>
   </div>
 
   <div>

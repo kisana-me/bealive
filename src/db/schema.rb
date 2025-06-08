@@ -58,7 +58,6 @@ ActiveRecord::Schema[8.0].define(version: 9) do
     t.string "comment", default: "", null: false
     t.boolean "reversed", default: false, null: false
     t.datetime "captured_at"
-    t.datetime "expires_at"
     t.integer "visibility", limit: 1, default: 0, null: false
     t.integer "status", limit: 1, default: 0, null: false
     t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
@@ -104,7 +103,7 @@ ActiveRecord::Schema[8.0].define(version: 9) do
   create_table "follows", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.bigint "followed_id", null: false
     t.bigint "follower_id", null: false
-    t.integer "status", limit: 1, default: 0, null: false
+    t.boolean "accepted", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["followed_id", "follower_id"], name: "index_follows_on_followed_id_and_follower_id", unique: true
@@ -145,8 +144,8 @@ ActiveRecord::Schema[8.0].define(version: 9) do
     t.bigint "account_id", null: false
     t.string "token_lookup", null: false
     t.string "token_digest", null: false
-    t.datetime "token_expires_at"
-    t.datetime "token_generated_at"
+    t.datetime "token_expires_at", default: -> { "current_timestamp(6)" }, null: false
+    t.datetime "token_generated_at", default: -> { "current_timestamp(6)" }, null: false
     t.string "name", default: "", null: false
     t.string "user_agent", default: "", null: false
     t.string "ip_address", default: "", null: false

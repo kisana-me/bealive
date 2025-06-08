@@ -14,34 +14,50 @@ class ApplicationController < ActionController::Base
 
   private
 
+  # render or redirect_to
+
   def render_404
     render "errors/404", status: :not_found
   end
+
   def render_500
     render "errors/500", status: :internal_server_error
   end
-  def logged_in_account
+
+  def require_signin
     unless @current_account
       flash[:alert] = "サインインしてください"
       redirect_to root_path
     end
   end
-  def logged_out_account
+
+  def require_signout
     unless !@current_account
       flash[:alert] = "サインイン済みです"
       redirect_to root_path
     end
   end
+
+  def require_admin
+    return if @current_account.roles.include?("admin")
+    return render_404
+  end
+
+  # general methods
+
   def set_current_account
     @current_account = current_account
   end
+
   def store_location
     session[:forwarding_url] = request.original_url if request.get?
   end
+
   def redirect_back_or(default: root_path)
     redirect_to(session[:forwarding_url] || default)
     session.delete(:forwarding_url)
   end
+
   def generate_random_problem
     num1 = rand(100)
     num2 = rand(1..10)
@@ -52,8 +68,5 @@ class ApplicationController < ActionController::Base
     problem = "#{num1} #{operator} #{num2}"
     [problem, eval(problem)]
   end
-  def admin_account
-    return if @current_account.meta["admin"]
-    return render_404
-  end
+
 end

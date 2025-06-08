@@ -7,7 +7,7 @@ module SessionManagement
     @current_account = account
   end
 
-  def log_in(account)
+  def sign_in(account)
     token = account.remember(request.remote_ip, request.user_agent)
     cookies.signed[:bealive] = {
       value: token,
@@ -20,7 +20,7 @@ module SessionManagement
     }
   end
 
-  def log_out
+  def sign_out
     return if cookies.signed[:bealive].blank?
     db_session = Session.find_by_token("token", cookies.signed[:bealive])
     return unless db_session

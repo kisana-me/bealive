@@ -4,6 +4,28 @@ class Account < ApplicationRecord
   has_many :invitations
   belongs_to :invitation, optional: true
 
+  # followに関して
+
+  has_many :active_follows, class_name: "Follow", foreign_key: "follower_id"
+  has_many :following, through: :active_follows, source: :followed
+
+  has_many :passive_follows, class_name: "Follow", foreign_key: "followed_id"
+  has_many :followers, through: :passive_follows, source: :follower
+
+  # 許可されたフォロワーのリストを取得するメソッド
+  # これは「自分がフォローされている側」で、かつ「accepted: true」であるフォロワー
+  has_many :accepted_passive_follows, -> { where(accepted: true) },
+           class_name: "Follow", foreign_key: "followed_id", dependent: :destroy
+  has_many :accepted_followers, through: :accepted_passive_follows, source: :follower
+
+  # 許可された「自分がフォローしている」ユーザーのリストを取得するメソッド
+  # これは「自分がフォローしている側」で、かつ「accepted: true」であるフォロー
+  has_many :accepted_active_follows, -> { where(accepted: true) },
+           class_name: "Follow", foreign_key: "follower_id", dependent: :destroy
+  has_many :accepted_following, through: :accepted_active_follows, source: :followed
+
+  # === #
+
   enum :status, { normal: 0, locked: 1 }
   attribute :meta, :json, default: {}
 
@@ -33,16 +55,49 @@ class Account < ApplicationRecord
     digest = generate_digest(token)
     session.token_lookup = lookup
     session.token_digest = digest
+    session.token_expires_at = 1.month.from_now
     return token if session.save
   end
 
   def self.find_by_session(token)
-    lookup = new.generate_lookup(token)
-    db_session = Session.find_by(token_lookup: lookup, status: 0, deleted: false)
+    db_session = Session.find_by_token("token", token)
     return nil unless db_session
-    return nil unless BCrypt::Password.new(db_session.token_digest).is_password?(token)
     db_session.account
   end
+
+  # followに関して
+
+  # 特定のユーザーをフォローするメソッド
+  def follow(other_account)
+    active_follows.create(followed_id: other_account.id)
+  end
+
+  # 特定のユーザーのフォローを解除するメソッド
+  def unfollow(other_account)
+    active_follows.find_by(followed_id: other_account.id).destroy
+  end
+
+  # あるユーザーがこのユーザーをフォローしているかチェックするメソッド
+  def following?(other_account)
+    following.include?(other_account)
+  end
+
+  # フォローリクエストを承認するメソッド
+  def accept_follow(follower_account)
+    passive_follows.find_by(follower_id: follower_account.id)&.update(accepted: true)
+  end
+
+  # フォローリクエストを拒否する（または削除する）メソッド
+  def decline_follow(follower_account)
+    passive_follows.find_by(follower_id: follower_account.id)&.destroy
+  end
+
+  # 特定のユーザーからのフォローが承認されているかチェックするメソッド
+  def has_accepted_follower?(follower_account)
+    accepted_followers.include?(follower_account)
+  end
+
+  # === #
 
   private
 

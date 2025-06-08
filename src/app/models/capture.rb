@@ -4,7 +4,7 @@ class Capture < ApplicationRecord
 
   enum :visibility, {
     public: 0,
-    following_only: 1,
+    followers_only: 1,
     group_only: 2,
     link_only: 3,
     private: 4
@@ -15,6 +15,7 @@ class Capture < ApplicationRecord
   attr_accessor :image
   attr_accessor :upload
 
+  after_initialize :generate_uuid, if: :new_record?
   before_save :image_upload
 
   validate :image_type_and_required, if: :upload
@@ -26,7 +27,7 @@ class Capture < ApplicationRecord
       variants =JSON.parse(self.front_variants)
     end
     unless variants.include?(variant_type)
-      return "/images/bealive-image-169.webp"
+      return "/statics/images/bealive-1.png"
     end
     return signed_object_url(key: "/variants/#{variant_type}/front_images/#{self.uuid}.webp")
   end
@@ -37,7 +38,7 @@ class Capture < ApplicationRecord
       variants =JSON.parse(self.back_variants)
     end
     unless variants.include?(variant_type)
-      return "/images/bealive-image-169.webp"
+      return "/statics/images/bealive-1.png"
     end
     return signed_object_url(key: "/variants/#{variant_type}/back_images/#{self.uuid}.webp")
   end

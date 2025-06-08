@@ -1,11 +1,27 @@
 class CapturesController < ApplicationController
-  before_action :logged_in_account, except: %i[ show edit update destroy ]
-  before_action :set_capture, only: %i[ show edit update ]
+  before_action :require_signin, except: %i[ show edit update destroy ]
+  before_action :set_capture, only: %i[ show edit update capture post_capture ]
   before_action :set_correct_capture, only: %i[ destroy ]
 
   def index
-    @sender_captures = Capture.where(sender: @current_account, deleted: false).limit(30).order(created_at: :desc)
-    @receiver_captures = Capture.where(receiver: @current_account, deleted: false).limit(30).order(created_at: :desc)
+    followed_account_ids = @current_account.accepted_following.pluck(:id)
+    @captures = Capture
+      .where(receiver_id: followed_account_ids)
+      .where(visibility: [:following_only, :public])
+      .order(captured_at: :desc)
+      .limit(30)
+      .includes(:sender, :receiver)
+
+    @sender_captures = Capture
+      .where(sender: @current_account, deleted: false)
+      .order(captured_at: :desc)
+      .limit(30)
+      .includes(:sender, :receiver)
+    @receiver_captures = Capture
+      .where(receiver: @current_account, deleted: false)
+      .order(captured_at: :desc)
+      .limit(30)
+      .includes(:sender, :receiver)
   end
 
   def show
@@ -21,13 +37,6 @@ class CapturesController < ApplicationController
     @capture = Capture.new
   end
 
-  def edit
-    # いらない？
-    if @capture.done?
-      redirect_to capture_path(@capture.uuid), alert: "撮影済み"
-    end
-  end
-
   def create
     recent_count = Capture.where(sender: @current_account)
                       .where("created_at >= ?", 24.hours.ago)
@@ -35,11 +44,11 @@ class CapturesController < ApplicationController
 
     if recent_count >= 10
       flash.now[:alert] = "作成制限：24時間以内に10件以上作成できません"
-      return render :new
+      @capture = Capture.new
+      return render :new, status: :unprocessable_entity
     end
 
     @capture = Capture.new
-    @capture.uuid = SecureRandom.uuid
     @capture.sender = @current_account
     @capture.status = "waiting"
     if @capture.save
@@ -50,11 +59,29 @@ class CapturesController < ApplicationController
     end
   end
 
+  def edit
+  end
+
   def update
+    if @capture.update(update_capture_params)
+      redirect_to capture_url(@capture.uuid), notice: "更新しました"
+    else
+      flash.now[:alert] = "更新できません"
+      render :capture
+    end
+  end
+
+  def capture
     if @capture.done?
       redirect_to capture_path(@capture.uuid), alert: "撮影済み"
     end
-    @capture.captured_at = Time.now
+  end
+
+  def post_capture
+    if @capture.done?
+      redirect_to capture_path(@capture.uuid), alert: "撮影済み"
+    end
+    @capture.captured_at = Time.current
     @capture.receiver = @current_account if @current_account
     @capture.status = "done"
     @capture.upload = true
@@ -67,7 +94,7 @@ class CapturesController < ApplicationController
       redirect_to capture_url(@capture.uuid), notice: "更新しました"
     else
       flash.now[:alert] = "間違っています"
-      render :edit
+      render :capture
     end
   end
 
@@ -104,7 +131,17 @@ class CapturesController < ApplicationController
       :back_image,
       :comment,
       :latitude,
-      :longitude
+      :longitude,
+      :visibility
     )
   end
+
+  def update_capture_params
+    params.expect(capture: [
+      :visibility,
+      :latitude,
+      :longitude
+    ])
+  end
+
 end

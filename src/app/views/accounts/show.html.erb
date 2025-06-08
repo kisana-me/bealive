@@ -17,6 +17,16 @@
     <%= @account.description %>
   </p>
 
+  <p>
+    <strong>フォロー:</strong>
+    <%= link_to @account.accepted_following.count, following_account_path(@account.name_id) %>
+  </p>
+
+  <p>
+    <strong>フォロワー:</strong>
+    <%= link_to @account.accepted_followers.count, followers_account_path(@account.name_id) %>
+  </p>
+
   <% if @account == @current_account %>
   <p>
     <strong>操作:</strong>
@@ -25,7 +35,25 @@
   <% else %>
   <p>
     <strong>操作:</strong>
-    フォローする
+
+
+    <% if @current_account %>
+      <% if @current_account.following?(@account) %>
+        <% if @current_account.accepted_following.include?(@account) %>
+          <p>フォロー済み (承認済み)</p>
+          <%= button_to "フォロー解除", follows_withdraw_path(name_id: @account.name_id), method: :delete, data: { confirm: "本当にフォロー解除しますか？" } %>
+        <% else %>
+          <p>フォローリクエスト送信済み (承認待ち)</p>
+          <%= button_to "フォローリクエストキャンセル", follows_withdraw_path(name_id: @account.name_id), method: :delete, data: { confirm: "本当にリクエストをキャンセルしますか？" } %>
+        <% end %>
+      <% else %>
+        <%= button_to "フォローリクエスト", follows_request_path(name_id: @account.name_id), method: :post %>
+      <% end %>
+    <% else %>
+      <%= link_to "サインインしてフォロー", sessions_start_path() %>
+    <% end %>
+
+
   </p>
   <% end %>
 

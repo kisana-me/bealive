@@ -1,5 +1,5 @@
 class SignupController < ApplicationController
-  before_action :logged_out_account
+  before_action :require_signout
   before_action :ensure_oauth_context
 
   def new
@@ -13,7 +13,7 @@ class SignupController < ApplicationController
     if @account.save
       session.delete(:pending_oauth_id)
       session.delete(:pending_oauth_info)
-      log_in(@account)
+      sign_in(@account)
       redirect_to root_path, notice: "登録完了"
     else
       render :new

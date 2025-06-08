@@ -4,8 +4,8 @@ class CreateSessions < ActiveRecord::Migration[8.0]
       t.references :account, null: false, foreign_key: true
       t.string :token_lookup, null: false
       t.string :token_digest, null: false
-      t.datetime :token_expires_at
-      t.datetime :token_generated_at
+      t.datetime :token_expires_at, null: false, default: -> { "CURRENT_TIMESTAMP" }
+      t.datetime :token_generated_at, null: false, default: -> { "CURRENT_TIMESTAMP" }
       t.string :name, null: false, default: ""
       t.string :user_agent, null: false, default: ""
       t.string :ip_address, null: false, default: ""

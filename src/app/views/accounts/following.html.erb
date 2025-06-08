@@ -1,0 +1,50 @@
+<h1><%= @account.name %>さんがフォローしているアカウント</h1>
+
+<%= link_to "プロフィールに戻る", account_path(@account.name_id) %>
+
+<% if @current_account == @account %>
+  <h2>承認待ちのフォローリクエスト (<%= @pending_following_requests.count %>件)</h2>
+  <ul>
+    <% @pending_following_requests.each do |follow_request| %>
+      <li>
+        <%= link_to follow_request.followed.name, account_path(follow_request.followed) %>
+        (<%= follow_request.followed.name_id %>)
+
+        <% # フォローリクエストのキャンセルボタン %>
+        <% # follows_withdraw_path は name_id をパラメータとして受け取る %>
+        <%= button_to "リクエストキャンセル", follows_withdraw_path, method: :delete,
+                      params: { name_id: follow_request.followed.name_id },
+                      class: "btn btn-warning", data: { confirm: "本当にリクエストをキャンセルしますか？" } %>
+      </li>
+    <% end %>
+  </ul>
+  <% if @pending_following_requests.blank? %>
+    <p>フォローリクエストはありません</p>
+  <% end %>
+  <hr>
+<% end %>
+
+
+<h2>フォロー中 (<%= @accepted_following.count %>人)</h2>
+<% if @accepted_following.any? %>
+  <ul>
+    <% @accepted_following.each do |followed| %>
+      <li>
+        <%= link_to followed.name, account_path(followed) %>
+        (<%= followed.name_id %>)
+
+        <% # もしログインユーザーがこのフォロー関係の所有者である場合、アンフォローボタンを表示 %>
+        <% if @current_account == @account %>
+          <% # follows_withdraw_path は name_id をパラメータとして受け取る %>
+          <%= button_to "フォロー解除", follows_withdraw_path, method: :delete,
+                        params: { name_id: followed.name_id },
+                        class: "btn btn-danger", data: { confirm: "本当にフォロー解除しますか？" } %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>まだ誰もフォローしていません。</p>
+<% end %>
+
+<%= link_to "プロフィールに戻る", account_path(@account.name_id) %>

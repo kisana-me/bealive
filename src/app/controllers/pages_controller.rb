@@ -1,7 +1,11 @@
 class PagesController < ApplicationController
 
   def index
-    @captures = Capture.where(visibility: :public, status: :done, deleted: false).limit(30).order(created_at: :desc)
+    @captures = Capture
+      .where(visibility: :public, status: :done, deleted: false)
+      .limit(30)
+      .order(captured_at: :desc)
+      .includes(:sender, :receiver)
   end
 
   def terms_of_service

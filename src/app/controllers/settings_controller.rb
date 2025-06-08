@@ -16,7 +16,7 @@ class SettingsController < ApplicationController
 
   def leave
     @current_account.update(deleted: true)
-    log_out
+    sign_out
     redirect_to root_url, notice: "ご利用いただきありがとうございました"
   end
 

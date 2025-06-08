@@ -3,7 +3,7 @@ class CreateFollows < ActiveRecord::Migration[8.0]
     create_table :follows do |t|
       t.bigint :followed_id, null: false
       t.bigint :follower_id, null: false
-      t.integer :status, limit: 1, null: false, default: 0
+      t.boolean :accepted, null: false, default: false
 
       t.timestamps
     end

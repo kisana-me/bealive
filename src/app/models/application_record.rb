@@ -37,6 +37,10 @@ class ApplicationRecord < ActiveRecord::Base
 
   private
 
+  def generate_uuid
+    self.uuid ||= SecureRandom.uuid
+  end
+
   #object.update(column.to_sym => mca_array.to_json)
   def add_mca_data(object, column, add_mca_array, save = false)
     if object[column.to_sym].present?

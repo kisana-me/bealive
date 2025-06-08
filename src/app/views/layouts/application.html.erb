@@ -7,7 +7,8 @@
     <meta property="og:title" content="<%= full_title(yield(:title)) %>">
     <meta property="og:description" content="<%= content_for?(:description) ? yield(:description) : "BeAlive. いつもの日常を相互確認。" %>">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="https://bealive.amiverse.net/images/bealive-image-169.webp">
+    <meta property="og:image" content="https://bealive.amiverse.net/statics/images/bealive-1.png">
+    <meta name="twitter:card" content="summary_large_image" />
     <meta http-equiv="content-language" content="<%= content_for?(:lang) ? yield(:lang) : "ja" %>">
     <link rel="icon" href="/favicon.ico">
     <%= csrf_meta_tags %>
@@ -37,7 +38,7 @@
           <ul class="header-menu-account">
             <% if @current_account %>
               <li><%= link_to "プロフィール", account_path(@current_account.name_id) %></li>
-              <li><%= button_to "ログアウト", logout_path, method: :delete %></li>
+              <li><%= button_to "サインアウト", signout_path, method: :delete %></li>
             <% else %>
               <li><%= link_to "続ける", sessions_start_path %></li>
             <% end %>
@@ -48,7 +49,7 @@
             <li><%= link_to "お問い合わせ", contact_path %></li>
             <li><%= link_to "BeAlive.", root_path %></li>
           </ul>
-          <div class="bealive-copylight">© BeAlive. 2024</div>
+          <div class="bealive-copylight">© BeAlive. 2025</div>
         </nav>
       </div>
     </header>

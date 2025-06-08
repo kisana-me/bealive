@@ -25,6 +25,8 @@ ja:
         password_confirmation: "パスワード(確認)"
         status: "ステータス"
       capture:
+        visibility: "公開範囲"
+        comment: "コメント"
       comment:
       entry:
       follow:
@@ -37,12 +39,16 @@ ja:
         expires_at: "有効期限"
         generated_at: "生成日時"
     enums:
-      document:
+      capture:
         status:
-          draft: "下書き"
-          unlisted: "限定公開"
-          specific: "特定用途"
-          published: "公開"
+          waiting: "未撮影"
+          done: "撮影済み"
+        visibility:
+          public: "全世界に公開"
+          followers_only: "フォロワーのみ"
+          group_only: "グループのみ"
+          link_only: "リンクを知っている人のみ"
+          private: "非公開"
       subscription:
         status:
           incomplete: "未完了"

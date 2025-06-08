@@ -1,7 +1,7 @@
 class SessionsController < ApplicationController
   require "net/http"
-  before_action :logged_in_account, except: %i[ start oauth callback ]
-  before_action :logged_out_account, only: %i[ start oauth callback ]
+  before_action :require_signin, except: %i[ start oauth callback ]
+  before_action :require_signout, only: %i[ start oauth callback ]
   before_action :set_session, only: %i[ show edit update destroy ]
 
   def start
@@ -14,7 +14,7 @@ class SessionsController < ApplicationController
     oauth_authorize_url = "https://anyur.com/oauth/authorize?" + {
       response_type: "code",
       client_id: "Be_Alive",
-      redirect_uri: "https://bealive.amiverse.net/sessions/callback",
+      redirect_uri: Rails.env.development? ? "http://localhost:3000/sessions/callback" : "https://bealive.amiverse.net/sessions/callback",
       scope: "id name name_id",
       state: state
     }.to_query
@@ -35,7 +35,7 @@ class SessionsController < ApplicationController
         grant_type: "authorization_code",
         client_id: "Be_Alive",
         client_secret: ENV["OAUTH_CLIENT_SECRET"],
-        redirect_uri: "https://bealive.amiverse.net/sessions/callback",
+        redirect_uri: Rails.env.development? ? "http://localhost:3000/sessions/callback" : "https://bealive.amiverse.net/sessions/callback",
         code: code
       }
     )
@@ -64,7 +64,7 @@ class SessionsController < ApplicationController
     account = Account.find_by(anyur_id: info.dig("data", "id"), deleted: false)
     if account
       # account.metaに4つ記録
-      log_in(account)
+      sign_in(account)
       redirect_to root_path, notice: "サインインしました"
     else
       session[:pending_oauth_id] = info.dig("data", "id")
@@ -98,11 +98,11 @@ class SessionsController < ApplicationController
     redirect_to sessions_path, notice: "セッションを削除しました"
   end
 
-  def logout
-    if log_out
-      redirect_to root_path, notice: "ログアウトしました"
+  def signout
+    if sign_out
+      redirect_to root_path, notice: "サインアウトしました"
     else
-      redirect_to root_path, alert: "ログアウトできませんでした"
+      redirect_to root_path, alert: "サインアウトできませんでした"
     end
   end
 
