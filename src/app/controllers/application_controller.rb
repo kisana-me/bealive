@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
   include SessionManagement
-  before_action :set_current_account
+  before_action :current_account
 
   unless Rails.env.development?
     rescue_from Exception,                      with: :render_500
@@ -44,10 +44,6 @@ class ApplicationController < ActionController::Base
   end
 
   # general methods
-
-  def set_current_account
-    @current_account = current_account
-  end
 
   def store_location
     session[:forwarding_url] = request.original_url if request.get?

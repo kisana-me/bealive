@@ -92,7 +92,7 @@ ActiveRecord::Schema[8.0].define(version: 9) do
   create_table "entries", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.bigint "group_id", null: false
-    t.integer "status", limit: 1, default: 0, null: false
+    t.boolean "accepted", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id", "group_id"], name: "index_entries_on_account_id_and_group_id", unique: true

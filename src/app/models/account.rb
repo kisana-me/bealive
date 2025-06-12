@@ -48,23 +48,6 @@ class Account < ApplicationRecord
   validates :password, length: { in: 8..63, allow_blank: true }
   has_secure_password validations: false
 
-  def remember(ip, ua)
-    session = Session.new(account: self, ip_address: ip, user_agent: ua)
-    token = generate_base36
-    lookup = generate_lookup(token)
-    digest = generate_digest(token)
-    session.token_lookup = lookup
-    session.token_digest = digest
-    session.token_expires_at = 1.month.from_now
-    return token if session.save
-  end
-
-  def self.find_by_session(token)
-    db_session = Session.find_by_token("token", token)
-    return nil unless db_session
-    db_session.account
-  end
-
   # followに関して
 
   # 特定のユーザーをフォローするメソッド

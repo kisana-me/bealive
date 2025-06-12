@@ -42,9 +42,11 @@ class Capture < ApplicationRecord
     end
     return signed_object_url(key: "/variants/#{variant_type}/back_images/#{self.uuid}.webp")
   end
+
   def variants_delete
     delete_variants()# aaa
   end
+
   def image_delete
     delete_image()# aaa
   end
