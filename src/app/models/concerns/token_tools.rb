@@ -1,10 +1,12 @@
-module TokenTools # ver.1
+module TokenTools
+  # ver 1.0.0
   # 必要なカラム(名前 型)
-  # ??_lookup string
-  # ??_digest string
-  # ??_generated_at string
-  # ??_expires_at string
-  # deleted boolean
+  # - ??_lookup string
+  # - ??_digest string
+  # - ??_generated_at string
+  # - ??_expires_at string
+  # - deleted boolean
+
   LOOKUP_LENGTH = 36
   BASE36_LENGTH = 128
   extend ActiveSupport::Concern
@@ -40,5 +42,4 @@ module TokenTools # ver.1
       record
     end
   end
-
 end
