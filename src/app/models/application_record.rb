@@ -3,6 +3,7 @@ class ApplicationRecord < ActiveRecord::Base
   require "aws-sdk-s3"
   include ImageTools
   include TokenTools
+  include Loggable
 
   def read_include(column: "info", obj:)
     if self[column.to_sym].present?
@@ -95,5 +96,9 @@ class ApplicationRecord < ActiveRecord::Base
       force_path_style: true
     )
     s3.delete_object(bucket: ENV["S3_BUCKET"], key: key)
+  end
+
+  def set_aid
+    self.aid ||= SecureRandom.base36(14)
   end
 end

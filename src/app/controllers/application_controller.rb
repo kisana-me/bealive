@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   include SessionManagement
   before_action :current_account
+  before_action :set_current_attributes
 
   unless Rails.env.development?
     rescue_from Exception,                      with: :render_500
@@ -65,4 +66,9 @@ class ApplicationController < ActionController::Base
     [problem, eval(problem)]
   end
 
+  def set_current_attributes
+    Current.account = @current_account
+    Current.ip_address = request.remote_ip
+    Current.user_agent = request.user_agent
+  end
 end
