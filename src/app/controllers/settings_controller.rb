@@ -6,6 +6,10 @@ class SettingsController < ApplicationController
   def account
   end
 
+  def icon
+    @images = Image.where(account: @current_account, deleted: false)
+  end
+
   def post_account
     if @current_account.update(account_params)
       redirect_to settings_account_path, notice: "更新しました"
@@ -27,7 +31,8 @@ class SettingsController < ApplicationController
       :name,
       :name_id,
       :description,
-      :birth
+      :birth,
+      :icon_uuid
     )
   end
 

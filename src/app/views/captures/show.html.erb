@@ -4,12 +4,20 @@
 
 <div class="capture-person">
   <% if @capture.receiver %>
-    <strong>撮影者:</strong> <%= @capture.receiver.name %>
+    <strong>撮影者:</strong>
+    <%= link_to account_path(@capture.receiver.name_id) do %>
+      <%= image_tag(@capture.receiver.icon_url, style: "width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ffffff;") if @capture.receiver %>
+      <%= @capture.receiver.name %>
+    <% end %>
   <% else %>
     <strong>撮影者:</strong> 匿名
   <% end %>
   <% if @capture.sender %>
-    <strong>リクエスト:</strong> <%= @capture.sender.name %>
+    <strong>リクエスト:</strong>
+    <%= link_to account_path(@capture.sender.name_id) do %>
+      <%= image_tag(@capture.sender.icon_url, style: "width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ffffff;") %>
+      <%= @capture.sender.name %>
+    <% end %>
   <% end %>
 </div>
 <div class="capture-image" style="width: 100%;">

@@ -3,6 +3,7 @@ class Account < ApplicationRecord
   has_many :receiver, class_name: "Capture", foreign_key: "receiver_id"
   has_many :invitations
   belongs_to :invitation, optional: true
+  belongs_to :icon, class_name: "Image", foreign_key: "icon_id", optional: true
 
   # followに関して
 
@@ -28,7 +29,9 @@ class Account < ApplicationRecord
 
   enum :status, { normal: 0, locked: 1 }
   attribute :meta, :json, default: {}
+  attr_accessor :icon_uuid
 
+  before_validation :assign_icon
   before_create :generate_aid
 
   BASE_64_URL_REGEX  = /\A[a-zA-Z0-9_-]*\z/
@@ -82,10 +85,22 @@ class Account < ApplicationRecord
 
   # === #
 
+  def icon_url
+    if icon
+      icon.image_url(variant_type: "icons")
+    else
+      return "/statics/images/bealive-logo.png"
+    end
+  end
+
   private
 
   def generate_aid
     self.aid ||= SecureRandom.base36(14)
   end
 
+  def assign_icon
+    return if icon_uuid.blank?
+    self.icon = Image.find_by(account: self, uuid: icon_uuid, deleted: false)
+  end
 end

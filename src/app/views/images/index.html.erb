@@ -1,0 +1,8 @@
+<% @images.each do |image| %>
+  名前:<%= image.name %>
+  <%= image_tag(image.image_url(variant_type: "icons")) %>
+<% end %>
+
+<% if @images.blank? %>
+画像はありません
+<% end %>

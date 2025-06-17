@@ -5,8 +5,10 @@
         <div class="capture">
           <div class="capture-person">
             <% if capture.receiver %>
+              <%= image_tag(capture.receiver.icon_url, style: "width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ffffff;") if capture.receiver %>
               <strong><%= capture.receiver.name %></strong>が撮った
             <% else %>
+              <%= image_tag(capture.sender.icon_url, style: "width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ffffff;") %>
               <strong><%= capture.sender.name %></strong>がリクエスト
             <% end %>
           </div>

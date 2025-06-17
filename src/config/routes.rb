@@ -36,6 +36,7 @@ Rails.application.routes.draw do
   # settings
   get "settings" => "settings#index"
   get "settings/account" => "settings#account"
+  get "settings/icon" => "settings#icon"
   patch "settings/account" => "settings#post_account"
   delete "settings/leave" => "settings#leave"
 
@@ -45,6 +46,8 @@ Rails.application.routes.draw do
       post "capture", to: "post_capture"
     end
   end
+
+  resources :images
 
   # resources :groups
   # resources :comments
