@@ -60,7 +60,7 @@ class ApplicationRecord < ActiveRecord::Base
     s3 = Aws::S3::Client.new(
       endpoint: ENV["S3_PUBLIC_ENDPOINT"],
       region: ENV["S3_REGION"],
-      access_key_id: ENV["S3_USER"],
+      access_key_id: ENV["S3_USERNAME"],
       secret_access_key: ENV["S3_PASSWORD"],
       force_path_style: true
     )
@@ -80,7 +80,7 @@ class ApplicationRecord < ActiveRecord::Base
     s3 = Aws::S3::Resource.new(
       endpoint: ENV["S3_LOCAL_ENDPOINT"],
       region: ENV["S3_REGION"],
-      access_key_id: ENV["S3_USER"],
+      access_key_id: ENV["S3_USERNAME"],
       secret_access_key: ENV["S3_PASSWORD"],
       force_path_style: true
     )
@@ -91,7 +91,7 @@ class ApplicationRecord < ActiveRecord::Base
     s3 = Aws::S3::Client.new(
       endpoint: ENV["S3_LOCAL_ENDPOINT"],
       region: ENV["S3_REGION"],
-      access_key_id: ENV["S3_USER"],
+      access_key_id: ENV["S3_USERNAME"],
       secret_access_key: ENV["S3_PASSWORD"],
       force_path_style: true
     )
