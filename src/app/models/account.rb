@@ -27,12 +27,12 @@ class Account < ApplicationRecord
 
   # === #
 
-  enum :status, { normal: 0, locked: 1 }
   attribute :meta, :json, default: {}
-  attr_accessor :icon_uuid
+  enum :status, { normal: 0, locked: 1 }
+  attr_accessor :icon_aid
 
   before_validation :assign_icon
-  before_create :generate_aid
+  before_create :set_aid
 
   BASE_64_URL_REGEX  = /\A[a-zA-Z0-9_-]*\z/
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
@@ -95,12 +95,8 @@ class Account < ApplicationRecord
 
   private
 
-  def generate_aid
-    self.aid ||= SecureRandom.base36(14)
-  end
-
   def assign_icon
-    return if icon_uuid.blank?
-    self.icon = Image.find_by(account: self, uuid: icon_uuid, deleted: false)
+    return if icon_aid.blank?
+    self.icon = Image.find_by(account: self, aid: icon_aid, deleted: false)
   end
 end

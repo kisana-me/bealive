@@ -92,7 +92,7 @@ module ImageTools
       end
       image.write(converted_image.path)
     end
-    key = "/variants/#{variant_type}/#{image_type}/#{self.uuid}.webp"
+    key = "/variants/#{variant_type}/#{image_type}/#{self.aid}.webp"
     s3_upload(key: key, file: converted_image.path, content_type: "image/webp")
     add_mca_data(self, variants_column, [variant_type], false)
     if downloaded_image
@@ -104,7 +104,7 @@ module ImageTools
   def delete_variants(variants_column: "variants", image_type: "images")
     arr = JSON.parse(self.send(variants_column))
     arr.each do |variant_type|
-      s3_delete(key: "/variants/#{variant_type}/#{image_type}/#{self.uuid}.webp")
+      s3_delete(key: "/variants/#{variant_type}/#{image_type}/#{self.aid}.webp")
     end
     remove_mca_data(self, variants_column, arr, false)
   end

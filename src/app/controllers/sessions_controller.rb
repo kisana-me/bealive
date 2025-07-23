@@ -47,6 +47,9 @@ class SessionsController < ApplicationController
     access_token = token_data["access_token"]
     expires_in = token_data["expires_in"]
     refresh_token = token_data["refresh_token"]
+    # トークンをセッションへ仮保存
+    session[:anyur_access_token] = access_token
+    session[:anyur_refresh_token] = refresh_token
     # データ取得
     info_uri = URI("https://anyur.com/api/resources")
     info_request = Net::HTTP::Post.new(info_uri)
@@ -65,6 +68,12 @@ class SessionsController < ApplicationController
     if account
       # account.metaに4つ記録
       sign_in(account)
+      account.update(
+        anyur_access_token: access_token,
+        anyur_refresh_token: refresh_token
+      )
+      session.delete(:anyur_access_token)
+      session.delete(:anyur_refresh_token)
       redirect_to root_path, notice: "サインインしました"
     else
       session[:pending_oauth_id] = info.dig("data", "id")

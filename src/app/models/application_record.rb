@@ -16,8 +16,8 @@ class ApplicationRecord < ActiveRecord::Base
 
   private
 
-  def generate_uuid
-    self.uuid ||= SecureRandom.uuid
+  def set_aid
+    self.aid ||= SecureRandom.base36(14)
   end
 
   #object.update(column.to_sym => mca_array.to_json)

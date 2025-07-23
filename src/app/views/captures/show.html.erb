@@ -21,7 +21,7 @@
   <% end %>
 </div>
 <div class="capture-image" style="width: 100%;">
-  <% if @capture.done? %>
+  <% if !@capture.captured_at.nil? %>
     <%= image_tag @capture.front_image_url, class: "front-image", style: "width: 100%;" %>
     <%= image_tag @capture.back_image_url, class: "back-image", style: "width: 28%;" %>
   <% else %>
@@ -38,13 +38,13 @@
   <p><%= @capture.captured_at.strftime("%m月 %d日 %k時 %M分") %>に撮影</p>
   <% end %>
 </div>
-<% if !@capture.done? %>
-  <%= link_to "撮る", capture_capture_path(@capture.uuid) %>
+<% if !@capture.captured_at.nil? %>
+  <%= link_to "撮る", capture_capture_path(@capture.aid) %>
 <% end %>
 <br />
 <br />
 <br />
 <% if @destroy_flag %>
-  <%= button_to "削除", capture_path(@capture.uuid), method: :delete %>
+  <%= button_to "削除", capture_path(@capture.aid), method: :delete %>
 <% end %>
 <p>コメントはそのうち実装</p>

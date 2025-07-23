@@ -1,8 +1,9 @@
 class Image < ApplicationRecord
   belongs_to :account
+  attribute :meta, :json, default: {}
   enum :status, { normal: 0, locked: 1 }
 
-  after_initialize :generate_uuid, if: :new_record? # before_create :generate_uuid
+  before_create :set_aid
   before_save :image_upload
   attr_accessor :image
 
@@ -13,7 +14,7 @@ class Image < ApplicationRecord
       unless self.variants.include?(variant_type)
         process_image(variant_type: variant_type)
       end
-      return signed_object_url(key: "/variants/#{variant_type}/images/#{self.uuid}.webp")
+      return signed_object_url(key: "/variants/#{variant_type}/images/#{self.aid}.webp")
     else
       return "/statics/images/bealive-logo.png"
     end
@@ -28,7 +29,7 @@ class Image < ApplicationRecord
         s3_delete(key: self.original_key)
       end
       extension = image.original_filename.split(".").last.downcase
-      key = "/images/#{self.uuid}.#{extension}"
+      key = "/images/#{self.aid}.#{extension}"
       self.original_key = key
       s3_upload(
         key: key,

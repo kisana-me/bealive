@@ -32,7 +32,7 @@ class SettingsController < ApplicationController
       :name_id,
       :description,
       :birth,
-      :icon_uuid
+      :icon_aid
     )
   end
 

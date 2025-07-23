@@ -49,7 +49,7 @@ class ImagesController < ApplicationController
   private
 
   def set_image
-    @image = Image.find_by(uuid: params[:id], deleted: false)
+    @image = Image.find_by(aid: params[:id], deleted: false)
     return render_404 unless @image
   end
 

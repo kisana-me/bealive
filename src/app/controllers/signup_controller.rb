@@ -14,6 +14,12 @@ class SignupController < ApplicationController
       session.delete(:pending_oauth_id)
       session.delete(:pending_oauth_info)
       sign_in(@account)
+      account.update(
+        anyur_access_token: access_token,
+        anyur_refresh_token: refresh_token
+      )
+      session.delete(:anyur_access_token)
+      session.delete(:anyur_refresh_token)
       redirect_to root_path, notice: "登録完了"
     else
       render :new

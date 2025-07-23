@@ -10,18 +10,18 @@ class CapturesController < ApplicationController
       .where(visibility: [:following_only, :public])
       .order(captured_at: :desc)
       .limit(30)
-      .includes(:sender, :receiver)
+      .includes(sender: :icon, receiver: :icon)
 
     @sender_captures = Capture
       .where(sender: @current_account, deleted: false)
       .order(captured_at: :desc)
       .limit(30)
-      .includes(:sender, :receiver)
+      .includes(sender: :icon, receiver: :icon)
     @receiver_captures = Capture
       .where(receiver: @current_account, deleted: false)
       .order(captured_at: :desc)
       .limit(30)
-      .includes(:sender, :receiver)
+      .includes(sender: :icon, receiver: :icon)
   end
 
   def show
@@ -30,7 +30,7 @@ class CapturesController < ApplicationController
       @destroy_flag ||= @capture.sender == @current_account if @capture.sender
       @destroy_flag ||= @capture.receiver == @current_account if @capture.receiver
     end
-    @destroy_flag ||= session[:captured]&.include?(@capture.uuid)
+    @destroy_flag ||= session[:captured]&.include?(@capture.aid)
   end
 
   def new
@@ -52,7 +52,7 @@ class CapturesController < ApplicationController
     @capture.sender = @current_account
     @capture.status = "waiting"
     if @capture.save
-      redirect_to capture_url(@capture.uuid), notice: "作成しました"
+      redirect_to capture_url(@capture.aid), notice: "作成しました"
     else
       flash.now[:alert] = "間違っています"
       render :new
@@ -64,7 +64,7 @@ class CapturesController < ApplicationController
 
   def update
     if @capture.update(update_capture_params)
-      redirect_to capture_url(@capture.uuid), notice: "更新しました"
+      redirect_to capture_url(@capture.aid), notice: "更新しました"
     else
       flash.now[:alert] = "更新できません"
       render :capture
@@ -72,26 +72,25 @@ class CapturesController < ApplicationController
   end
 
   def capture
-    if @capture.done?
-      redirect_to capture_path(@capture.uuid), alert: "撮影済み"
+    if !@capture.captured_at.nil?
+      redirect_to capture_path(@capture.aid), alert: "撮影済み"
     end
   end
 
   def post_capture
-    if @capture.done?
-      redirect_to capture_path(@capture.uuid), alert: "撮影済み"
+    if !@capture.captured_at.nil?
+      redirect_to capture_path(@capture.aid), alert: "撮影済み"
     end
     @capture.captured_at = Time.current
     @capture.receiver = @current_account if @current_account
-    @capture.status = "done"
     @capture.upload = true
     if @capture.update(capture_params)
       # 通知
       unless @current_account
         session[:captured] ||= []
-        session[:captured] << @capture.uuid
+        session[:captured] << @capture.aid
       end
-      redirect_to capture_url(@capture.uuid), notice: "更新しました"
+      redirect_to capture_url(@capture.aid), notice: "更新しました"
     else
       flash.now[:alert] = "間違っています"
       render :capture
@@ -101,22 +100,22 @@ class CapturesController < ApplicationController
   def destroy
     unless @current_account
       captured_array = session[:captured] || []
-      return redirect_to root_url, alert: "不可能な操作" unless captured_array.include?(@capture.uuid)
+      return redirect_to root_url, alert: "不可能な操作" unless captured_array.include?(@capture.aid)
     end
     @capture.update(deleted: true)
     redirect_to root_url, notice: "削除しました"
-    session[:captured].delete(@capture.uuid) if session[:captured]
+    session[:captured].delete(@capture.aid) if session[:captured]
   end
 
   private
 
   def set_capture
-    @capture = Capture.find_by(uuid: params[:id], deleted: false)
+    @capture = Capture.find_by(aid: params[:id], deleted: false)
     return render_404 unless @capture
   end
 
   def set_correct_capture
-    @capture = Capture.find_by(uuid: params[:id], deleted: false)
+    @capture = Capture.find_by(aid: params[:id], deleted: false)
     if @capture.sender == @current_account || @capture.receiver == @current_account
       return @capture
     else

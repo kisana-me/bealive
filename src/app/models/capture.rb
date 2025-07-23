@@ -2,6 +2,8 @@ class Capture < ApplicationRecord
   belongs_to :sender, foreign_key: "sender_id", class_name: "Account"
   belongs_to :receiver, foreign_key: "receiver_id", class_name: "Account", optional: true
 
+  attribute :meta, :json, default: {}
+  enum :status, { normal: 0, locked: 1 }
   enum :visibility, {
     public: 0,
     followers_only: 1,
@@ -9,13 +11,12 @@ class Capture < ApplicationRecord
     link_only: 3,
     private: 4
   }, prefix: true
-  enum :status, { waiting: 0, done: 1 }
   attr_accessor :front_image
   attr_accessor :back_image
   attr_accessor :image
   attr_accessor :upload
 
-  after_initialize :generate_uuid, if: :new_record?
+  before_create :set_aid
   before_save :image_upload
 
   validate :image_type_and_required, if: :upload
@@ -29,7 +30,7 @@ class Capture < ApplicationRecord
     unless variants.include?(variant_type)
       return "/statics/images/bealive-1.png"
     end
-    return signed_object_url(key: "/variants/#{variant_type}/front_images/#{self.uuid}.webp")
+    return signed_object_url(key: "/variants/#{variant_type}/front_images/#{self.aid}.webp")
   end
 
   def back_image_url(variant_type: "bealive_capture")
@@ -40,7 +41,7 @@ class Capture < ApplicationRecord
     unless variants.include?(variant_type)
       return "/statics/images/bealive-1.png"
     end
-    return signed_object_url(key: "/variants/#{variant_type}/back_images/#{self.uuid}.webp")
+    return signed_object_url(key: "/variants/#{variant_type}/back_images/#{self.aid}.webp")
   end
 
   def variants_delete
@@ -61,7 +62,7 @@ class Capture < ApplicationRecord
   def image_upload
     if front_image
       extension = front_image.original_filename.split(".").last.downcase
-      key = "/front_images/#{self.uuid}.#{extension}"
+      key = "/front_images/#{self.aid}.#{extension}"
       process_image(
         variant_type: "bealive_capture", image_type: "front_images",
         variants_column: "front_variants", original_key_column: "front_original_key",
@@ -70,7 +71,7 @@ class Capture < ApplicationRecord
     end
     if back_image
       extension = back_image.original_filename.split(".").last.downcase
-      key = "/back_images/#{self.uuid}.#{extension}"
+      key = "/back_images/#{self.aid}.#{extension}"
       process_image(
         variant_type: "bealive_capture", image_type: "back_images",
         variants_column: "back_variants", original_key_column: "back_original_key",

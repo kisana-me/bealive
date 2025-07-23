@@ -8,7 +8,7 @@
   <%= render "shared/error_messages", instead: @current_account %>
 
   <% @images.each do |image| %>
-    <%= form.radio_button :icon_uuid, image.uuid, checked: (@current_account.icon_id == image.id) %>
+    <%= form.radio_button :icon_aid, image.aid, checked: (@current_account.icon_id == image.id) %>
     名前:<%= image.name %>
     <%= image_tag(image.image_url(variant_type: "icons")) %>
   <% end %>
@@ -17,7 +17,7 @@
   画像はありません
   <% end %>
 
-  <%= form.radio_button :icon_uuid, "00000", checked: (@current_account.icon_id.blank?) %>
+  <%= form.radio_button :icon_aid, "00000", checked: (@current_account.icon_id.blank?) %>
   アイコン無し
 
   <br />

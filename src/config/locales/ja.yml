@@ -40,9 +40,6 @@ ja:
         generated_at: "生成日時"
     enums:
       capture:
-        status:
-          waiting: "未撮影"
-          done: "撮影済み"
         visibility:
           public: "全世界に公開"
           followers_only: "フォロワーのみ"
