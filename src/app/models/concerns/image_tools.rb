@@ -115,7 +115,7 @@ module ImageTools
     self.update(original_key_column.to_sym => "")
   end
 
-  def varidate_image(column_name: "image", required: true, max_size_mb: 30, max_width: 2000, max_height: 2000)
+  def varidate_image(column_name: "image", required: true, max_size_mb: 30, max_width: 4096, max_height: 4096)
     file = self.send(column_name)
     if file
       begin
@@ -135,7 +135,7 @@ module ImageTools
 
         # ピクセルサイズチェック
         if image.width > max_width || image.height > max_height
-          errors.add(column_name.to_sym, "画像サイズが大きすぎます（最大 #{max_width}x#{max_height}px）")
+          errors.add(column_name.to_sym, "画像サイズが大きすぎます（最大 #{max_width}px x #{max_height}px）")
         end
 
       rescue MiniMagick::Invalid

@@ -6,7 +6,7 @@ class PagesController < ApplicationController
       .where(visibility: :public, deleted: false)
       .limit(30)
       .order(captured_at: :desc)
-      .includes(sender: :icon, receiver: :icon)
+      .includes(:front_photo, :back_photo, sender: :icon, receiver: :icon)
   end
 
   def terms_of_service

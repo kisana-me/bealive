@@ -25,8 +25,11 @@ ja:
         password_confirmation: "パスワード(確認)"
         status: "ステータス"
       capture:
+        front_photo: "正面写真"
+        back_photo: "背面写真"
         visibility: "公開範囲"
-        comment: "コメント"
+        sender_comment: "送信者コメント"
+        receiver_comment: "受信者コメント"
       comment:
       entry:
       follow:
@@ -57,6 +60,7 @@ ja:
           unpaid: "未払い"
     errors:
       messages:
+        record_invalid: "バリデーションに失敗しました: %{errors}"
         # default
         blank: "を入力してください"
         too_short: "は%{count}文字以上で入力してください"

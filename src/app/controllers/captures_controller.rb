@@ -1,5 +1,5 @@
 class CapturesController < ApplicationController
-  before_action :require_signin, except: %i[ show edit update destroy ]
+  before_action :require_signin, except: %i[ show edit capture post_capture update destroy ]
   before_action :set_capture, only: %i[ show edit update capture post_capture ]
   before_action :set_correct_capture, only: %i[ destroy ]
 
@@ -10,18 +10,18 @@ class CapturesController < ApplicationController
       .where(visibility: [:following_only, :public])
       .order(captured_at: :desc)
       .limit(30)
-      .includes(sender: :icon, receiver: :icon)
+      .includes(:front_photo, :back_photo, sender: :icon, receiver: :icon)
 
     @sender_captures = Capture
       .where(sender: @current_account, deleted: false)
       .order(captured_at: :desc)
       .limit(30)
-      .includes(sender: :icon, receiver: :icon)
+      .includes(:front_photo, :back_photo, sender: :icon, receiver: :icon)
     @receiver_captures = Capture
       .where(receiver: @current_account, deleted: false)
       .order(captured_at: :desc)
       .limit(30)
-      .includes(sender: :icon, receiver: :icon)
+      .includes(:front_photo, :back_photo, sender: :icon, receiver: :icon)
   end
 
   def show
@@ -48,9 +48,8 @@ class CapturesController < ApplicationController
       return render :new, status: :unprocessable_entity
     end
 
-    @capture = Capture.new
+    @capture = Capture.new(sender_comment: params[:capture][:sender_comment])
     @capture.sender = @current_account
-    @capture.status = "waiting"
     if @capture.save
       redirect_to capture_url(@capture.aid), notice: "作成しました"
     else
@@ -75,16 +74,19 @@ class CapturesController < ApplicationController
     if !@capture.captured_at.nil?
       redirect_to capture_path(@capture.aid), alert: "撮影済み"
     end
+    @capture.build_front_photo
+    @capture.build_back_photo
   end
 
   def post_capture
     if !@capture.captured_at.nil?
       redirect_to capture_path(@capture.aid), alert: "撮影済み"
     end
+    @capture.assign_attributes(capture_params)
     @capture.captured_at = Time.current
     @capture.receiver = @current_account if @current_account
-    @capture.upload = true
-    if @capture.update(capture_params)
+    @capture.upload_photo = true
+    if @capture.save
       # 通知
       unless @current_account
         session[:captured] ||= []
@@ -126,12 +128,13 @@ class CapturesController < ApplicationController
 
   def capture_params
     params.require(:capture).permit(
-      :front_image,
-      :back_image,
-      :comment,
+      :sender_comment,
+      :receiver_comment,
       :latitude,
       :longitude,
-      :visibility
+      :visibility,
+      front_photo_attributes: [:image],
+      back_photo_attributes: [:image]
     )
   end
 

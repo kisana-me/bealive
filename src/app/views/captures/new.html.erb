@@ -3,17 +3,12 @@
 <h1>リクエストする</h1>
 
 <%= form_with(model: @capture) do |form| %>
-  <% if @capture.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(@capture.errors.count, "error") %> つ問題があります。</h2>
+  <%= render "shared/error_messages", instead: @capture %>
 
-      <ul>
-        <% @capture.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <div>
+    <%= form.label :sender_comment, style: "display: block" %>
+    <%= form.text_field :sender_comment %>
+  </div>
 
   <div>
     <%= form.submit "作成" %>

@@ -1,9 +1,9 @@
 class Image < ApplicationRecord
-  belongs_to :account
+  belongs_to :account, optional: true
   attribute :meta, :json, default: {}
   enum :status, { normal: 0, locked: 1 }
 
-  before_create :set_aid
+  after_initialize :set_aid, if: :new_record? # before_create :set_aidだと画像のpathにaidを入れられない
   before_save :image_upload
   attr_accessor :image
 
@@ -13,6 +13,7 @@ class Image < ApplicationRecord
     if self.original_key.present?
       unless self.variants.include?(variant_type)
         process_image(variant_type: variant_type)
+        self.save
       end
       return signed_object_url(key: "/variants/#{variant_type}/images/#{self.aid}.webp")
     else
@@ -40,6 +41,6 @@ class Image < ApplicationRecord
   end
 
   def image_varidation
-    varidate_image()
+    varidate_image() if self.original_key.blank?
   end
 end

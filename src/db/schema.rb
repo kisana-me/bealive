@@ -66,14 +66,11 @@ ActiveRecord::Schema[8.0].define(version: 10) do
     t.bigint "receiver_id"
     t.bigint "sender_capture_id"
     t.bigint "group_id"
-    t.string "front_original_key", default: "", null: false
-    t.string "front_variants", default: "", null: false
-    t.string "back_original_key", default: "", null: false
-    t.string "back_variants", default: "", null: false
     t.boolean "reversed", default: false, null: false
     t.decimal "latitude", precision: 10
     t.decimal "longitude", precision: 10
-    t.string "comment", default: "", null: false
+    t.string "sender_comment", default: "", null: false
+    t.string "receiver_comment", default: "", null: false
     t.datetime "captured_at"
     t.integer "visibility", limit: 1, default: 0, null: false
     t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
@@ -81,7 +78,11 @@ ActiveRecord::Schema[8.0].define(version: 10) do
     t.boolean "deleted", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "front_photo_id"
+    t.bigint "back_photo_id"
     t.index ["aid"], name: "index_captures_on_aid", unique: true
+    t.index ["back_photo_id"], name: "fk_rails_90dfb2f6eb"
+    t.index ["front_photo_id"], name: "fk_rails_5e6647f5e3"
     t.index ["group_id"], name: "index_captures_on_group_id"
     t.index ["receiver_id"], name: "fk_rails_436bbf3df3"
     t.index ["sender_capture_id"], name: "fk_rails_77f92f8bd1"
@@ -184,6 +185,8 @@ ActiveRecord::Schema[8.0].define(version: 10) do
   add_foreign_key "captures", "accounts", column: "sender_id"
   add_foreign_key "captures", "captures", column: "sender_capture_id"
   add_foreign_key "captures", "groups"
+  add_foreign_key "captures", "images", column: "back_photo_id"
+  add_foreign_key "captures", "images", column: "front_photo_id"
   add_foreign_key "comments", "accounts"
   add_foreign_key "comments", "captures"
   add_foreign_key "entries", "accounts"

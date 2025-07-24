@@ -14,9 +14,9 @@ class SignupController < ApplicationController
       session.delete(:pending_oauth_id)
       session.delete(:pending_oauth_info)
       sign_in(@account)
-      account.update(
-        anyur_access_token: access_token,
-        anyur_refresh_token: refresh_token
+      @account.update(
+        anyur_access_token: session[:anyur_access_token],
+        anyur_refresh_token: session[:anyur_refresh_token]
       )
       session.delete(:anyur_access_token)
       session.delete(:anyur_refresh_token)

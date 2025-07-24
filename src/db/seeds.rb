@@ -17,14 +17,20 @@ Account.create!(
   )
   capture.update!(
     receiver: Account.first,
-    front_image: ActionDispatch::Http::UploadedFile.new(
-      filename: "front_image_#{num}",
-      type: "image/png",
-      tempfile: File.open(Rails.root.join("db", "seed_images", "#{num}-f.webp"))),
-    back_image: ActionDispatch::Http::UploadedFile.new(
-      filename: "back_image_#{num}",
-      type: "image/png",
-      tempfile: File.open(Rails.root.join("db", "seed_images", "#{num}-b.webp"))),
+    front_photo_attributes: {
+      image: ActionDispatch::Http::UploadedFile.new(
+        filename: "front_image_#{num}.webp",
+        type: "image/png",
+        tempfile: File.open(Rails.root.join("db", "seed_images", "#{num}-f.webp"))
+      )
+    },
+    back_photo_attributes: {
+      image: ActionDispatch::Http::UploadedFile.new(
+        filename: "back_image_#{num}.webp",
+        type: "image/png",
+        tempfile: File.open(Rails.root.join("db", "seed_images", "#{num}-b.webp"))
+      )
+    },
     captured_at: Time.zone.local(2025, 6, 8, 15, 0) + num.minutes
   )
 end

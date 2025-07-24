@@ -1,7 +1,7 @@
 <div class="captures">
   <% captures.each do |capture| %>
     <div class="capture-wrap">
-      <%= link_to capture_path(capture.aid), data: {turbo_prefetch: false} do %>
+      <%= link_to capture_path(capture.aid) do %>
         <div class="capture">
           <div class="capture-person">
             <% if capture.receiver %>
@@ -14,16 +14,13 @@
           </div>
           <div class="capture-image">
             <% if !capture.captured_at.nil? %>
-              <%= image_tag capture.front_image_url, class: "front-image" %>
-              <%= image_tag capture.back_image_url, class: "back-image" %>
+              <%= image_tag capture.front_photo_image_url, class: "front-image" %>
+              <%= image_tag capture.back_photo_image_url, class: "back-image" %>
             <% else %>
               <div class="capture-image-dummy">
                 リンクを共有して撮ってもらおう！
               </div>
             <% end %>
-          </div>
-          <div class="capture-comment">
-            <p><%= capture.comment %></p>
           </div>
           <div class="capture-info">
             <% if capture.captured_at %>
