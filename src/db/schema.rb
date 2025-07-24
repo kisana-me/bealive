@@ -64,7 +64,7 @@ ActiveRecord::Schema[8.0].define(version: 10) do
     t.string "aid", limit: 14, null: false
     t.bigint "sender_id", null: false
     t.bigint "receiver_id"
-    t.bigint "sender_capture_id"
+    t.bigint "parent_capture_id"
     t.bigint "group_id"
     t.boolean "reversed", default: false, null: false
     t.decimal "latitude", precision: 10
@@ -84,8 +84,8 @@ ActiveRecord::Schema[8.0].define(version: 10) do
     t.index ["back_photo_id"], name: "fk_rails_90dfb2f6eb"
     t.index ["front_photo_id"], name: "fk_rails_5e6647f5e3"
     t.index ["group_id"], name: "index_captures_on_group_id"
+    t.index ["parent_capture_id"], name: "fk_rails_7fab272310"
     t.index ["receiver_id"], name: "fk_rails_436bbf3df3"
-    t.index ["sender_capture_id"], name: "fk_rails_77f92f8bd1"
     t.index ["sender_id"], name: "fk_rails_ce2cf603f1"
     t.check_constraint "json_valid(`meta`)", name: "meta"
   end
@@ -183,7 +183,7 @@ ActiveRecord::Schema[8.0].define(version: 10) do
   add_foreign_key "activity_logs", "accounts"
   add_foreign_key "captures", "accounts", column: "receiver_id"
   add_foreign_key "captures", "accounts", column: "sender_id"
-  add_foreign_key "captures", "captures", column: "sender_capture_id"
+  add_foreign_key "captures", "captures", column: "parent_capture_id"
   add_foreign_key "captures", "groups"
   add_foreign_key "captures", "images", column: "back_photo_id"
   add_foreign_key "captures", "images", column: "front_photo_id"

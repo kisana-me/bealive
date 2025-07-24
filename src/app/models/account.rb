@@ -36,6 +36,9 @@ class Account < ApplicationRecord
 
   BASE_64_URL_REGEX  = /\A[a-zA-Z0-9_-]*\z/
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
+  validates :anyur_id,
+    allow_nil: true,
+    uniqueness: { case_sensitive: false }
   validates :name,
     presence: true,
     length: { in: 1..50, allow_blank: true }
@@ -43,7 +46,7 @@ class Account < ApplicationRecord
     presence: true,
     length: { in: 5..50, allow_blank: true },
     format: { with: BASE_64_URL_REGEX, allow_blank: true },
-    uniqueness: { case_sensitive: false }
+    uniqueness: { case_sensitive: false, allow_blank: true }
   validates :email,
     length: { maximum: 255, allow_blank: true },
     format: { with: VALID_EMAIL_REGEX, allow_blank: true },
@@ -91,6 +94,17 @@ class Account < ApplicationRecord
     else
       return "/statics/images/bealive-logo.png"
     end
+  end
+
+  def subscription_plan
+    status = meta.dig("subscription", "subscription_status")
+    return :basic unless %w[active trialing].include?(status)
+    
+    period_end = meta.dig("subscription", "current_period_end")&.to_time
+    return :expired unless period_end && period_end > Time.current
+
+    plan = meta.dig("subscription", "plan")
+    plan&.to_sym || :unknown
   end
 
   private

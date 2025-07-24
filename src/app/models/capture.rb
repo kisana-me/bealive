@@ -23,14 +23,12 @@ class Capture < ApplicationRecord
   validates :receiver_comment, length: { in: 1..255, allow_blank: true }
   validates :front_photo, :back_photo, presence: true, if: :upload_photo
 
-  delegate :image_url, to: :front_photo, prefix: true, allow_nil: true
-  delegate :image_url, to: :back_photo, prefix: true, allow_nil: true
-
   def front_photo_url()
     self.front_photo&.image_url(variant_type: "bealive_capture") || "/statics/images/bealive-1.png"
   end
 
   def back_photo_url()
+    self.back_photo&.image_url(variant_type: "bealive_capture") || "/statics/images/bealive-1.png"
   end
 
   private

@@ -22,8 +22,8 @@
 </div>
 <div class="capture-image" style="width: 100%;">
   <% if !@capture.captured_at.nil? %>
-    <%= image_tag @capture.front_photo_image_url, class: "front-image", style: "width: 100%;" %>
-    <%= image_tag @capture.back_photo_image_url, class: "back-image", style: "width: 28%;" %>
+    <%= image_tag @capture.front_photo_url, class: "front-image", style: "width: 100%;" %>
+    <%= image_tag @capture.back_photo_url, class: "back-image", style: "width: 28%;" %>
   <% else %>
     <div class="capture-image-dummy">
       このリンクを共有して撮ってもらおう！

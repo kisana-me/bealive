@@ -32,6 +32,10 @@
 
 <br />
 <br />
+現在のサブスクリプション:
+<%= I18n.t("general.subscription.status.#{@current_account.subscription_plan}") %>
+<br />
+<br />
 <%= button_to "ANYURから最新の情報を取得", oauth_path, method: :post, data: { turbo: false }, class: "pages-link-button" %>
 <br />
 <br />

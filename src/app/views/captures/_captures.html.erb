@@ -14,8 +14,8 @@
           </div>
           <div class="capture-image">
             <% if !capture.captured_at.nil? %>
-              <%= image_tag capture.front_photo_image_url, class: "front-image" %>
-              <%= image_tag capture.back_photo_image_url, class: "back-image" %>
+              <%= image_tag capture.front_photo_url, class: "front-image" %>
+              <%= image_tag capture.back_photo_url, class: "back-image" %>
             <% else %>
               <div class="capture-image-dummy">
                 リンクを共有して撮ってもらおう！
