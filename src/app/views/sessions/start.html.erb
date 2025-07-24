@@ -3,8 +3,4 @@
 <h1>はじめる</h1>
 <p>ここでサインイン・サインアップができます。</p>
 
-<%= form_with url: "/sessions/oauth", method: :post, data: { turbo: false } do %>
-  <div class="custom-button">
-    <%= submit_tag "ANYURで続ける", class: "" %>
-  </div>
-<% end %>
+<%= button_to "ANYUR続行", oauth_path, method: :post, data: { turbo: false }, class: "pages-link-button" %>

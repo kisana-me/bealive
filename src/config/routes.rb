@@ -24,14 +24,16 @@ Rails.application.routes.draw do
 
   # sessions
   get "sessions/start"
-  post "sessions/oauth"
-  get "sessions/callback"
   delete "signout" => "sessions#signout"
   resources :sessions, except: [:new, :create]
 
   # signup
   get "signup" => "signup#new"
   post "signup" => "signup#create"
+
+  # OAuth
+  post "oauth" => "oauth#start"
+  get "callback" => "oauth#callback"
 
   # settings
   get "settings" => "settings#index"
