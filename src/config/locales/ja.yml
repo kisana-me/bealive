@@ -85,9 +85,10 @@ ja:
         created_at: "作成日時"
         updated_at: "更新日時"
       image:
+        image: "画像"
         aid: "固有ID"
         name: "名前"
-        original_key: "オリジナルキー"
+        original_ext: "オリジナル拡張子"
         variants: "バリアント"
         meta: "メタデータ"
         status: "ステータス"
@@ -123,6 +124,11 @@ ja:
         singin_locked: "サインインがロックされています、お問い合わせください"
         wrong_password: "パスワードが間違っています"
         failed_captcha: "CAPTCHAの認証に失敗しました"
+        image_blank: "がありません"
+        image_invalid: "は無効です"
+        image_invalid_format: "は未対応の形式です(png, jpeg, gif, webpのみ対応)"
+        image_too_large: "の容量が大きすぎます(最大 %{max_size_mb} MB)"
+        image_dimensions_exceeded: "の解像度が大きすぎます(最大 %{max_width}px × %{max_height}px)"
   general:
     subscription:
       status:

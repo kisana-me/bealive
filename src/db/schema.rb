@@ -149,8 +149,8 @@ ActiveRecord::Schema[8.0].define(version: 9) do
     t.bigint "account_id"
     t.string "aid", null: false
     t.string "name", default: "", null: false
-    t.string "original_key", default: "", null: false
-    t.string "variants", default: "", null: false
+    t.string "original_ext", default: "", null: false
+    t.text "variants", size: :long, default: "[]", null: false, collation: "utf8mb4_bin"
     t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
     t.integer "status", limit: 1, default: 0, null: false
     t.boolean "deleted", default: false, null: false
@@ -159,6 +159,7 @@ ActiveRecord::Schema[8.0].define(version: 9) do
     t.index ["account_id"], name: "index_images_on_account_id"
     t.index ["aid"], name: "index_images_on_aid", unique: true
     t.check_constraint "json_valid(`meta`)", name: "meta"
+    t.check_constraint "json_valid(`variants`)", name: "variants"
   end
 
   create_table "sessions", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|

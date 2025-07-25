@@ -1,40 +1,38 @@
 class Image < ApplicationRecord
   belongs_to :account, optional: true
+  attribute :variants, :json, default: []
   attribute :meta, :json, default: {}
   enum :status, { normal: 0, locked: 1 }
 
   after_initialize :set_aid, if: :new_record? # before_create :set_aidだと画像のpathにaidを入れられない
-  before_save :image_upload
+  before_create :image_upload
   attr_accessor :image
 
   validate :image_varidation
 
   def image_url(variant_type: "images")
-    return "/statics/images/bealive-logo.png" unless self.original_key.present?
-    unless self.variants.include?(variant_type)
+    unless variants.include?(variant_type)
+      return "/statics/images/bealive-logo.png" unless self.original_ext.present?
       process_image(variant_type: variant_type)
       self.save
     end
-    return signed_object_url(key: "/variants/#{variant_type}/images/#{self.aid}.webp")
+    return signed_object_url(key: "/images/variants/#{variant_type}/#{self.aid}.webp")
   end
 
   private
 
   def image_upload
-    return unless image
-    delete_image() if self.original_key.present?
-
     extension = image.original_filename.split(".").last.downcase
-    key = "/images/#{self.aid}.#{extension}"
-    self.original_key = key
+    self.original_ext = extension
     s3_upload(
-      key: key,
+      key: "/images/#{self.aid}.#{extension}",
       file: self.image.path,
       content_type: self.image.content_type
     )
   end
 
   def image_varidation
-    varidate_image(required: false)
+    return unless new_record?
+    varidate_image(required: true)
   end
 end
