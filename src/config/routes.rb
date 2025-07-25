@@ -58,7 +58,5 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   # errors
-  get "*not_found", to: "application#routing_error"
-  post "*not_found", to: "application#routing_error"
-
+  match "*path", to: "application#routing_error", via: :all
 end

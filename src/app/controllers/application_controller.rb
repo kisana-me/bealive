@@ -1,29 +1,17 @@
 class ApplicationController < ActionController::Base
+  include ErrorsManagement
   include SessionManagement
+
   before_action :current_account
   before_action :set_current_attributes
 
-  unless Rails.env.development?
-    rescue_from Exception,                      with: :render_500
-    rescue_from ActiveRecord::RecordNotFound,   with: :render_404
-    rescue_from ActionController::RoutingError, with: :render_404
-  end
+  helper_method :admin?
 
   def routing_error
     raise ActionController::RoutingError, params[:path]
   end
 
   private
-
-  # render or redirect_to
-
-  def render_404
-    render "errors/404", status: :not_found
-  end
-
-  def render_500
-    render "errors/500", status: :internal_server_error
-  end
 
   def require_signin
     unless @current_account
@@ -44,7 +32,9 @@ class ApplicationController < ActionController::Base
     return render_404
   end
 
-  # general methods
+  def admin?
+    @current_account&.meta["roles"]&.include?("admin")
+  end
 
   def store_location
     session[:forwarding_url] = request.original_url if request.get?
