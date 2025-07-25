@@ -26,7 +26,7 @@ class Image < ApplicationRecord
     extension = image.original_filename.split(".").last.downcase
     self.original_ext = extension
     s3_upload(
-      key: "/images/#{self.aid}.#{extension}",
+      key: "/images/originals/#{self.aid}.#{extension}",
       file: self.image.path,
       content_type: self.image.content_type
     )

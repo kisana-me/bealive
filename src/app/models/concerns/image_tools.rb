@@ -1,7 +1,7 @@
 module ImageTools
   # ver 1.0.0
   # images/variants/[variant_type]/[aid].[ext]
-  # images/original/[aid].[ext]
+  # images/originals/[aid].[ext]
   # original_ext(string)とvariants(json)が必要
 
   include S3Tools
@@ -18,7 +18,7 @@ module ImageTools
     if original_image_path.blank?
       downloaded_image = Tempfile.new(["downloaded_image"])
       original_image_path = downloaded_image.path
-      s3_download(key: "/images/#{self.aid}.#{self.send(original_ext_column)}", response_target: original_image_path)
+      s3_download(key: "/images/originals/#{self.aid}.#{self.send(original_ext_column)}", response_target: original_image_path)
     end
     converted_image = Tempfile.new(["converted_image"])
     resize = "2048x2048>"
