@@ -14,17 +14,16 @@ class ApplicationController < ActionController::Base
   private
 
   def require_signin
-    unless @current_account
-      flash[:alert] = "サインインしてください"
-      redirect_to root_path
-    end
+    return if @current_account
+    store_location
+    flash[:alert] = "サインインしてください"
+    redirect_to root_path
   end
 
   def require_signout
-    unless !@current_account
-      flash[:alert] = "サインイン済みです"
-      redirect_to root_path
-    end
+    return unless @current_account
+    flash[:alert] = "サインイン済みです"
+    redirect_to root_path
   end
 
   def require_admin
@@ -39,20 +38,8 @@ class ApplicationController < ActionController::Base
     session[:forwarding_url] = request.original_url if request.get?
   end
 
-  def redirect_back_or(default: root_path)
-    redirect_to(session[:forwarding_url] || default)
-    session.delete(:forwarding_url)
-  end
-
-  def generate_random_problem
-    num1 = rand(100)
-    num2 = rand(1..10)
-    operator = %w[+ - * /].sample
-    if operator == "/"
-      num1 = num1 - (num1 % num2)
-    end
-    problem = "#{num1} #{operator} #{num2}"
-    [problem, eval(problem)]
+  def redirect_back_or(default = root_path)
+    redirect_to(session.delete(:forwarding_url) || default)
   end
 
   def set_current_attributes
