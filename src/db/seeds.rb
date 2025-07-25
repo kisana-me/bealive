@@ -5,7 +5,7 @@ Account.create!(
   name_id: "kisana",
   email: "kisana@kisana.me",
   email_verified: true,
-  roles: "admin"
+  meta: { roles: "admin" }
 )
 
 30.times do |index|

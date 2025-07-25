@@ -28,8 +28,7 @@ class ApplicationController < ActionController::Base
   end
 
   def require_admin
-    return if @current_account.roles.include?("admin")
-    return render_404
+    render_404 unless admin?
   end
 
   def admin?

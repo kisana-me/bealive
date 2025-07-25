@@ -22,7 +22,6 @@ ja:
         birth: "誕生日"
         email: "メールアドレス"
         email_verified: "検証済みのメールアドレスかどうか"
-        roles: "ロール"
         password: "パスワード"
         password_confirmation: "パスワード(確認)"
         meta: "メタデータ"

@@ -22,7 +22,6 @@ ActiveRecord::Schema[8.0].define(version: 10) do
     t.datetime "birth"
     t.string "email", default: "", null: false
     t.boolean "email_verified", default: false, null: false
-    t.string "roles", default: "", null: false
     t.string "password_digest", default: "", null: false
     t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
     t.integer "status", limit: 1, default: 0, null: false
