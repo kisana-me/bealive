@@ -14,7 +14,7 @@
         <% # follows_withdraw_path は name_id をパラメータとして受け取る %>
         <%= button_to "リクエストキャンセル", follows_withdraw_path, method: :delete,
                       params: { name_id: follow_request.followed.name_id },
-                      class: "btn btn-warning", data: { confirm: "本当にリクエストをキャンセルしますか？" } %>
+                      class: "btn btn-warning" %>
       </li>
     <% end %>
   </ul>
@@ -38,7 +38,7 @@
           <% # follows_withdraw_path は name_id をパラメータとして受け取る %>
           <%= button_to "フォロー解除", follows_withdraw_path, method: :delete,
                         params: { name_id: followed.name_id },
-                        class: "btn btn-danger", data: { confirm: "本当にフォロー解除しますか？" } %>
+                        class: "btn btn-danger" %>
         <% end %>
       </li>
     <% end %>

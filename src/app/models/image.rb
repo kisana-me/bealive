@@ -22,6 +22,7 @@ class Image < ApplicationRecord
   private
 
   def image_upload
+    self.name = image.original_filename.split(".").first if self.name.blank?
     extension = image.original_filename.split(".").last.downcase
     self.original_ext = extension
     s3_upload(

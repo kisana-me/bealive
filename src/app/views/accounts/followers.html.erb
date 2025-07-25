@@ -14,7 +14,7 @@
         <%= button_to "承認", follows_accept_path, method: :patch, params: { name_id: follow_request.follower.name_id }, class: "btn btn-success" %>
 
         <% # フォローリクエストの拒否ボタン %>
-        <%= button_to "拒否", follows_decline_path, method: :delete, params: { name_id: follow_request.follower.name_id }, class: "btn btn-danger", data: { confirm: "本当に拒否しますか？" } %>
+        <%= button_to "拒否", follows_decline_path, method: :delete, params: { name_id: follow_request.follower.name_id }, class: "btn btn-danger" %>
       </li>
     <% end %>
   </ul>
@@ -32,6 +32,7 @@
         <%= link_to follower.name, account_path(follower.name_id) %>
         (<%= follower.name_id %>)
         <% # ログインユーザーが@accountのフォロワーの場合、ここで「フォロー中」などを表示しても良い %>
+        <%= button_to "拒否", follows_decline_path, method: :delete, params: { name_id: follower.name_id }, class: "btn btn-danger" %>
       </li>
     <% end %>
   </ul>

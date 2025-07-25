@@ -4,7 +4,14 @@ class SessionsController < ApplicationController
   before_action :set_session, only: %i[ show edit update destroy ]
 
   def start
-    #「続ける」
+  end
+
+  def signout
+    if sign_out
+      redirect_to root_path, notice: "サインアウトしました"
+    else
+      redirect_to root_path, alert: "サインアウトできませんでした"
+    end
   end
 
   # 以下サインイン済み #
@@ -30,14 +37,6 @@ class SessionsController < ApplicationController
   def destroy
     @session.update(deleted: true)
     redirect_to sessions_path, notice: "セッションを削除しました"
-  end
-
-  def signout
-    if sign_out
-      redirect_to root_path, notice: "サインアウトしました"
-    else
-      redirect_to root_path, alert: "サインアウトできませんでした"
-    end
   end
 
   private

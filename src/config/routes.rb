@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
+  root "pages#index"
 
   # pages
-  root "pages#index"
   get "terms-of-service" => "pages#terms_of_service"
   get "privacy-policy" => "pages#privacy_policy"
   get "contact" => "pages#contact"
@@ -25,7 +25,7 @@ Rails.application.routes.draw do
   # sessions
   get "sessions/start"
   delete "signout" => "sessions#signout"
-  resources :sessions, except: [:new, :create]
+  resources :sessions, except: [:new, :create], param: :aid
 
   # signup
   get "signup" => "signup#new"
@@ -42,6 +42,7 @@ Rails.application.routes.draw do
   patch "settings/account" => "settings#post_account"
   delete "settings/leave" => "settings#leave"
 
+  # captures
   resources :captures do
     member do
       get "capture"
@@ -49,8 +50,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :images
-
+  resources :images, only: [:new, :create], param: :aid
   # resources :groups
   # resources :comments
 

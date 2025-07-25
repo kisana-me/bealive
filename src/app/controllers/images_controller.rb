@@ -20,7 +20,7 @@ class ImagesController < ApplicationController
     if @image.save
       redirect_to root_path, notice: "作成しました"
     else
-      flash.now[:alert] = "間違っています"
+      flash.now[:alert] = "作成できませんでした"
       render :new
     end
   end

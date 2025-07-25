@@ -1,96 +1,65 @@
 class FollowsController < ApplicationController
   before_action :require_signin
+  before_action :set_account
 
   def frequest
-    @account = Account.find_by(
-      name_id: params[:name_id],
-      status: 0,
-      deleted: false
-    )
-
-    unless @account
-      return redirect_to accounts_path, alert: "指定されたアカウントは見つかりませんでした"
-    end
-
-    if @current_account == @account
-      redirect_to @account, alert: "自分自身をフォローすることはできません"
-      return
-    end
-
+    return redirect_to account_path(@account.name_id), alert: "自分自身はフォローできません" if @current_account == @account
     @follow = @current_account.active_follows.build(followed_id: @account.id)
 
     if @follow.save
       # フォロー成功時の処理（通知など）
-      flash[:notice] = "#{@account.name}さんにフォローリクエストしました"
+      flash[:notice] = "フォロー(リクエスト)しました"
       redirect_to account_path(@account.name_id)
     else
-      flash[:alert] = @follow.errors.full_messages.to_sentence
+      flash[:alert] = "フォロー(リクエスト)できませんでした"
       redirect_to account_path(@account.name_id)
     end
   end
 
   def withdraw
-    @account = Account.find_by(
-      name_id: params[:name_id],
-      status: 0,
-      deleted: false
-    )
-
     @follow = @current_account.active_follows.find_by(followed_id: @account.id)
+    return redirect_to account_path(@account.name_id), alert: "対象のフォローが見つかりません" unless @follow
 
-    unless @account && @follow
-      return redirect_to accounts_path, alert: "指定されたアカウントまたはフォローは見つかりませんでした"
-    end
-
-    if @follow
-      @follow.destroy
-      flash[:notice] = "#{@account.name}さんのフォローを解除しました"
-      redirect_to account_path(@account.name_id)
+    if @follow.destroy
+      flash[:notice] = "フォロー(リクエスト)を解除しました"
     else
-      flash[:alert] = "フォローしていません"
-      redirect_to account_path(@account.name_id)
+      flash[:alert] = "フォロー(リクエスト)を解除できませんでした"
     end
+    redirect_to account_path(@account.name_id)
   end
 
   def accept
-    @account = Account.find_by(
-      name_id: params[:name_id],
-      status: 0,
-      deleted: false
-    )
     @follow_request = Follow.find_by(followed: @current_account, follower: @account, accepted: false)
-
-    unless @follow_request
-      redirect_to root_path, alert: "対象が見つかりませんでした"
-      return
-    end
+    return redirect_to account_path(@account.name_id), alert: "対象のフォローリクエストが見つかりません" unless @follow_request
 
     if @follow_request.update(accepted: true)
-      flash[:notice] = "#{@follow_request.follower.name}さんのフォローを承認しました"
+      flash[:notice] = "フォローリクエストを承認しました"
     else
-      flash[:alert] = @follow_request.errors.full_messages.to_sentence
+      flash[:alert] = "フォローリクエストを承認できませんでした"
     end
-    redirect_to followers_account_path(@account.name_id)
+    redirect_to followers_account_path(@current_account.name_id)
   end
 
   def decline
+    @follow = Follow.find_by(followed: @current_account, follower: @account)
+    return redirect_to account_path(@account.name_id), alert: "対象のフォロー(リクエスト)が見つかりません" unless @follow
+
+    if @follow.destroy
+      flash[:notice] = "フォロー(リクエスト)を却下しました"
+    else
+      flash[:alert] = "フォロー(リクエスト)を却下できませんでした"
+    end
+    redirect_to followers_account_path(@current_account.name_id)
+  end
+
+  private
+
+  def set_account
     @account = Account.find_by(
       name_id: params[:name_id],
       status: 0,
       deleted: false
     )
-    @follow_request = Follow.find_by(followed: @current_account, follower: @account)
-
-    unless @follow_request
-      redirect_to root_path, alert: "対象が見つかりませんでした"
-      return
-    end
-
-    if @follow_request.destroy
-      flash[:notice] = "#{@follow_request.follower.name}さんのフォローを拒否しました"
-    else
-      flash[:alert] = @follow_request.errors.full_messages.to_sentence
-    end
-    redirect_to followers_account_path(@account.name_id)
+    return redirect_to account_path(params[:name_id]), alert: "対象のアカウントが見つかりません" unless @account
   end
 end
