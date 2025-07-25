@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 10) do
+ActiveRecord::Schema[8.0].define(version: 9) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.string "anyur_id"
     t.string "anyur_access_token", default: "", null: false
@@ -19,6 +19,7 @@ ActiveRecord::Schema[8.0].define(version: 10) do
     t.string "aid", limit: 14, null: false
     t.string "name", null: false
     t.string "name_id", null: false
+    t.bigint "icon_id"
     t.text "description", default: "", null: false
     t.datetime "birth"
     t.string "email", default: "", null: false
@@ -29,10 +30,9 @@ ActiveRecord::Schema[8.0].define(version: 10) do
     t.boolean "deleted", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "icon_id"
     t.index ["aid"], name: "index_accounts_on_aid", unique: true
     t.index ["anyur_id"], name: "index_accounts_on_anyur_id", unique: true
-    t.index ["icon_id"], name: "fk_rails_fc2285bd47"
+    t.index ["icon_id"], name: "index_accounts_on_icon_id"
     t.index ["name_id"], name: "index_accounts_on_name_id", unique: true
     t.check_constraint "json_valid(`meta`)", name: "meta"
   end
@@ -66,6 +66,8 @@ ActiveRecord::Schema[8.0].define(version: 10) do
     t.bigint "receiver_id"
     t.bigint "parent_capture_id"
     t.bigint "group_id"
+    t.bigint "front_photo_id"
+    t.bigint "back_photo_id"
     t.boolean "reversed", default: false, null: false
     t.decimal "latitude", precision: 10
     t.decimal "longitude", precision: 10
@@ -78,15 +80,13 @@ ActiveRecord::Schema[8.0].define(version: 10) do
     t.boolean "deleted", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "front_photo_id"
-    t.bigint "back_photo_id"
     t.index ["aid"], name: "index_captures_on_aid", unique: true
-    t.index ["back_photo_id"], name: "fk_rails_90dfb2f6eb"
-    t.index ["front_photo_id"], name: "fk_rails_5e6647f5e3"
+    t.index ["back_photo_id"], name: "index_captures_on_back_photo_id"
+    t.index ["front_photo_id"], name: "index_captures_on_front_photo_id"
     t.index ["group_id"], name: "index_captures_on_group_id"
-    t.index ["parent_capture_id"], name: "fk_rails_7fab272310"
-    t.index ["receiver_id"], name: "fk_rails_436bbf3df3"
-    t.index ["sender_id"], name: "fk_rails_ce2cf603f1"
+    t.index ["parent_capture_id"], name: "index_captures_on_parent_capture_id"
+    t.index ["receiver_id"], name: "index_captures_on_receiver_id"
+    t.index ["sender_id"], name: "index_captures_on_sender_id"
     t.check_constraint "json_valid(`meta`)", name: "meta"
   end
 
@@ -124,23 +124,24 @@ ActiveRecord::Schema[8.0].define(version: 10) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["followed_id", "follower_id"], name: "index_follows_on_followed_id_and_follower_id", unique: true
-    t.index ["follower_id"], name: "fk_rails_622d34a301"
+    t.index ["followed_id"], name: "index_follows_on_followed_id"
+    t.index ["follower_id"], name: "index_follows_on_follower_id"
   end
 
   create_table "groups", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.string "aid", null: false
     t.string "name", default: "", null: false
+    t.bigint "icon_id"
     t.text "description", default: "", null: false
     t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
     t.integer "status", limit: 1, default: 0, null: false
     t.boolean "deleted", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "icon_id"
     t.index ["account_id"], name: "index_groups_on_account_id"
     t.index ["aid"], name: "index_groups_on_aid", unique: true
-    t.index ["icon_id"], name: "fk_rails_79bcbd1e53"
+    t.index ["icon_id"], name: "index_groups_on_icon_id"
     t.check_constraint "json_valid(`meta`)", name: "meta"
   end
 

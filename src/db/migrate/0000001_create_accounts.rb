@@ -8,6 +8,7 @@ class CreateAccounts < ActiveRecord::Migration[8.0]
       t.string :aid, null: false, limit: 14
       t.string :name, null: false
       t.string :name_id, null: false
+      t.bigint :icon_id, null: true
       t.text :description, null: false, default: ""
       t.datetime :birth, null: true
       t.string :email, null: false, default: ""
