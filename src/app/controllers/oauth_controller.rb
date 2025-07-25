@@ -45,7 +45,8 @@ class OauthController < ApplicationController
       if @current_account == account # 同
         account.assign_attributes(
           anyur_access_token: token_data["access_token"],
-          anyur_refresh_token: token_data["refresh_token"]
+          anyur_refresh_token: token_data["refresh_token"],
+          anyur_token_fetched_at: Time.current
         )
         account.meta["subscription"] = resources.dig("data", "subscription")
         account.save!
@@ -56,7 +57,8 @@ class OauthController < ApplicationController
         @current_account.assign_attributes(
           anyur_id: resources.dig("data", "id"),
           anyur_access_token: token_data["access_token"],
-          anyur_refresh_token: token_data["refresh_token"]
+          anyur_refresh_token: token_data["refresh_token"],
+          anyur_token_fetched_at: Time.current
         )
         @current_account.meta["subscription"] = resources.dig("data", "subscription")
         @current_account.save!
@@ -67,7 +69,8 @@ class OauthController < ApplicationController
         sign_in(account)
         account.assign_attributes(
           anyur_access_token: token_data["access_token"],
-          anyur_refresh_token: token_data["refresh_token"]
+          anyur_refresh_token: token_data["refresh_token"],
+          anyur_token_fetched_at: Time.current
         )
         account.meta["subscription"] = resources.dig("data", "subscription")
         account.save!

@@ -4,6 +4,7 @@ class CreateAccounts < ActiveRecord::Migration[8.0]
       t.string :anyur_id, null: true
       t.string :anyur_access_token, null: false, default: ""
       t.string :anyur_refresh_token, null: false, default: ""
+      t.datetime :anyur_token_fetched_at, null: false, default: -> { "CURRENT_TIMESTAMP" }
       t.string :aid, null: false, limit: 14
       t.string :name, null: false
       t.string :name_id, null: false

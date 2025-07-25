@@ -15,6 +15,7 @@ ja:
         anyur_id: "ANYUR 固有ID"
         anyur_access_token: "ANYUR アクセストークン"
         anyur_refresh_token: "ANYUR リフレッシュトークン"
+        anyur_token_fetched_at: "ANYUR トークン取得日時"
         aid: "固有ID"
         name: "名前"
         name_id: "ID"

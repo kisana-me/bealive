@@ -15,6 +15,7 @@ ActiveRecord::Schema[8.0].define(version: 10) do
     t.string "anyur_id"
     t.string "anyur_access_token", default: "", null: false
     t.string "anyur_refresh_token", default: "", null: false
+    t.datetime "anyur_token_fetched_at", default: -> { "current_timestamp(6)" }, null: false
     t.string "aid", limit: 14, null: false
     t.string "name", null: false
     t.string "name_id", null: false
