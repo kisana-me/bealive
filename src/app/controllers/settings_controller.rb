@@ -1,4 +1,5 @@
 class SettingsController < ApplicationController
+  before_action :require_signin, except: %i[ leave ]
 
   def index
   end

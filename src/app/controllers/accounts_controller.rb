@@ -1,12 +1,6 @@
 class AccountsController < ApplicationController
 
   def index
-    @accounts = Account.where(
-      status: 0,
-      deleted: false
-    )
-    .order(id: :desc)
-    .limit(10)
   end
 
   def show

@@ -1,7 +1,6 @@
 class CapturesController < ApplicationController
-  before_action :require_signin, except: %i[ show edit capture post_capture update destroy ]
-  before_action :set_capture, only: %i[ show edit update capture post_capture ]
-  before_action :set_correct_capture, only: %i[ destroy ]
+  before_action :require_signin, only: %i[ index new create ]
+  before_action :set_capture, except: %i[ index new create ]
 
   def index
     followed_account_ids = @current_account.accepted_following.pluck(:id)
@@ -113,16 +112,6 @@ class CapturesController < ApplicationController
 
   def set_capture
     @capture = Capture.find_by(aid: params[:id], deleted: false)
-    return render_404 unless @capture
-  end
-
-  def set_correct_capture
-    @capture = Capture.find_by(aid: params[:id], deleted: false)
-    if @capture.sender == @current_account || @capture.receiver == @current_account
-      return @capture
-    else
-      @capture = nil
-    end
     return render_404 unless @capture
   end
 
