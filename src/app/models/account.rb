@@ -87,11 +87,7 @@ class Account < ApplicationRecord
   # === #
 
   def icon_url
-    if icon
-      icon.image_url(variant_type: "icons")
-    else
-      return "/statics/images/bealive-logo.png"
-    end
+    self.icon&.image_url(variant_type: "icons") || "/statics/images/bealive-logo.png"
   end
 
   def subscription_plan

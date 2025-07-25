@@ -10,37 +10,31 @@ class Image < ApplicationRecord
   validate :image_varidation
 
   def image_url(variant_type: "images")
-    if self.original_key.present?
-      unless self.variants.include?(variant_type)
-        process_image(variant_type: variant_type)
-        self.save
-      end
-      return signed_object_url(key: "/variants/#{variant_type}/images/#{self.aid}.webp")
-    else
-      return "/statics/images/bealive-logo.png"
+    return "/statics/images/bealive-logo.png" unless self.original_key.present?
+    unless self.variants.include?(variant_type)
+      process_image(variant_type: variant_type)
+      self.save
     end
+    return signed_object_url(key: "/variants/#{variant_type}/images/#{self.aid}.webp")
   end
 
   private
 
   def image_upload
-    if image
-      if self.original_key.present?
-        delete_variants()
-        s3_delete(key: self.original_key)
-      end
-      extension = image.original_filename.split(".").last.downcase
-      key = "/images/#{self.aid}.#{extension}"
-      self.original_key = key
-      s3_upload(
-        key: key,
-        file: self.image.path,
-        content_type: self.image.content_type
-      )
-    end
+    return unless image
+    delete_image() if self.original_key.present?
+
+    extension = image.original_filename.split(".").last.downcase
+    key = "/images/#{self.aid}.#{extension}"
+    self.original_key = key
+    s3_upload(
+      key: key,
+      file: self.image.path,
+      content_type: self.image.content_type
+    )
   end
 
   def image_varidation
-    varidate_image() if self.original_key.blank?
+    varidate_image(required: false)
   end
 end

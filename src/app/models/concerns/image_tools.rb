@@ -1,25 +1,27 @@
 module ImageTools
+  # ver 1.0.0
+
+  include S3Tools
 
   private
 
-  def process_image(variant_type: "images", image_type: "images", variants_column: "variants", original_key_column: "original_key", original_image_path: "")
+  def process_image(
+    variant_type: "images",
+    image_type: "images",
+    variants_column: "variants",
+    original_key_column: "original_key",
+    original_image_path: ""
+  )
     if self.send(variants_column).present?
       variants =JSON.parse(self.send(variants_column))
       if variants.include?(variant_type)
         return
       end
     end
-    s3 = Aws::S3::Client.new(
-      endpoint: ENV["S3_LOCAL_ENDPOINT"],
-      region: ENV["S3_REGION"],
-      access_key_id: ENV["S3_USERNAME"],
-      secret_access_key: ENV["S3_PASSWORD"],
-      force_path_style: true
-    )
     if original_image_path.blank?
       downloaded_image = Tempfile.new(["downloaded_image"])
       original_image_path = downloaded_image.path
-      s3.get_object(bucket: ENV["S3_BUCKET"], key: self.send(original_key_column), response_target: original_image_path)
+      s3_download(key: self.send(original_key_column), response_target: original_image_path)
     end
     converted_image = Tempfile.new(["converted_image"])
     resize = "2048x2048>"
@@ -95,13 +97,16 @@ module ImageTools
     key = "/variants/#{variant_type}/#{image_type}/#{self.aid}.webp"
     s3_upload(key: key, file: converted_image.path, content_type: "image/webp")
     add_mca_data(self, variants_column, [variant_type], false)
-    if downloaded_image
-      downloaded_image.close
-    end
+    downloaded_image.close if downloaded_image
     converted_image.close
   end
 
-  def delete_variants(variants_column: "variants", image_type: "images")
+
+
+  def delete_variants(
+    variants_column: "variants",
+    image_type: "images"
+  )
     arr = JSON.parse(self.send(variants_column))
     arr.each do |variant_type|
       s3_delete(key: "/variants/#{variant_type}/#{image_type}/#{self.aid}.webp")
@@ -109,41 +114,54 @@ module ImageTools
     remove_mca_data(self, variants_column, arr, false)
   end
 
-  def delete_image(original_key_column: "original_key", variants_column: "variants", image_type: "images")
+
+
+  def delete_image(
+    original_key_column: "original_key",
+    variants_column: "variants",
+    image_type: "images"
+  )
     delete_variants(variants_column: variants_column, image_type: image_type)
     s3_delete(key: self.send(original_key_column))
     self.update(original_key_column.to_sym => "")
   end
 
-  def varidate_image(column_name: "image", required: true, max_size_mb: 30, max_width: 4096, max_height: 4096)
+
+
+  def varidate_image(
+    column_name: "image",
+    required: true,
+    max_size_mb: 30,
+    max_width: 4096,
+    max_height: 4096
+  )
     file = self.send(column_name)
-    if file
-      begin
-        image = MiniMagick::Image.read(file)
+    unless file
+      errors.add(column_name.to_sym, "画像がありません") if required
+      return
+    end
+    begin
+      image = MiniMagick::Image.read(file)
 
-        # 拡張子チェック
-        allowed_content_types = ["image/png", "image/jpeg", "image/gif", "image/webp"]
-        unless allowed_content_types.include?(image.mime_type)
-          errors.add(column_name.to_sym, "未対応の形式です")
-        end
-
-        # 容量チェック（バイト単位）
-        size_in_mb = (file.size.to_f / 1024 / 1024).round(2)
-        if size_in_mb > max_size_mb
-          errors.add(column_name.to_sym, "容量が大きすぎます（最大 #{max_size_mb}MB）")
-        end
-
-        # ピクセルサイズチェック
-        if image.width > max_width || image.height > max_height
-          errors.add(column_name.to_sym, "画像サイズが大きすぎます（最大 #{max_width}px x #{max_height}px）")
-        end
-
-      rescue MiniMagick::Invalid
-        errors.add(column_name.to_sym, "無効な画像ファイルです")
+      # 拡張子チェック
+      allowed_content_types = ["image/png", "image/jpeg", "image/gif", "image/webp"]
+      unless allowed_content_types.include?(image.mime_type)
+        errors.add(column_name.to_sym, "未対応の形式です")
       end
-    elsif required
-      errors.add(column_name.to_sym, "画像がありません")
+
+      # 容量チェック（バイト単位）
+      size_in_mb = (file.size.to_f / 1024 / 1024).round(2)
+      if size_in_mb > max_size_mb
+        errors.add(column_name.to_sym, "容量が大きすぎます（最大 #{max_size_mb}MB）")
+      end
+
+      # ピクセルサイズチェック
+      if image.width > max_width || image.height > max_height
+        errors.add(column_name.to_sym, "画像サイズが大きすぎます（最大 #{max_width}px x #{max_height}px）")
+      end
+
+    rescue MiniMagick::Invalid
+      errors.add(column_name.to_sym, "無効な画像ファイルです")
     end
   end
-
 end
