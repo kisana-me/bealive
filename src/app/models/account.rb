@@ -34,8 +34,6 @@ class Account < ApplicationRecord
   before_validation :assign_icon
   before_create :set_aid
 
-  BASE_64_URL_REGEX  = /\A[a-zA-Z0-9_-]*\z/
-  VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
   validates :anyur_id,
     allow_nil: true,
     uniqueness: { case_sensitive: false }
@@ -45,7 +43,7 @@ class Account < ApplicationRecord
   validates :name_id,
     presence: true,
     length: { in: 5..50, allow_blank: true },
-    format: { with: BASE_64_URL_REGEX, allow_blank: true },
+    format: { with: NAME_ID_REGEX, allow_blank: true },
     uniqueness: { case_sensitive: false, allow_blank: true }
   validates :email,
     length: { maximum: 255, allow_blank: true },
