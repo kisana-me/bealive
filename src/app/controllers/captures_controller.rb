@@ -82,8 +82,17 @@ class CapturesController < ApplicationController
       .where("captures.created_at >= ?", 24.hours.ago)
       .count
 
-    if recent_count >= 10
-      flash.now[:alert] = "作成制限：24時間以内に10件以上作成できません"
+    max_count = 5
+    case @current_account.subscription_plan
+    when :plus then
+      max_count = 10
+    when :premium then
+      max_count = 15
+    when :luxury then
+      max_count = 20
+    end
+    if recent_count >= max_count
+      flash.now[:alert] = "作成制限: 24時間以内に#{max_count}件以上作成できません"
       @capture = Capture.new
       return render :new, status: :unprocessable_entity
     end
