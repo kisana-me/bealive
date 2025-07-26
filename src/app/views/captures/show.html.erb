@@ -2,6 +2,8 @@
 
 <h1>みる</h1>
 
+<% if @capture %>
+
 <div class="capture-person">
   <% if @capture.receiver %>
     <strong>撮影者:</strong>
@@ -38,6 +40,7 @@
   <% if @capture.captured_at %>
   <p><%= @capture.captured_at.strftime("%m月 %d日 %k時 %M分") %>に撮影</p>
   <% end %>
+  <p>公開範囲: <%= t("activerecord.enums.capture.visibility.#{@capture.visibility}") %></p>
 </div>
 <% if @capture.captured_at.nil? %>
   <%= link_to "撮る", capture_capture_path(@capture.aid) %>
@@ -45,7 +48,13 @@
 <br />
 <br />
 <br />
-<% if @destroy_flag %>
-  <%= button_to "削除", capture_path(@capture.aid), method: :delete %>
+<% if @capture.owner == @current_account || session[:captured]&.include?(@capture.aid) && !@capture.receiver %>
+  <%= link_to "編集", edit_capture_path(@capture.aid) %>
 <% end %>
 <p>コメントはそのうち実装</p>
+
+<% else %>
+
+<p>キャプチャーが見つかりません</p>
+
+<% end %>

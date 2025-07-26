@@ -1,24 +1,38 @@
 <% provide(:robots, "index, follow, archive") %>
-<h1>BeAlive.</h1>
+
 <% if @current_account %>
 
-  <%= link_to "タイムラインへ", captures_path %>
+  <h1>キャプチャー</h1>
+  <%= link_to "フォロー中のアカウントの", captures_path %>
+  <br /><br />
+  <%= link_to "リクエストした", captures_sended_path %>
+  <br /><br />
+  <%= link_to "リクエストされた", captures_received_path %>
   <br /><br />
   <%= link_to "リクエストする", new_capture_path %>
 
 <% else %>
 
+  <h1>BeAlive.</h1>
   <p>いつもの日常を相互確認。</p>
-
   <div>
     <%= link_to "続ける", sessions_start_path, class: "pages-link-button" %>
   </div>
 
 <% end %>
 
-<h1>みんなのキャプチャー</h1>
 
-<% @captures.each_slice(5) do |captures_slice| %>
-  <%= render "captures/captures", captures: captures_slice %>
-  <br />
-<% end %>
+
+<h1>みんなのキャプチャー</h1>
+<div>
+  <% if @captures.present? %>
+    <div id="captures">
+      <%= render partial: "captures/capture", collection: @captures %>
+    </div>
+    <div id="load-more">
+      <%= render partial: "captures/load_more", locals: { offset: @captures.last.aid, type: "", layout: "" } %>
+    </div>
+  <% else %>
+    <p>キャプチャーがありません</p>
+  <% end %>
+</div>

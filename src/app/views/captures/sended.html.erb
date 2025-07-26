@@ -1,0 +1,37 @@
+<% provide(:title, "リクエストした") %>
+
+<h1>リクエストした</h1>
+<p>
+  リクエストしたキャプチャーが表示されます。
+</p>
+
+<h2>未撮影</h2>
+<div>
+  <% if @undone_captures.present? %>
+    <div class="captures">
+      <%= render "captures/captures", captures: @undone_captures %>
+    </div>
+  <% else %>
+    <p>キャプチャーがありません</p>
+    <%= link_to "リクエストする", new_capture_path %>
+  <% end %>
+</div>
+<h2>撮影済み</h2>
+<div>
+  <% if @captures.present? %>
+    <div id="captures">
+      <%= render "captures/captures", captures: @captures %>
+    </div>
+    <div id="load-more">
+      <%= render partial: "captures/load_more", locals: { offset: @captures.last.aid, type: "sended", layout: "rc" } %>
+    </div>
+  <% else %>
+    <p>キャプチャーがありません</p>
+  <% end %>
+</div>
+
+<br />
+<hr />
+<br />
+
+<%= link_to "リクエストする", new_capture_path %>

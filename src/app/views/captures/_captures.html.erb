@@ -1,32 +1,9 @@
-<div class="captures">
-  <% captures.each do |capture| %>
-    <div class="capture-wrap">
-      <%= link_to capture_path(capture.aid) do %>
-        <div class="capture">
-          <div class="capture-person">
-            <% if capture.receiver %>
-              <%= image_tag(capture.receiver.icon_url, style: "width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ffffff;") if capture.receiver %>
-              <strong><%= capture.receiver.name %></strong>が撮った
-            <% else %>
-              <%= image_tag(capture.sender.icon_url, style: "width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ffffff;") %>
-              <strong><%= capture.sender.name %></strong>がリクエスト
-            <% end %>
-          </div>
-          <div class="capture-image">
-            <% if !capture.captured_at.nil? %>
-              <%= image_tag capture.front_photo_url, class: "front-image" %>
-              <%= image_tag capture.back_photo_url, class: "back-image" %>
-            <% else %>
-              <div class="capture-image-dummy">
-                リンクを共有して撮ってもらおう！
-              </div>
-            <% end %>
-          </div>
-          <div class="capture-info">
-            <% if capture.captured_at %>
-            <p><%= capture.captured_at.strftime("%m月 %d日 %k時 %M分") %>に撮影</p>
-            <% end %>
-          </div>
+<div class="captures-colmun">
+  <% captures.each_slice(5) do |captures_slice| %>
+    <div class="captures-row">
+      <% captures_slice.each do |capture| %>
+        <div class="captures-list">
+          <%= render "captures/capture", capture: capture %>
         </div>
       <% end %>
     </div>

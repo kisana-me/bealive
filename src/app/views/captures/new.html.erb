@@ -11,6 +11,11 @@
   </div>
 
   <div>
+    <%= form.label :visibility %>
+    <%= form.select :visibility, Capture.visibilities.keys.map { |k| [t("activerecord.enums.capture.visibility.#{k}"), k] }, {} %>
+  </div>
+
+  <div>
     <%= form.submit "作成" %>
   </div>
 <% end %>

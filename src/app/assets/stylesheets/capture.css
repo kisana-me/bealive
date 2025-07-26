@@ -1,12 +1,23 @@
-.captures {
+.captures-row {
   display: flex;
   flex-direction: row;
   overflow-x: auto;
+  gap: 20px;
 }
-.captures a,
-.captures a:visited,
-.captures a:hover,
-.captures a:active {
+
+.captures-row:not(:last-child) {
+  margin-bottom: 30px;
+}
+
+.captures-list {
+  width: 220px;
+  flex-shrink: 0;
+}
+
+.capture-wrap a,
+.capture-wrap a:visited,
+.capture-wrap a:hover,
+.capture-wrap a:active {
   color: #fff;
   width: 100%;
   height: 100%;
@@ -14,13 +25,13 @@
 }
 
 .capture-wrap {
-  margin-right: 24px;
 }
+
 .capture {
   display: flex;
   flex-direction: column;
   flex-shrink: 1;
-  width: 220px;
+  width: 100%;
 }
 .capture div {
   display: block;
@@ -32,7 +43,7 @@
 }
 
 .capture-image .front-image {
-  width: 220px;
+  width: 100%;
   border: 2px solid #fff;
   border-radius: 14px;
   box-sizing: border-box;
@@ -41,7 +52,7 @@
 }
 
 .capture-image .back-image {
-  width: 60px;
+  width: 28%;
   position: absolute;
   top: 20px;
   left: 20px;

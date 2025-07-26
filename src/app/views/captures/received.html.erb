@@ -1,0 +1,24 @@
+<% provide(:title, "リクエストされた") %>
+
+<h1>リクエストされた</h1>
+<p>
+  リクエストされたキャプチャーが表示されます。
+</p>
+<div>
+  <% if @captures.present? %>
+    <div id="captures">
+      <%= render "captures/captures", captures: @captures %>
+    </div>
+    <div id="load-more">
+      <%= render partial: "captures/load_more", locals: { offset: @captures.last.aid, type: "received", layout: "rc" } %>
+    </div>
+  <% else %>
+    <p>キャプチャーがありません</p>
+  <% end %>
+</div>
+
+<br />
+<hr />
+<br />
+
+<%= link_to "リクエストする", new_capture_path %>

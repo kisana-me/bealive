@@ -43,7 +43,10 @@ Rails.application.routes.draw do
   delete "settings/leave" => "settings#leave"
 
   # captures
-  resources :captures do
+  get "captures/sended"
+  get "captures/received"
+  get "captures/load_more"
+  resources :captures, param: :aid do
     member do
       get "capture"
       post "capture", to: "post_capture"

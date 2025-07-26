@@ -5,14 +5,17 @@
   <%= render "shared/error_messages", instead: @capture %>
 
   <div>
-    <%= form.label :visibility %>
+    <%= form.label :visibility, class: "custom-label" %>
     <%= form.select :visibility, Capture.visibilities.keys.map { |k| [t("activerecord.enums.capture.visibility.#{k}"), k] }, {} %>
   </div>
-
+  <br />
   <div>
-    <%= form.submit "送信" %>
+    <%= form.submit "送信", class: "custom-button" %>
   </div>
 <% end %>
 
-
 <br>
+<br>
+<br>
+
+<%= button_to "削除", capture_path(@capture.aid), method: :delete, class: "custom-delete-button" %>

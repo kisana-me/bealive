@@ -1,20 +1,26 @@
-.custom-form {
-  width: 80%;
-}
-
-.custom-form div {
-  margin: 20px 10px;
-}
-
-.custom-button input {
-  background: none;
+.custom-button {
+  background: #000;
   color: #fff;
   border: 2px solid #fff;
   border-radius: 20px;
   padding: 12px 32px;
+  cursor: pointer;
 }
 
-.custom-input {
+.custom-delete-button {
+  background: #000;
+  color: #fff;
+  border: 2px solid red;
+  border-radius: 20px;
+  padding: 12px 32px;
+  cursor: pointer;
+}
+
+.custom-label {
+  display: block;
+}
+
+.custom-textfield {
   width: 100%;
   font-size: 20px;
   background: none;
@@ -26,13 +32,12 @@
   box-sizing: border-box;
 }
 
-.custom-input:focus {
+.custom-textfield:focus {
   border-bottom: 2px solid #ffcd4f;
-  color: #fff;
 }
 
-.custom-label {
-  display: block;
+.custom-label:has(+ .custom-textfield:focus) {
+  color: #ffcd4f;
 }
 
 .custom-textarea {
@@ -41,8 +46,16 @@
   background: none;
   color: white;
   font-size: 20px;
-  border: 2px solid;
+  border: 2px solid #fff;
   border-radius: 17px;
   padding: 14px;
   box-sizing: border-box;
+}
+
+.custom-textarea:focus {
+  border: 2px solid #ffcd4f;
+}
+
+.custom-label:has(+ .custom-textarea:focus) {
+  color: #ffcd4f;
 }

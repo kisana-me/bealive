@@ -7,12 +7,12 @@
 
   <div>
     <%= form.label :name, "名前", class: "custom-label" %>
-    <%= form.text_field :name, class: "custom-input" %>
+    <%= form.text_field :name, class: "custom-textfield" %>
   </div>
   <br />
   <div>
     <%= form.label :name_id, "ID", class: "custom-label" %>
-    <%= form.text_field :name_id, class: "custom-input" %>
+    <%= form.text_field :name_id, class: "custom-textfield" %>
   </div>
   <br />
   <div>
@@ -25,8 +25,8 @@
     <%= form.datetime_field :birth %>
   </div>
   <br />
-  <div class="custom-button">
-    <%= form.submit "更新" %>
+  <div>
+    <%= form.submit "更新", class: "custom-button" %>
   </div>
 <% end %>
 
@@ -34,6 +34,7 @@
 <br />
 現在のサブスクリプション:
 <%= I18n.t("general.subscription.status.#{@current_account.subscription_plan}") %>
+<br />
 <br />
 <br />
 <%= button_to "ANYURから最新の情報を取得", oauth_path, method: :post, data: { turbo: false }, class: "pages-link-button" %>
@@ -47,4 +48,4 @@
 <br />
 <br />
 
-<%= button_to "アカウントを削除", settings_leave_path, method: :delete %>
+<%= button_to "アカウントを削除", settings_leave_path, method: :delete, class: "custom-delete-button" %>

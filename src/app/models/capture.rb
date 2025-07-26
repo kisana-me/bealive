@@ -23,12 +23,28 @@ class Capture < ApplicationRecord
   validates :receiver_comment, length: { in: 1..255, allow_blank: true }
   validates :front_photo, :back_photo, presence: true, if: :upload_photo
 
+  default_scope {
+    where(deleted: false)
+    .joins("INNER JOIN accounts AS senders ON senders.id = captures.sender_id AND senders.deleted = false")
+    .joins("LEFT JOIN accounts AS receivers ON receivers.id = captures.receiver_id")
+    .where("captures.receiver_id IS NULL OR receivers.deleted = false")
+    .includes(:front_photo, :back_photo, sender: :icon, receiver: :icon)
+    .order(captured_at: :desc)
+  }
+  scope :captured, -> {
+    where.not(captured_at: nil)
+  }
+
   def front_photo_url()
     self.front_photo&.image_url(variant_type: "bealive_capture") || "/statics/images/bealive-1.png"
   end
 
   def back_photo_url()
     self.back_photo&.image_url(variant_type: "bealive_capture") || "/statics/images/bealive-1.png"
+  end
+
+  def owner
+    self.receiver ? self.receiver : self.sender
   end
 
   private

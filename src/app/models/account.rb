@@ -52,6 +52,8 @@ class Account < ApplicationRecord
   validates :password, length: { in: 8..63, allow_blank: true }
   has_secure_password validations: false
 
+  default_scope { where(deleted: false) }
+
   # followに関して
 
   # 特定のユーザーをフォローするメソッド

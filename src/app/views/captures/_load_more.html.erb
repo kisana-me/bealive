@@ -1,0 +1,1 @@
+<%= button_to "さらに読み込む", captures_load_more_path(offset: offset, type: type, layout: layout), params: {offset: offset, type: type, layout: layout}, method: :get, id: "load-more-button", data: { turbo_action: "replace" } %>

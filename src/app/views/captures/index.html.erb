@@ -1,29 +1,27 @@
-<% provide(:title, "キャプチャー一覧") %>
+<% provide(:title, "フォロー中のアカウントの") %>
 
-<h1>タイムライン</h1>
+<h1>フォロー中のアカウントの</h1>
+<p>
+  フォロー中のアカウントによって撮影されたキャプチャーを表示します。<br />
+  フォローリクエストが承認されている必要があります。<br />
+  公開範囲を「全世界」または「フォロワーのみ」に設定しているキャプチャーのみが表示されます。
+</p>
 
-<% @captures.each_slice(5) do |captures_slice| %>
-  <%= render "captures/captures", captures: captures_slice %>
-  <br />
-<% end %>
+<div>
+  <% if @captures.present? %>
+    <div id="captures">
+      <%= render partial: "captures/capture", collection: @captures %>
+    </div>
+    <div id="load-more">
+      <%= render partial: "captures/load_more", locals: { offset: @captures.last.aid, type: "following", layout: "" } %>
+    </div>
+  <% else %>
+    <p>キャプチャーがありません</p>
+  <% end %>
+</div>
 
-<h1>リクエストした</h1>
-
-<% @sender_captures.each_slice(5) do |captures_slice| %>
-  <%= render "captures/captures", captures: captures_slice %>
-  <br />
-<% end %>
-
-<h1>リクエストされた</h1>
-
-<% @receiver_captures.each_slice(5) do |captures_slice| %>
-  <%= render "captures/captures", captures: captures_slice %>
-  <br />
-<% end %>
-
-<br /><br />
+<br />
+<hr />
+<br />
 
 <%= link_to "リクエストする", new_capture_path %>
-
-<h1>過去のすべて</h1>
-<p>準備中</p>

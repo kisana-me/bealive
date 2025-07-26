@@ -68,7 +68,7 @@ ja:
         sender_comment: "送信者コメント"
         receiver_comment: "受信者コメント"
         captured_at: "キャプチャー日時"
-        visivility: "公開範囲"
+        visibility: "公開範囲"
         meta: "メタデータ"
         status: "ステータス"
         deleted: "削除済みかどうか"
@@ -100,7 +100,7 @@ ja:
     enums:
       capture:
         visibility:
-          public: "全世界に公開"
+          public: "全世界"
           followers_only: "フォロワーのみ"
           group_only: "グループのみ"
           link_only: "リンクを知っている人のみ"
