@@ -14,7 +14,7 @@ class Capture < ApplicationRecord
     group_only: 2,
     link_only: 3,
     private: 4
-  }, prefix: true
+  }, prefix: true, default: :link_only
   attr_accessor :upload_photo
 
   before_create :set_aid

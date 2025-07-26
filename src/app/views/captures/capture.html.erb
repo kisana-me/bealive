@@ -32,7 +32,6 @@
   </div>
 </div>
 
-<h1>コメント</h1>
 <%= form_with(model: @capture, url: capture_capture_path(@capture.aid), method: :post, data: {turbo: false}) do |form| %>
   <%= render "shared/error_messages", instead: @capture %>
 
@@ -44,14 +43,19 @@
   <% end %>
   <%= form.hidden_field :latitude %>
   <%= form.hidden_field :longitude %>
-
+  <br />
   <div>
-    <%= form.label :receiver_comment, style: "display: block" %>
-    <%= form.text_field :receiver_comment %>
+    <%= form.label :visibility, class: "custom-label" %>
+    <%= form.select :visibility, Capture.visibilities.keys.map { |k| [t("activerecord.enums.capture.visibility.#{k}"), k] }, {} %>
   </div>
-
+  <br />
   <div>
-    <%= form.submit "送信" %>
+    <%= form.label :receiver_comment, class: "custom-label" %>
+    <%= form.text_field :receiver_comment, class: "custom-textfield", placeholder: "コメントを入力..." %>
+  </div>
+  <br />
+  <div>
+    <%= form.submit "送信", class: "custom-button" %>
   </div>
 <% end %>
 
