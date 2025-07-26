@@ -1,6 +1,6 @@
 class CapturesController < ApplicationController
   before_action :require_signin, only: %i[ index sended received new create ]
-  before_action :set_capture, only: %i[ show ]
+  before_action :set_visible_capture, only: %i[ show capture post_capture ]
   before_action :set_owned_capture, only: %i[ edit update destroy ]
 
   def index
@@ -18,6 +18,7 @@ class CapturesController < ApplicationController
       .where(sender: @current_account)
     
     @captures = Capture
+      .where("captures.receiver_id IS NULL OR captures.receiver_id = ?", @current_account.id)
       .captured
       .where(sender: @current_account)
       .limit(10)
@@ -110,6 +111,7 @@ class CapturesController < ApplicationController
   end
 
   def capture
+    return redirect_to capture_path(params[:aid]) unless @capture
     if !@capture.captured_at.nil?
       redirect_to capture_path(@capture.aid), alert: "撮影済み"
     end
@@ -118,6 +120,7 @@ class CapturesController < ApplicationController
   end
 
   def post_capture
+    return redirect_to capture_path(params[:aid]) unless @capture
     if !@capture.captured_at.nil?
       redirect_to capture_path(@capture.aid), alert: "撮影済み"
     end
@@ -150,11 +153,11 @@ class CapturesController < ApplicationController
 
   private
 
-  def set_capture
+  def set_visible_capture
     @capture = Capture.find_by(aid: params[:aid])
     return unless @capture
     return if @capture.owner == @current_account
-    Rails.logger.info("TTTTTTTTTT#{@capture.visibility_public?}")
+
     return if @capture.visibility_public?
     return if @capture.visibility_link_only?
     
