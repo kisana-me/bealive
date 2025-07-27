@@ -26,8 +26,8 @@ module ImageTools
     case variant_type
     # bealive
     when "bealive_capture"
-      resize = "400x600^"
-      extent = "400x600"
+      resize = "600x800^"
+      extent = "600x800"
     # icon
     when "icons"
       resize = "400x400^"
