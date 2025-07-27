@@ -54,6 +54,17 @@
     <%= form.text_field :receiver_comment, class: "custom-textfield", placeholder: "コメントを入力..." %>
   </div>
   <br />
+  <% unless @current_account %>
+    <div>
+      <small>送信すると
+        <%= link_to "プライバシーポリシー", privacy_policy_path %>
+        と
+        <%= link_to "利用規約", terms_of_service_path %>
+        に同意したことになります
+      </small>
+    </div>
+    <br />
+  <% end %>
   <div>
     <%= form.submit "送信", class: "custom-button" %>
   </div>
