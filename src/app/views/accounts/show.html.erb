@@ -2,15 +2,17 @@
 
   <% provide(:title, @account.name + "さん") %>
 
-  <p>
-    <strong>名前:</strong>
-    <%= @account.name %>
-  </p>
+  <div>
+    <%= image_tag(@account.icon_url, class: "account-icon") %>
+  </div>
 
-  <p>
-    <strong>ID:</strong>
-    <%= @account.name_id %>
-  </p>
+  <div>
+    <%= @account.name %>
+  </div>
+
+  <div>
+    @<%= @account.name_id %>
+  </div>
 
   <p>
     <strong>自己紹介:</strong>
@@ -35,8 +37,6 @@
   <% else %>
   <p>
     <strong>操作:</strong>
-
-
     <% if @current_account %>
       <% if @current_account.following?(@account) %>
         <% if @current_account.accepted_following.include?(@account) %>
@@ -52,11 +52,23 @@
     <% else %>
       <%= link_to "サインインしてフォロー", sessions_start_path() %>
     <% end %>
-
-
   </p>
   <% end %>
 
+  <hr />
+
+  <div>
+    <% if @captures.present? %>
+      <div id="captures">
+        <%= render partial: "captures/capture", collection: @captures, locals: { show_comment: true } %>
+      </div>
+      <div id="load-more">
+        <%= render partial: "captures/load_more", locals: { offset: @captures.last.aid, type: "account", layout: "" } %>
+      </div>
+    <% else %>
+      <p>キャプチャーがありません</p>
+    <% end %>
+  </div>
 <% else %>
 
   <% provide(:title, "アカウントが見つかりません") %>

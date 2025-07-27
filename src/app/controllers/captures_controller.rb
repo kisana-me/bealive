@@ -18,9 +18,9 @@ class CapturesController < ApplicationController
       .where(sender: @current_account)
     
     @captures = Capture
-      .where("captures.receiver_id IS NULL OR captures.receiver_id = ?", @current_account.id)
       .captured
       .where(sender: @current_account)
+      .where("captures.receiver_id IS NULL OR captures.receiver_id = ?", @current_account.id)
       .limit(10)
   end
 
@@ -46,9 +46,13 @@ class CapturesController < ApplicationController
         .where(visibility: [:followers_only, :public])
         .where(receiver_id: following_ids)
     elsif @current_account && params[:type] == "sended"
-      @captures = @captures.where(sender: @current_account)
+      @captures = @captures
+        .where(sender: @current_account)
+        .where("captures.receiver_id IS NULL OR captures.receiver_id = ?", @current_account.id)
     elsif @current_account && params[:type] == "received"
       @captures = @captures.where(receiver: @current_account)
+    elsif params[:type] == "account"
+      @captures = @captures.where(receiver: capture.receiver, visibility: [:public])
     else
       @captures = @captures.where(visibility: [:public])
     end
@@ -59,7 +63,7 @@ class CapturesController < ApplicationController
       if params[:layout] == "rc"
         ts << turbo_stream.append("captures", partial: "captures/captures", locals: { captures: @captures })
       else
-        ts << turbo_stream.append("captures", partial: "captures/capture", collection: @captures)
+        ts << turbo_stream.append("captures", partial: "captures/capture", collection: @captures, locals: { show_comment: true })
       end
       if @captures.count == 10
         ts << turbo_stream.update("load-more", partial: "captures/load_more", locals: { offset: @captures.last.aid, type: params[:type], layout: params[:layout] })
@@ -77,11 +81,11 @@ class CapturesController < ApplicationController
   end
 
   def create
+    @capture = Capture.new(sender_comment: params[:capture][:sender_comment])
     recent_count = Capture
       .where(sender: @current_account)
       .where("captures.created_at >= ?", 24.hours.ago)
       .count
-
     max_count = 5
     case @current_account.subscription_plan
     when :plus then
@@ -93,11 +97,8 @@ class CapturesController < ApplicationController
     end
     if recent_count >= max_count
       flash.now[:alert] = "作成制限: 24時間以内に#{max_count}件以上作成できません"
-      @capture = Capture.new
       return render :new, status: :unprocessable_entity
     end
-
-    @capture = Capture.new(sender_comment: params[:capture][:sender_comment])
     @capture.sender = @current_account
     if @capture.save
       redirect_to capture_url(@capture.aid), notice: "作成しました"

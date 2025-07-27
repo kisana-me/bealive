@@ -80,6 +80,7 @@ a:active {
 }
 img {
   width: 100%;
+  vertical-align: middle;
 }
 
 main {

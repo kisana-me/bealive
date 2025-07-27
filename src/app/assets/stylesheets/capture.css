@@ -24,18 +24,69 @@
   display: inline-block;
 }
 
-.capture-wrap {
+.capture-wrap:not(:last-child) {
+  margin-bottom: 30px;
 }
 
 .capture {
   display: flex;
   flex-direction: column;
-  flex-shrink: 1;
   width: 100%;
+  gap: 4px;
 }
-.capture div {
-  display: block;
+
+.capture-person {
 }
+
+.capture-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid #ffffff;
+  box-sizing: border-box;
+}
+
+.capture-nameplate{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  line-height: 24px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.capture-minicomment {
+  margin-left: 0.5em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.capture-info{
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #cbcbcb;
+}
+
+.capture-info div {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.capture-commentbox {
+  background: #333;
+  padding: 7px;
+  border-radius: 7px;
+  line-height: 24px;
+}
+
+.capture-fullcomment {
+  margin-left: 0.5em;
+}
+
+/* 画像 */
 
 .capture-image {
   position: relative;
@@ -64,13 +115,10 @@
 }
 
 .capture-image-dummy {
-  width: 220px;
+  width: 100%;
   padding: 10px;
   border: 2px solid #fff;
   border-radius: 14px;
   box-sizing: border-box;
   aspect-ratio: 3 / 4;
-}
-.capture-comment p {
-  margin: 0;
 }

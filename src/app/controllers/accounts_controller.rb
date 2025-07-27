@@ -15,6 +15,12 @@ class AccountsController < ApplicationController
   end
 
   def show
+    @captures = 
+    @captures = Capture
+      .captured
+      .where(receiver: @account)
+      .where(visibility: :public)
+      .limit(10)
   end
 
   def following

@@ -1,15 +1,37 @@
 <div class="capture-wrap">
   <%= link_to capture_path(capture.aid) do %>
     <div class="capture">
+
       <div class="capture-person">
-        <% if capture.receiver %>
-          <%= image_tag(capture.receiver.icon_url, style: "width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ffffff;") if capture.receiver %>
-          <strong><%= capture.receiver.name %></strong>が撮った
-        <% else %>
-          <%= image_tag(capture.sender.icon_url, style: "width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ffffff;") %>
+        <div class="capture-nameplate">
+          <%= image_tag(capture.sender.icon_url, class: "capture-icon") %>
           <strong><%= capture.sender.name %></strong>がリクエスト
+        </div>
+        <% if defined? show_comment %>
+          <div class="capture-minicomment">
+            <%= "💬" if capture.sender_comment.present? %><%= capture.sender_comment %>
+          </div>
         <% end %>
       </div>
+
+      <div class="capture-person">
+        <div class="capture-nameplate">
+          <% if capture.receiver %>
+            <%= image_tag(capture.receiver.icon_url, class: "capture-icon") if capture.receiver %>
+            <strong><%= capture.receiver.name %></strong>が撮影
+          <% elsif capture.captured_at.nil?  %>
+            撮影待ち
+          <% else %>
+            <strong>匿名</strong>が撮影
+          <% end %>
+        </div>
+        <% if defined? show_comment %>
+          <div class="capture-minicomment">
+            <%= "🗨️" if capture.receiver_comment.present? %><%= capture.receiver_comment %>
+          </div>
+        <% end %>
+      </div>
+
       <div class="capture-image">
         <% if !capture.captured_at.nil? %>
           <%= image_tag capture.front_photo_url, class: "front-image" %>
@@ -20,11 +42,20 @@
           </div>
         <% end %>
       </div>
+
       <div class="capture-info">
-        <% if capture.captured_at %>
-        <p><%= capture.captured_at.strftime("%m月 %d日 %k時 %M分") %>に撮影</p>
-        <% end %>
+        <div class="capture-visibility">
+          <%= t("activerecord.enums.capture.visibility.#{capture.visibility}") %>
+        </div>
+        <div class="capture-time">
+          <% if capture.captured_at %>
+            <%= capture.captured_at.strftime("%m月 %d日 %k時 %M分") %>に撮影
+          <% else %>
+            未撮影
+          <% end %>
+        </div>
       </div>
+
     </div>
   <% end %>
 </div>

@@ -27,7 +27,7 @@
 <div>
   <% if @captures.present? %>
     <div id="captures">
-      <%= render partial: "captures/capture", collection: @captures %>
+      <%= render partial: "captures/capture", collection: @captures, locals: { show_comment: true } %>
     </div>
     <div id="load-more">
       <%= render partial: "captures/load_more", locals: { offset: @captures.last.aid, type: "", layout: "" } %>

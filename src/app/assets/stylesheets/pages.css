@@ -6,3 +6,17 @@
   color: #ffcd4f;
   border: 1px solid;
 }
+
+.image-shelf {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.account-icon {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 1px solid #ffffff;
+  box-sizing: border-box;
+}
