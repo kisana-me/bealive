@@ -74,7 +74,7 @@ class OauthController < ApplicationController
         )
         account.meta["subscription"] = resources.dig("data", "subscription")
         account.save!
-        redirect_to root_path, notice: "サインインしました"
+        redirect_back_or root_path, notice: "サインインしました"
       else
         session[:anyur_access_token] = token_data["access_token"]
         session[:anyur_refresh_token] = token_data["refresh_token"]

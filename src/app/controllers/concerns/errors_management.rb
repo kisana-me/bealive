@@ -1,5 +1,5 @@
 module ErrorsManagement
-  # Errors Management ver 1.0.0
+  # Errors Management ver 1.0.1
   # controllers/application_controller.rbで
   # include ErrorsManagement
   # def routing_error
@@ -21,7 +21,7 @@ module ErrorsManagement
   private
 
   def render_404(exception = nil)
-    log_error(exception)
+    # log_error(exception)
     respond_to do |format|
       format.html { render("errors/404", status: :not_found) rescue head :not_found }
       format.json { render json: { error: "Not Found", request_id: request.request_id }, status: :not_found }

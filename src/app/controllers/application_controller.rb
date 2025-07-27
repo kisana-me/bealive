@@ -31,7 +31,7 @@ class ApplicationController < ActionController::Base
   end
 
   def admin?
-    @current_account&.meta["roles"]&.include?("admin")
+    @current_account&.admin?
   end
 
   def store_location

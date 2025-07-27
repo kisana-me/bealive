@@ -103,6 +103,10 @@ class Account < ApplicationRecord
     plan&.to_sym || :unknown
   end
 
+  def admin?
+    self.meta["roles"]&.include?("admin")
+  end
+
   private
 
   def assign_icon
