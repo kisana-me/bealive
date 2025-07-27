@@ -7,12 +7,10 @@ Rails.application.routes.draw do
   get "contact" => "pages#contact"
 
   # accounts
-  resources :accounts, only: [:index, :show], param: :name_id do
-    member do
-      get :followers
-      get :following
-    end
-  end
+  resources :accounts, only: :index
+  get "@:name_id", to: "accounts#show", as: :account
+  get "@:name_id/followers", to: "accounts#following", as: :followers_account
+  get "@:name_id/following", to: "accounts#following", as: :following_account
 
   # follows
   namespace :follows do
