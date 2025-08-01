@@ -1,10 +1,10 @@
 module OauthManagement
-  # OAuth Management for ANYUR ver 1.0.0
+  # OAuth Management for ANYUR ver 1.0.1
   # controllers/oauth_controllerが必須
 
   OAUTH_REDIRECT_URI = Rails.env.development? ? "http://localhost:3000/callback" : "https://bealive.amiverse.net/callback"
   OAUTH_CLIENT_ID = "Be_Alive"
-  OAUTH_CLIENT_SECRET = ENV["OAUTH_CLIENT_SECRET"]
+  OAUTH_CLIENT_SECRET = ENV.fetch("OAUTH_CLIENT_SECRET")
   OAUTH_SCOPE =  "id name name_id subscription"
 
   require "net/http"
