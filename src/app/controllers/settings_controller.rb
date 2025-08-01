@@ -1,5 +1,6 @@
 class SettingsController < ApplicationController
   before_action :require_signin, except: %i[ leave ]
+  before_action :set_account, only: %i[ account icon post_account ]
 
   def index
   end
@@ -12,7 +13,7 @@ class SettingsController < ApplicationController
   end
 
   def post_account
-    if @current_account.update(account_params)
+    if @account.update(account_params)
       redirect_to settings_account_path, notice: "更新しました"
     else
       render :account
@@ -27,6 +28,10 @@ class SettingsController < ApplicationController
 
   private
 
+  def set_account
+    @account = Account.find_by(aid: @current_account.aid)
+  end
+
   def account_params
     params.require(:account).permit(
       :name,
@@ -36,5 +41,4 @@ class SettingsController < ApplicationController
       :icon_aid
     )
   end
-
 end
