@@ -3,22 +3,24 @@ source "https://rubygems.org"
 ruby "3.4.4"
 
 gem "rails", "8.0.2"
-gem "sprockets-rails"
+
+gem "aws-sdk-s3", require: false
+gem "bcrypt"
+gem "bootsnap", require: false
+gem "image_processing"
+gem "importmap-rails"
+gem "jbuilder"
+gem "mini_magick"
 gem "mysql2", "~> 0.5"
 gem "puma", ">= 5.0"
-gem "importmap-rails"
-gem "turbo-rails"
+gem "sprockets-rails"
 gem "stimulus-rails"
-gem "jbuilder"
+gem "turbo-rails"
 gem "tzinfo-data", platforms: %i[ windows jruby ]
-gem "bootsnap", require: false
-gem "aws-sdk-s3", require: false
-gem "image_processing"
-gem "mini_magick"
-gem "bcrypt"
 
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ]
+  gem "rubocop-rails-omakase", require: false
 end
 
 group :development do

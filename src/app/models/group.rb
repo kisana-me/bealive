@@ -1,6 +1,9 @@
 class Group < ApplicationRecord
   belongs_to :account
-  attribute :meta, :json, default: {}
-  enum :status, { normal: 0, locked: 1 }
+
+  attribute :meta, :json, default: -> { {} }
+  enum :visibility, { closed: 0, limited: 1, opened: 2 }
+  enum :status, { normal: 0, locked: 1, deleted: 2 }
+
   before_create :set_aid
 end
