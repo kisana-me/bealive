@@ -10,7 +10,7 @@ services:
     volumes:
       - ./src:/app
     ports:
-      - "3060:3000"
+      - 3000:3000
     depends_on:
       - db
       - minio
@@ -19,23 +19,8 @@ services:
       rm -rf /app/public/assets &&
       gem cleanup &&
       bundle install -j4 &&
-      rails db:migrate &&
       RAILS_ENV=production rails assets:precompile &&
       rails s -b 0.0.0.0"
-
-  minio:
-    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
-    tty: true
-    stdin_open: true
-    restart: always
-    env_file:
-      - .exa.env
-    volumes:
-      - minio-vol:/data
-    ports:
-      - "9060:9000"
-      - "9061:9001"
-    command: server /data --console-address ":9001"
 
   db:
     image: mariadb:latest
@@ -47,6 +32,20 @@ services:
     volumes:
       - db-vol:/var/lib/mysql
 
+  minio:
+    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
+    tty: true
+    stdin_open: true
+    restart: always
+    env_file:
+      - .exa.env
+    volumes:
+      - minio-vol:/data
+    ports:
+      - 9000:9000
+      - 9001:9001
+    command: server /data --console-address ":9001"
+
   phpmyadmin:
     image: phpmyadmin:latest
     tty: true
@@ -55,7 +54,7 @@ services:
     env_file:
       - .exa.env
     ports:
-      - "8060:80"
+      - 8080:80
     depends_on:
       - db
 

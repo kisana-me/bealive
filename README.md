@@ -1,5 +1,7 @@
 # BeAlive.
-いつもの日常を相互確認。
 
-# 説明
-手ごろに生存確認をしあえるウェブアプリケーションです。
+![BeAlive.の画像](https://kisana.me/images/bealive/bealive-1.png)
+
+生存確認のSNSです。
+
+リンク: [bealive.amiverse.net](https://bealive.amiverse.net)
