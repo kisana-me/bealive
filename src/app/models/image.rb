@@ -3,7 +3,7 @@ class Image < ApplicationRecord
 
   attribute :variants, :json, default: -> { [] }
   attribute :meta, :json, default: -> { {} }
-  enum :visibility, { closed: 0, limited: 1, opened: 2 }
+  enum :visibility, { closed: 0, limited: 1, opened: 2 }, default: :opened
   enum :status, { normal: 0, locked: 1, deleted: 2 }
   attr_accessor :image
 

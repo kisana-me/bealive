@@ -1,10 +1,24 @@
 Rails.application.routes.draw do
   root "pages#index"
 
-  # pages
+  # Pages
   get "terms-of-service" => "pages#terms_of_service"
   get "privacy-policy" => "pages#privacy_policy"
   get "contact" => "pages#contact"
+
+  # Sessions
+  get "sessions/start"
+  delete "signout" => "sessions#signout"
+  resources :sessions, except: [:new, :create], param: :aid
+
+  # Signup
+  get "signup" => "signup#new"
+  post "signup" => "signup#create"
+
+  # OAuth
+  post "oauth/start" => "oauth#start"
+  get "oauth/callback" => "oauth#callback"
+  post "oauth/fetch" => "oauth#fetch"
 
   # accounts
   resources :accounts, only: :index
@@ -19,26 +33,6 @@ Rails.application.routes.draw do
     patch "accept"
     delete "decline"
   end
-
-  # sessions
-  get "sessions/start"
-  delete "signout" => "sessions#signout"
-  resources :sessions, except: [:new, :create], param: :aid
-
-  # signup
-  get "signup" => "signup#new"
-  post "signup" => "signup#create"
-
-  # OAuth
-  post "oauth" => "oauth#start"
-  get "callback" => "oauth#callback"
-
-  # settings
-  get "settings" => "settings#index"
-  get "settings/account" => "settings#account"
-  get "settings/icon" => "settings#icon"
-  patch "settings/account" => "settings#post_account"
-  delete "settings/leave" => "settings#leave"
 
   # captures
   get "captures/sended"
@@ -55,9 +49,16 @@ Rails.application.routes.draw do
   # resources :groups
   # resources :comments
 
-  # others
+  # Settings
+  get "settings" => "settings#index"
+  get "settings/account" => "settings#account"
+  get "settings/icon" => "settings#icon"
+  patch "settings/account" => "settings#post_account"
+  delete "settings/leave" => "settings#leave"
+
+  # Others
   get "up" => "rails/health#show", as: :rails_health_check
 
-  # errors
+  # Errors
   match "*path", to: "application#routing_error", via: :all
 end

@@ -7,7 +7,7 @@ class Capture < ApplicationRecord
   accepts_nested_attributes_for :main_photo, :sub_photo
 
   attribute :meta, :json, default: -> { {} }
-  enum :visibility, { closed: 0, limited: 1, opened: 2, followers_only: 3, group_only: 4 }
+  enum :visibility, { closed: 0, limited: 1, opened: 2, followers_only: 3, group_only: 4 }, default: :limited
   enum :status, { normal: 0, locked: 1, deleted: 2 }
   attr_accessor :upload_photo
 
@@ -23,6 +23,7 @@ class Capture < ApplicationRecord
   scope :isnt_closed, -> { where.not(visibility: :closed) }
 
   scope :is_captured, -> { where.not(captured_at: nil) }
+  scope :isnt_captured, -> { where(captured_at: nil) }
   scope :sent_captures, -> {
     where(status: :normal)
     .joins('INNER JOIN accounts AS senders ON senders.id = captures.sender_id AND senders.status = 0')

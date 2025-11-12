@@ -7,8 +7,8 @@ class Session < ApplicationRecord
   before_create :set_aid
 
   validates :name,
-            allow_blank: true,
-            length: { in: 1..50 }
+    allow_blank: true,
+    length: { in: 1..50 }
 
   scope :from_normal_accounts, -> { joins(:account).where(accounts: { status: :normal }) }
   scope :from_not_deleted_accounts, -> { joins(:account).where.not(accounts: { status: :deleted }) }

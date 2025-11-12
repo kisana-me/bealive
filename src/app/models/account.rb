@@ -2,6 +2,7 @@ class Account < ApplicationRecord
   has_many :sender, class_name: 'Capture', foreign_key: 'sender_id'
   has_many :receiver, class_name: 'Capture', foreign_key: 'receiver_id'
   belongs_to :icon, class_name: 'Image', foreign_key: 'icon_id', optional: true
+  has_many :oauth_accounts
 
   # followに関して
 

@@ -10,53 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 9) do
+ActiveRecord::Schema[8.0].define(version: 10) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
-    t.string "anyur_id"
-    t.string "anyur_access_token", default: "", null: false
-    t.string "anyur_refresh_token", default: "", null: false
-    t.datetime "anyur_token_fetched_at", default: -> { "current_timestamp(6)" }, null: false
     t.string "aid", limit: 14, null: false
     t.string "name", null: false
     t.string "name_id", null: false
-    t.bigint "icon_id"
     t.text "description", default: "", null: false
-    t.datetime "birth"
-    t.string "email", default: "", null: false
+    t.datetime "birthdate"
+    t.string "email"
     t.boolean "email_verified", default: false, null: false
-    t.string "password_digest", default: "", null: false
+    t.integer "visibility", limit: 1, default: 0, null: false
+    t.string "password_digest"
     t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
     t.integer "status", limit: 1, default: 0, null: false
-    t.boolean "deleted", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "icon_id"
     t.index ["aid"], name: "index_accounts_on_aid", unique: true
-    t.index ["anyur_id"], name: "index_accounts_on_anyur_id", unique: true
+    t.index ["email"], name: "index_accounts_on_email", unique: true
     t.index ["icon_id"], name: "index_accounts_on_icon_id"
     t.index ["name_id"], name: "index_accounts_on_name_id", unique: true
-    t.check_constraint "json_valid(`meta`)", name: "meta"
-  end
-
-  create_table "activity_logs", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
-    t.string "aid", limit: 14, null: false
-    t.bigint "account_id"
-    t.string "loggable_type"
-    t.bigint "loggable_id"
-    t.string "action_name", default: "", null: false
-    t.text "attribute_data", size: :long, default: "[]", null: false, collation: "utf8mb4_bin"
-    t.datetime "changed_at", default: -> { "current_timestamp(6)" }, null: false
-    t.string "change_reason", default: "", null: false
-    t.string "user_agent", default: "", null: false
-    t.string "ip_address", default: "", null: false
-    t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
-    t.integer "status", limit: 1, default: 0, null: false
-    t.boolean "deleted", default: false, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["account_id"], name: "index_activity_logs_on_account_id"
-    t.index ["aid"], name: "index_activity_logs_on_aid", unique: true
-    t.index ["loggable_type", "loggable_id"], name: "index_activity_logs_on_loggable"
-    t.check_constraint "json_valid(`attribute_data`)", name: "attribute_data"
     t.check_constraint "json_valid(`meta`)", name: "meta"
   end
 
@@ -66,38 +39,36 @@ ActiveRecord::Schema[8.0].define(version: 9) do
     t.bigint "receiver_id"
     t.bigint "parent_capture_id"
     t.bigint "group_id"
-    t.bigint "front_photo_id"
-    t.bigint "back_photo_id"
-    t.boolean "reversed", default: false, null: false
+    t.bigint "main_photo_id"
+    t.bigint "sub_photo_id"
     t.decimal "latitude", precision: 10
     t.decimal "longitude", precision: 10
-    t.string "sender_comment", default: "", null: false
-    t.string "receiver_comment", default: "", null: false
+    t.string "sender_comment"
+    t.string "receiver_comment"
     t.datetime "captured_at"
     t.integer "visibility", limit: 1, default: 0, null: false
     t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
     t.integer "status", limit: 1, default: 0, null: false
-    t.boolean "deleted", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["aid"], name: "index_captures_on_aid", unique: true
-    t.index ["back_photo_id"], name: "index_captures_on_back_photo_id"
-    t.index ["front_photo_id"], name: "index_captures_on_front_photo_id"
     t.index ["group_id"], name: "index_captures_on_group_id"
+    t.index ["main_photo_id"], name: "index_captures_on_main_photo_id"
     t.index ["parent_capture_id"], name: "index_captures_on_parent_capture_id"
     t.index ["receiver_id"], name: "index_captures_on_receiver_id"
     t.index ["sender_id"], name: "index_captures_on_sender_id"
+    t.index ["sub_photo_id"], name: "index_captures_on_sub_photo_id"
     t.check_constraint "json_valid(`meta`)", name: "meta"
   end
 
   create_table "comments", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.bigint "account_id"
     t.bigint "capture_id", null: false
-    t.string "aid", null: false
+    t.string "aid", limit: 14, null: false
+    t.string "name"
     t.string "content", null: false
     t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
     t.integer "status", limit: 1, default: 0, null: false
-    t.boolean "deleted", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_comments_on_account_id"
@@ -130,13 +101,13 @@ ActiveRecord::Schema[8.0].define(version: 9) do
 
   create_table "groups", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.bigint "account_id", null: false
+    t.bigint "icon_id"
     t.string "aid", null: false
     t.string "name", default: "", null: false
-    t.bigint "icon_id"
     t.text "description", default: "", null: false
+    t.integer "visibility", limit: 1, default: 0, null: false
     t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
     t.integer "status", limit: 1, default: 0, null: false
-    t.boolean "deleted", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_groups_on_account_id"
@@ -147,13 +118,14 @@ ActiveRecord::Schema[8.0].define(version: 9) do
 
   create_table "images", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.bigint "account_id"
-    t.string "aid", null: false
+    t.string "aid", limit: 14, null: false
     t.string "name", default: "", null: false
-    t.string "original_ext", default: "", null: false
+    t.text "description", default: "", null: false
+    t.string "original_ext", null: false
     t.text "variants", size: :long, default: "[]", null: false, collation: "utf8mb4_bin"
+    t.integer "visibility", limit: 1, default: 0, null: false
     t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
     t.integer "status", limit: 1, default: 0, null: false
-    t.boolean "deleted", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_images_on_account_id"
@@ -162,17 +134,35 @@ ActiveRecord::Schema[8.0].define(version: 9) do
     t.check_constraint "json_valid(`variants`)", name: "variants"
   end
 
+  create_table "oauth_accounts", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
+    t.string "aid", limit: 14, null: false
+    t.bigint "account_id", null: false
+    t.integer "provider", limit: 1, null: false
+    t.string "uid", null: false
+    t.text "access_token", null: false
+    t.text "refresh_token", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "fetched_at", null: false
+    t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
+    t.integer "status", limit: 1, default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_oauth_accounts_on_account_id"
+    t.index ["aid"], name: "index_oauth_accounts_on_aid", unique: true
+    t.index ["provider", "uid"], name: "index_oauth_accounts_on_provider_and_uid", unique: true
+    t.check_constraint "json_valid(`meta`)", name: "meta"
+  end
+
   create_table "sessions", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.string "aid", limit: 14, null: false
     t.bigint "account_id", null: false
     t.string "name", default: "", null: false
     t.string "token_lookup", null: false
     t.string "token_digest", null: false
-    t.datetime "token_expires_at", default: -> { "current_timestamp(6)" }, null: false
-    t.datetime "token_generated_at", default: -> { "current_timestamp(6)" }, null: false
+    t.datetime "token_expires_at", null: false
+    t.datetime "token_generated_at", null: false
     t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"
     t.integer "status", limit: 1, default: 0, null: false
-    t.boolean "deleted", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_sessions_on_account_id"
@@ -182,13 +172,12 @@ ActiveRecord::Schema[8.0].define(version: 9) do
   end
 
   add_foreign_key "accounts", "images", column: "icon_id"
-  add_foreign_key "activity_logs", "accounts"
   add_foreign_key "captures", "accounts", column: "receiver_id"
   add_foreign_key "captures", "accounts", column: "sender_id"
   add_foreign_key "captures", "captures", column: "parent_capture_id"
   add_foreign_key "captures", "groups"
-  add_foreign_key "captures", "images", column: "back_photo_id"
-  add_foreign_key "captures", "images", column: "front_photo_id"
+  add_foreign_key "captures", "images", column: "main_photo_id"
+  add_foreign_key "captures", "images", column: "sub_photo_id"
   add_foreign_key "comments", "accounts"
   add_foreign_key "comments", "captures"
   add_foreign_key "entries", "accounts"
@@ -198,5 +187,6 @@ ActiveRecord::Schema[8.0].define(version: 9) do
   add_foreign_key "groups", "accounts"
   add_foreign_key "groups", "images", column: "icon_id"
   add_foreign_key "images", "accounts"
+  add_foreign_key "oauth_accounts", "accounts"
   add_foreign_key "sessions", "accounts"
 end
