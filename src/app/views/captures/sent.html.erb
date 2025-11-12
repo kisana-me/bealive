@@ -23,7 +23,7 @@
       <%= render "captures/captures", captures: @captures %>
     </div>
     <div id="load-more">
-      <%= render partial: "captures/load_more", locals: { offset: @captures.last.aid, type: "sended", layout: "rc" } %>
+      <%= render partial: "captures/load_more", locals: { offset: @captures.last.aid, type: "sent", layout: "rc" } %>
     </div>
   <% else %>
     <p>キャプチャーがありません</p>

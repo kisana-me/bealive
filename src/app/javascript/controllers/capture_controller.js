@@ -170,7 +170,7 @@ export default class extends Controller {
     const dataTransfer = new DataTransfer()
     dataTransfer.items.add(file)
 
-    const fieldId = role === "front" ? "front_image_field" : "back_image_field"
+    const fieldId = role === "front" ? "main_image_field" : "sub_image_field"
     const imgTarget = role === "front" ? this.capturedFrontImageTarget : this.capturedBackImageTarget
     const fileField = document.getElementById(fieldId)
 

@@ -6,23 +6,23 @@
   <%= render "shared/error_messages", instead: @account %>
 
   <div>
-    <%= form.label :name, "名前", class: "custom-label" %>
+    <%= form.label :name, class: "custom-label" %>
     <%= form.text_field :name, class: "custom-textfield" %>
   </div>
   <br />
   <div>
-    <%= form.label :name_id, "ID", class: "custom-label" %>
+    <%= form.label :name_id, class: "custom-label" %>
     <%= form.text_field :name_id, class: "custom-textfield" %>
   </div>
   <br />
   <div>
-    <%= form.label :description, "あなたを説明", class: "custom-label" %>
+    <%= form.label :description, class: "custom-label" %>
     <%= form.text_area :description, class: "custom-textarea" %>
   </div>
   <br />
   <div>
-    <%= form.label :birth, "生まれ", class: "custom-label" %>
-    <%= form.datetime_field :birth %>
+    <%= form.label :birthdate, class: "custom-label" %>
+    <%= form.datetime_field :birthdate %>
   </div>
   <br />
   <div>
@@ -37,7 +37,7 @@
 <br />
 <br />
 <br />
-<%= button_to "ANYURから最新の情報を取得", oauth_path, method: :post, data: { turbo: false }, class: "pages-link-button" %>
+<%= button_to "ANYURから最新の情報を取得", oauth_start_path, method: :post, data: { turbo: false }, class: "pages-link-button" %>
 <br />
 <br />
 <%= link_to("アイコンを変更", settings_icon_path) %>

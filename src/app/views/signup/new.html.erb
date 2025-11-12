@@ -1,18 +1,23 @@
 <h1>BeAlive.を開始する</h1>
 
-<p>ようこそ、<%= session[:pending_oauth_info]["name"] %> さん！以下の情報を確認して登録してください。</p>
+<p>ようこそ！以下の情報を確認して登録してください。</p>
 
 <%= form_with model: @account, url: signup_path, method: :post, data: { turbo: false } do |f| %>
   <%= render "shared/error_messages", instead: @account %>
 
   <div>
-    <%= f.label :name, "名前" %>
-    <%= f.text_field :name, value: session[:pending_oauth_info]["name"] %>
+    <%= f.label :name %>
+    <%= f.text_field :name, value: session[:oauth_signup]["name"] %>
   </div>
 
   <div>
-    <%= f.label :name_id, "ID" %>
-    <%= f.text_field :name_id, value: session[:pending_oauth_info]["name_id"] %>
+    <%= f.label :name_id %>
+    <%= f.text_field :name_id, value: session[:oauth_signup]["name_id"] %>
+  </div>
+
+  <div>
+    <%= f.label :description %>
+    <%= f.text_area :description, value: session[:oauth_signup]["description"] %>
   </div>
 
   <div>

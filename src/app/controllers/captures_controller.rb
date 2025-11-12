@@ -1,33 +1,41 @@
 class CapturesController < ApplicationController
-  before_action :require_signin, only: %i[ index sended received new create ]
+  before_action :require_signin, only: %i[ index sent received new create ]
   before_action :set_visible_capture, only: %i[ show capture post_capture ]
   before_action :set_owned_capture, only: %i[ edit update destroy ]
 
   def index
     following_ids = @current_account.accepted_following.pluck(:id)
     @captures = Capture
-      .captured
+      .is_normal
+      .is_captured
       .where(receiver_id: following_ids)
-      .where(visibility: [:followers_only, :public])
+      .where(visibility: [:followers_only, :opened])
+      .order(captured_at: :desc)
       .limit(10)
   end
 
-  def sended
+  def sent
     @undone_captures = Capture
-      .where(captured_at: nil)
+      .is_normal
+      .isnt_captured
       .where(sender: @current_account)
-    
+      .order(created_at: :desc)
+      .limit(10)
+
     @captures = Capture
-      .captured
+      .is_normal
+      .is_captured
       .where(sender: @current_account)
-      .where("captures.receiver_id IS NULL OR captures.receiver_id = ?", @current_account.id)
+      # .where("captures.receiver_id IS NULL OR captures.receiver_id = ?", @current_account.id)
+      .order(captured_at: :desc)
       .limit(10)
   end
 
   def received
     @captures = Capture
-      .captured
+      .is_normal
       .where(receiver: @current_account)
+      .order(captured_at: :desc)
       .limit(10)
   end
 
@@ -37,24 +45,25 @@ class CapturesController < ApplicationController
       return render turbo_stream: turbo_stream.update("load-more", partial: "captures/load_end")
     end
     @captures = Capture
-      .captured
+      .is_captured
       .where("captures.captured_at < ?", capture.captured_at)
+      .order(captured_at: :desc)
       .limit(10)
     if @current_account && params[:type] == "following"
       following_ids = @current_account.accepted_following.pluck(:id)
       @captures = @captures
-        .where(visibility: [:followers_only, :public])
+        .where(visibility: [:followers_only, :opened])
         .where(receiver_id: following_ids)
-    elsif @current_account && params[:type] == "sended"
+    elsif @current_account && params[:type] == "sent"
       @captures = @captures
         .where(sender: @current_account)
         .where("captures.receiver_id IS NULL OR captures.receiver_id = ?", @current_account.id)
     elsif @current_account && params[:type] == "received"
       @captures = @captures.where(receiver: @current_account)
     elsif params[:type] == "account"
-      @captures = @captures.where(receiver: capture.receiver, visibility: [:public])
+      @captures = @captures.where(receiver: capture.receiver, visibility: [:opened])
     else
-      @captures = @captures.where(visibility: [:public])
+      @captures = @captures.where(visibility: [:opened])
     end
     unless @captures.present?
       return render turbo_stream: turbo_stream.update("load-more", partial: "captures/load_end")
@@ -81,7 +90,7 @@ class CapturesController < ApplicationController
   end
 
   def create
-    @capture = Capture.new(sender_comment: params[:capture][:sender_comment])
+    @capture = Capture.new(create_capture_params)
     recent_count = Capture
       .where(sender: @current_account)
       .where("captures.created_at >= ?", 24.hours.ago)
@@ -91,9 +100,9 @@ class CapturesController < ApplicationController
     when :plus then
       max_count = 10
     when :premium then
-      max_count = 15
-    when :luxury then
       max_count = 20
+    when :luxury then
+      max_count = 40
     end
     if recent_count >= max_count
       flash.now[:alert] = "作成制限: 24時間以内に#{max_count}件以上作成できません"
@@ -125,8 +134,8 @@ class CapturesController < ApplicationController
     if !@capture.captured_at.nil?
       redirect_to capture_path(@capture.aid), alert: "撮影済み"
     end
-    @capture.build_front_photo
-    @capture.build_back_photo
+    @capture.build_main_photo
+    @capture.build_sub_photo
   end
 
   def post_capture
@@ -135,11 +144,12 @@ class CapturesController < ApplicationController
       redirect_to capture_path(@capture.aid), alert: "撮影済み"
     end
     @capture.assign_attributes(receiver_params)
+    @capture.main_photo.account = @current_account
+    @capture.sub_photo.account = @current_account
     @capture.captured_at = Time.current
-    @capture.receiver = @current_account if @current_account
+    @capture.receiver = @current_account
     @capture.upload_photo = true
     if @capture.save
-      # 通知
       unless @current_account
         session[:captured] ||= []
         session[:captured] << @capture.aid
@@ -156,7 +166,7 @@ class CapturesController < ApplicationController
       captured_array = session[:captured] || []
       return redirect_to root_url, alert: "不可能な操作" unless captured_array.include?(@capture.aid)
     end
-    @capture.update(deleted: true)
+    @capture.update(status: :deleted)
     redirect_to root_url, notice: "削除しました"
     session[:captured].delete(@capture.aid) if session[:captured]
   end
@@ -168,8 +178,9 @@ class CapturesController < ApplicationController
     return unless @capture
     return if @capture.owner == @current_account
 
-    return if @capture.visibility_public?
-    return if @capture.visibility_link_only?
+    return if @capture.opened?
+    return if @capture.limited?
+    return if session[:captured]&.include?(@capture.aid) && !@capture.receiver
     
     case @capture.visibility
     when "followers_only" then
@@ -194,8 +205,17 @@ class CapturesController < ApplicationController
       :latitude,
       :longitude,
       :visibility,
-      front_photo_attributes: [:image],
-      back_photo_attributes: [:image]
+      main_photo_attributes: [:image],
+      sub_photo_attributes: [:image]
+    )
+  end
+
+  def create_capture_params
+    params.expect(
+      capture: [
+        :sender_comment,
+        :visibility
+      ]
     )
   end
 

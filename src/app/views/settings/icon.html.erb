@@ -13,7 +13,7 @@
       <%= form.radio_button :icon_aid, image.aid, checked: (@account.icon_id == image.id), hidden: true %>
       <%= form.label :icon_aid, for: "account_icon_aid_#{image.aid}", class: "custom-image-label" do %>
         <%= image.name %>
-        <%= image_tag(image.image_url(variant_type: "icons")) %>
+        <%= image_tag(image.image_url(variant_type: "bealive_capture")) %>
       <% end %>
     <% end %>
     <%= form.radio_button :icon_aid, "00000", checked: (@account.icon_id.blank?), hidden: true %>

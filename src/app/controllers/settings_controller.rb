@@ -1,5 +1,5 @@
 class SettingsController < ApplicationController
-  before_action :require_signin, except: %i[ leave ]
+  before_action :require_signin
   before_action :set_account, only: %i[ account icon post_account ]
 
   def index
@@ -9,7 +9,10 @@ class SettingsController < ApplicationController
   end
 
   def icon
-    @images = Image.where(account: @current_account, deleted: false)
+    @images = Image
+      .is_normal
+      .is_opened
+      .where(account: @current_account)
   end
 
   def post_account
@@ -21,7 +24,7 @@ class SettingsController < ApplicationController
   end
 
   def leave
-    @current_account.update(deleted: true)
+    @current_account.update(status: :deleted)
     sign_out
     redirect_to root_url, notice: "ご利用いただきありがとうございました"
   end
@@ -37,7 +40,7 @@ class SettingsController < ApplicationController
       :name,
       :name_id,
       :description,
-      :birth,
+      :birthdate,
       :icon_aid
     )
   end

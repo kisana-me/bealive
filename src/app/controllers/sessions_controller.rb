@@ -34,7 +34,7 @@ class SessionsController < ApplicationController
     end
   end
 
-  def destroy
+  def destroy#bad
     @session.update(deleted: true)
     redirect_to sessions_path, notice: "セッションを削除しました"
   end

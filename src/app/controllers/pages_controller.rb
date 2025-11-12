@@ -1,7 +1,12 @@
 class PagesController < ApplicationController
 
   def index
-    @captures = Capture.captured.where(visibility: :public).limit(10)
+    @captures = Capture
+      .is_normal
+      .is_opened
+      .is_captured
+      .order(captured_at: :desc)
+      .limit(10)
   end
 
   def terms_of_service

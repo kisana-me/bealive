@@ -1,46 +1,116 @@
 module SessionManagement
-  # 単一サインイン版 ver 1.0.1
+  # SessionManagement Ver. 2.0.0
   # models/token_toolsが必須
   # Sessionに必要なカラム差分(名前 型)
   # - account references
   # Accountに必要なカラム(名前 型)
-  # - deleted boolean
+  # - status enum { normal: 0, locked: 1, deleted: 2 }
 
-  COOKIE_NAME = "bealive"
-  COOKIE_EXPIRES = 1.month # 2592000
+  COOKIE_NAME = 'bealive'.freeze
+  COOKIE_EXPIRES_IN = 6.months
+  TOKEN_EXPIRES_IN = 6.months
 
-  def current_account()
+  def current_account
     @current_account = nil
-    return unless token = cookies.encrypted[COOKIE_NAME.to_sym]
-    db_session = Session.find_by_token("token", token)
-    if db_session&.account && !db_session.account.deleted
-      @current_account = db_session.account
-    else
-      cookies.delete(COOKIE_NAME.to_sym)
+    tokens = get_tokens
+    cookie_needs_update = false
+
+    while tokens.any?
+      token = tokens.first
+      db_session = Session.isnt_deleted.from_not_deleted_accounts.findby_token(token)
+      if db_session
+        @current_account = db_session.account
+        break
+      else
+        tokens.shift
+        cookie_needs_update = true
+      end
     end
+
+    write_tokens(tokens) if cookie_needs_update
+    @current_account
   end
 
   def sign_in(account)
+    return false if account.nil? || account.deleted?
+
     db_session = Session.new(account: account)
-    token = db_session.generate_token("token", COOKIE_EXPIRES)
+    token = db_session.generate_token(TOKEN_EXPIRES_IN)
+
+    if db_session.save
+      tokens = get_tokens
+      tokens.unshift(token)
+      write_tokens(tokens.uniq)
+      true
+    else
+      false
+    end
+  end
+
+  def sign_out
+    tokens = get_tokens
+    return false unless (token = tokens.shift)
+
+    db_session = Session.isnt_deleted.from_not_deleted_accounts.findby_token(token)
+    db_session&.update(status: :deleted)
+
+    if tokens.empty?
+      cookies.delete(COOKIE_NAME.to_sym)
+    else
+      write_tokens(tokens)
+    end
+    @current_account = nil
+    true
+  end
+
+  def signed_in_accounts
+    db_sessions = Session
+      .isnt_deleted
+      .from_not_deleted_accounts
+      .includes(:account)
+      .find_all_by_tokens(get_tokens)
+    db_sessions.map(&:account).uniq
+  end
+
+  def change_account(account_aid)
+    tokens = get_tokens
+    target_token = nil
+    tokens.shift
+
+    while tokens.any?
+      token = tokens.first
+      db_session = Session.isnt_deleted.from_not_deleted_accounts.findby_token(token)
+      if db_session && db_session.account.aid == account_aid
+        target_token = token
+        break
+      else
+        tokens.shift
+      end
+    end
+    return false unless target_token
+
+    new_tokens = get_tokens.partition { |t| t == target_token }.flatten
+    write_tokens(new_tokens)
+    true
+  end
+
+  private
+
+  def get_tokens
+    JSON.parse(cookies.encrypted[COOKIE_NAME.to_sym] || '[]')
+  rescue JSON::ParserError
+    []
+  end
+
+  def write_tokens(tokens)
     cookies.encrypted[COOKIE_NAME.to_sym] = {
-      value: token,
+      value: tokens.to_json,
       domain: :all,
       tld_length: 2,
       same_site: :lax,
-      expires: Time.current + COOKIE_EXPIRES,
+      expires: Time.current + COOKIE_EXPIRES_IN,
       secure: Rails.env.production?,
       httponly: true
     }
-    db_session.save()
-  end
-
-  def sign_out()
-    return unless token = cookies.encrypted[COOKIE_NAME.to_sym]
-    db_session = Session.find_by_token("token", token)
-    return unless db_session
-    cookies.delete(COOKIE_NAME.to_sym)
-    @current_account = nil
-    db_session.update(deleted: true)
   end
 end

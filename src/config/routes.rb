@@ -35,7 +35,7 @@ Rails.application.routes.draw do
   end
 
   # captures
-  get "captures/sended"
+  get "captures/sent"
   get "captures/received"
   get "captures/load_more"
   resources :captures, param: :aid do

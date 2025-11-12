@@ -2,9 +2,9 @@ class AccountsController < ApplicationController
   before_action :set_account, except: %i[ index ]
 
   def index
-    @accounts = Account.where(status: 0, deleted: false)
     return @accounts = [] if params[:query].blank?
     
+    @accounts = Account.is_normal.is_opened.order(id: :desc)
     if params[:type] == "id"
       @accounts = @accounts.where("name_id LIKE ?", "%#{params[:query]}%")
     elsif params[:type] == "name"
@@ -15,11 +15,11 @@ class AccountsController < ApplicationController
   end
 
   def show
-    @captures = 
     @captures = Capture
-      .captured
+      .is_normal
+      .is_opened
+      .is_captured
       .where(receiver: @account)
-      .where(visibility: :public)
       .limit(10)
   end
 
@@ -38,10 +38,24 @@ class AccountsController < ApplicationController
   private
 
   def set_account
-    @account = Account.find_by(
-      name_id: params[:name_id],
-      status: 0,
-      deleted: false
-    )
+    @account = Account
+      .is_normal
+      .is_opened  
+      .find_by(name_id: params[:name_id])
+    return if @account
+
+    return render_404 unless @current_account
+
+    if @current_account.name_id == params[:name_id]
+      @account = @current_account
+      return
+    end
+    
+    if admin?
+      @account = Account.find_by(name_id: params[:name_id])
+      return if @account
+    end
+
+    render_404
   end
 end
