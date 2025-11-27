@@ -7,7 +7,7 @@ class Capture < ApplicationRecord
   accepts_nested_attributes_for :main_photo, :sub_photo
 
   attribute :meta, :json, default: -> { {} }
-  enum :visibility, { closed: 0, limited: 1, opened: 2, followers_only: 3, group_only: 4 }, default: :limited
+  enum :visibility, { opened: 0, limited: 1, closed: 2, followers_only: 3, group_only: 4 }, default: :limited
   enum :status, { normal: 0, locked: 1, deleted: 2 }
   attr_accessor :upload_photo
 
