@@ -34,16 +34,14 @@ class Capture < ApplicationRecord
   }
 
   def main_photo_url
-    self.main_photo&.image_url(variant_type: 'bealive_capture') || '/statics/images/bealive-1.png'
+    self.main_photo&.image_url || full_url('/static_assets/images/bealive-1.png')
   end
 
   def sub_photo_url
-    self.sub_photo&.image_url(variant_type: 'bealive_capture') || '/statics/images/bealive-1.png'
+    self.sub_photo&.image_url || full_url('/static_assets/images/bealive-1.png')
   end
 
   def owner
     self.receiver ? self.receiver : self.sender
   end
-
-  private
 end

@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   include ErrorsManagement
   include SessionManagement
+  include Pagination
 
   before_action :current_account
   before_action :set_current_attributes

@@ -144,10 +144,12 @@ class CapturesController < ApplicationController
       redirect_to capture_path(@capture.aid), alert: "撮影済み"
     end
     @capture.assign_attributes(receiver_params)
-    @capture.main_photo.account = @current_account
-    @capture.sub_photo.account = @current_account
     @capture.captured_at = Time.current
     @capture.receiver = @current_account
+    @capture.main_photo.account = @current_account || @capture.sender
+    @capture.sub_photo.account = @current_account || @capture.sender
+    @capture.main_photo.variant_type = 'bealive_capture'
+    @capture.sub_photo.variant_type = 'bealive_capture'
     @capture.upload_photo = true
     if @capture.save
       unless @current_account

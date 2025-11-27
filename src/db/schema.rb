@@ -121,7 +121,8 @@ ActiveRecord::Schema[8.0].define(version: 10) do
     t.string "aid", limit: 14, null: false
     t.string "name", default: "", null: false
     t.text "description", default: "", null: false
-    t.string "original_ext", null: false
+    t.string "original_ext"
+    t.string "variant_type"
     t.text "variants", size: :long, default: "[]", null: false, collation: "utf8mb4_bin"
     t.integer "visibility", limit: 1, default: 0, null: false
     t.text "meta", size: :long, default: "{}", null: false, collation: "utf8mb4_bin"

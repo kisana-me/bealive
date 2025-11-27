@@ -45,14 +45,13 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :images, only: [:new, :create], param: :aid
+  resources :images, only: [:index, :destroy], param: :aid
   # resources :groups
   # resources :comments
 
   # Settings
   get "settings" => "settings#index"
   get "settings/account" => "settings#account"
-  get "settings/icon" => "settings#icon"
   patch "settings/account" => "settings#post_account"
   delete "settings/leave" => "settings#leave"
 

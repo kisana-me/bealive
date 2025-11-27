@@ -8,13 +8,6 @@ class SettingsController < ApplicationController
   def account
   end
 
-  def icon
-    @images = Image
-      .is_normal
-      .is_opened
-      .where(account: @current_account)
-  end
-
   def post_account
     if @account.update(account_params)
       redirect_to settings_account_path, notice: "更新しました"
@@ -36,12 +29,14 @@ class SettingsController < ApplicationController
   end
 
   def account_params
-    params.require(:account).permit(
-      :name,
-      :name_id,
-      :description,
-      :birthdate,
-      :icon_aid
+    params.expect(
+      account: [
+        :name,
+        :name_id,
+        :description,
+        :birthdate,
+        :icon_file,
+      ]
     )
   end
 end

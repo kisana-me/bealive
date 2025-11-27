@@ -2,14 +2,12 @@ class ImagesController < ApplicationController
   before_action :require_signin
 
   def index
-    @images = Image
-      .is_normal
-      .is_opened
-      where(account: @current_account)
+    images = @current_account.images.is_normal.order(id: :desc)
+    @images = set_pagination_for(images)
   end
 
   def show
-
+    @image = @current_account.images.is_normal.find_by(aid: params[:aid])
   end
 
   def new
@@ -57,7 +55,8 @@ class ImagesController < ApplicationController
   end
 
   def destroy
-    if @image.update(deleted: true)
+    @image = @current_account.images.is_normal.find_by(aid: params[:aid])
+    if @image.update(status: :deleted)
       redirect_to root_url, notice: "削除しました"
     else
       flash.now[:alert] = "削除できません"

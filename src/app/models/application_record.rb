@@ -1,7 +1,6 @@
 class ApplicationRecord < ActiveRecord::Base
   primary_abstract_class
   include S3Tools
-  include ImageTools
   include TokenTools
   include Paginatable
 
@@ -13,5 +12,9 @@ class ApplicationRecord < ActiveRecord::Base
 
   def set_aid
     self.aid ||= SecureRandom.base36(14)
+  end
+
+  def full_url(path)
+    URI.join(ENV.fetch('APP_URL'), path).to_s
   end
 end

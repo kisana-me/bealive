@@ -1,4 +1,5 @@
 class Account < ApplicationRecord
+  has_many :images
   has_many :sender, class_name: 'Capture', foreign_key: 'sender_id'
   has_many :receiver, class_name: 'Capture', foreign_key: 'receiver_id'
   belongs_to :icon, class_name: 'Image', foreign_key: 'icon_id', optional: true
@@ -95,8 +96,18 @@ class Account < ApplicationRecord
 
   # === #
 
+  def icon_file=(file)
+    if file.present? && file.content_type.start_with?('image/')
+      new_image = Image.new
+      new_image.account = self
+      new_image.image = file
+      new_image.variant_type = 'icon'
+      self.icon = new_image
+    end
+  end
+
   def icon_url
-    icon&.image_url(variant_type: 'icon') || '/statics/images/bealive-logo.png'
+    icon&.image_url || full_url('static_assets/images/bealive-logo.png')
   end
 
   def subscription_plan
