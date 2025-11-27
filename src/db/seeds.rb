@@ -11,7 +11,6 @@ Account.create!(
   num = index + 1
   capture = Capture.create!(
     sender: Account.first,
-    visibility: 2,
     created_at: Time.zone.local(2025, 6, 8, 15, 0),
     updated_at: Time.zone.local(2025, 6, 8, 15, 0)
   )
